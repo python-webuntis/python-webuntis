@@ -12,9 +12,10 @@ from . import option_utils
 
 OptionStore = option_utils.OptionStore
 
+
 class lazyproperty(object):
     '''A read-only @property that is only evaluated once.
-    
+
     Stolen from http://www.reddit.com/r/Python/comments/ejp25/cached_property_decorator_that_is_memory_friendly/
     '''
     def __init__(self, fget, doc=None):

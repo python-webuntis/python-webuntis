@@ -66,7 +66,7 @@ class JSONRPCSession(object):
 
     def logout(self, suppress_errors=False):
         '''Log out of session
-        
+
         :param suppress_errors: boolean, whether to not raise an error if we
         already were logged out.
         '''

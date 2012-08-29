@@ -105,8 +105,8 @@ class ServerOption(Option):
                     # A bit weird, but it formats kinda nicely in the log.
                     # I am not logging line each, because other threads might
                     # interfere this and fuck everything up.
-                    logging.warning('''You specified that the API endpoint should be /. That is
-uncommon. If you didn't mean to do so, remove the slash at
+                    logging.warning('''You specified that the API endpoint
+should be /. That is uncommon. If you didn't mean to do so, remove the slash at
 the end of your "server" parameter.''')
 
                 self.value = {
