@@ -30,7 +30,6 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
 
         self.session = webuntis.Session()
 
-
     def tearDown(self):
         self.request_patcher.stop()
         self.session = None
@@ -68,7 +67,6 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
         if type(values) != dict:
                 raise Exception('Expected that OptionStore.values is a \
                     dictionary')
-
 
     def test_getdepartments_mock(self):
         jsonstr = json.load(
@@ -164,7 +162,6 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
                 period_raw['endTime']
             )
 
-
     def test_getrooms_mock(self):
         jsonstr = json.load(
             open(self.data_path + '/getrooms_mock.json')
@@ -178,7 +175,6 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
                 self.assertEqual(room_raw['longName'], room.long_name)
                 self.assertEqual(room_raw['name'], room.name)
                 self.assertEqual(room_raw['id'], room.id)
-
 
     def test_getschoolyears_mock(self):
         jsonstr = json.load(
@@ -215,7 +211,6 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
                 self.assertEqual(subj_raw['longName'], subj.long_name)
                 self.assertEqual(subj_raw['name'], subj.name)
 
-
     def test_getteachers_mock(self):
         jsonstr = json.load(
             open(self.data_path + '/getteachers_mock.json')
@@ -246,11 +241,6 @@ def test_gettimegrid_mock(self):
             for t2_raw, t2 in zip(t_raw['timeUnits'], t.times):
                 self.assertEqual(t2_raw['startTime'], t2[0].strftime('%H%M'))
                 self.assertEqual(t2_raw['endTime'], t2[1].strftime('%H%M'))
-
-
-
-
-
 
 
 class WebUntisRemoteTests(unittest.TestCase, WebUntisTests):
@@ -326,7 +316,6 @@ class WebUntisRemoteTests(unittest.TestCase, WebUntisTests):
     def test_gettimeunits(self):
         self.session.timeunits()
 
-    
     def test_gettimetables(self):
         print('TEST_GETTIMETABLES')
         timetables = []
@@ -381,7 +370,6 @@ def main():
         unittest.TextTestRunner(verbosity=2).run(suite)
 
     tests = [WebUntisOfflineTests, WebUntisRemoteTests]
-
 
     if len(sys.argv) == 1:
         print('ERROR: No tests specified.\n\nAdd a number to the command-line arguments to execute the test:')
