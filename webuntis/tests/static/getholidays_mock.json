@@ -1,0 +1,12 @@
+[
+    {"startDate": 20121026, "longName": "Nationalfeiertag", "endDate": 20121026, "id": 58, "name": "National"},
+    {"startDate": 20121101, "longName": "Allerheiligen", "endDate": 20121101, "id": 57, "name": "Allerheiligen"},
+    {"startDate": 20121208, "longName": "MariaEmpfängnis", "endDate": 20121208, "id": 56, "name": "MariaEmpf"},
+    {"startDate": 20121223, "longName": "Weihnachtsferien", "endDate": 20130106, "id": 52, "name": "Weih"},
+    {"startDate": 20130206, "longName": "Semesterferien", "endDate": 20130212, "id": 53, "name": "Sem"},
+    {"startDate": 20130325, "longName": "Ostern", "endDate": 20130401, "id": 54, "name": "Ost"},
+    {"startDate": 20130501, "longName": "1.Mai", "endDate": 20130501, "id": 59, "name": "1.Mai"},
+    {"startDate": 20130509, "longName": "Christi Himmelfahrt", "endDate": 20130509, "id": 55, "name": "ChristHim"},
+    {"startDate": 20130520, "longName": "Pfingstmontag", "endDate": 20130520, "id": 60, "name": "PfMon"},
+    {"startDate": 20130530, "longName": "Fronleichnam", "endDate": 20130530, "id": 61, "name": "Fron"}
+]

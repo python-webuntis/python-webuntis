@@ -1,0 +1,9 @@
+[
+    {"startDate": 20060904, "endDate": 20070701, "id": 1, "name": "2006/07"},
+    {"startDate": 20070903, "endDate": 20080627, "id": 2, "name": "2007/08"},
+    {"startDate": 20080901, "endDate": 20090705, "id": 3, "name": "2008/2009"},
+    {"startDate": 20090831, "endDate": 20100704, "id": 4, "name": "2009/2010"},
+    {"startDate": 20100802, "endDate": 20110731, "id": 5, "name": "2010/2011"},
+    {"startDate": 20110905, "endDate": 20120729, "id": 6, "name": "2011/2012"},
+    {"startDate": 20120827, "endDate": 20130728, "id": 7, "name": "2012/2013"}
+]
