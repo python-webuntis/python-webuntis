@@ -1,0 +1,407 @@
+[{
+    "longName": "Aristoteles",
+    "foreName": "",
+    "id": 30,
+    "dids": [{
+        "id": 4
+    }],
+    "name": "Arist"
+}, {
+    "longName": "Asimov",
+    "foreName": "Isaac",
+    "id": 20,
+    "dids": [{
+        "id": 3
+    }, {
+        "id": 4
+    }],
+    "name": "Asim"
+}, {
+    "longName": "Bachmann",
+    "foreName": "Ingeborg",
+    "id": 1,
+    "dids": [],
+    "name": "Bach"
+}, {
+    "longName": "Baker",
+    "foreName": "Josephine",
+    "id": 32,
+    "dids": [],
+    "name": "Baker"
+}, {
+    "longName": "Becket",
+    "foreName": "Thomas",
+    "id": 59,
+    "dids": [],
+    "name": "Beck"
+}, {
+    "longName": "Bergmann",
+    "foreName": "Ingrid",
+    "id": 41,
+    "dids": [],
+    "name": "Berg"
+}, {
+    "longName": "Blanchett",
+    "foreName": "Cate",
+    "id": 34,
+    "dids": [{
+        "id": 2
+    }, {
+        "id": 4
+    }],
+    "name": "Blan"
+}, {
+    "longName": "Borgia",
+    "foreName": "Lucrezia",
+    "id": 37,
+    "dids": [],
+    "name": "Bor"
+}, {
+    "longName": "Buck",
+    "foreName": "Pearl S.",
+    "id": 16,
+    "dids": [],
+    "name": "Buck"
+}, {
+    "longName": "Calamity",
+    "foreName": "Jane",
+    "id": 42,
+    "dids": [],
+    "name": "Cala"
+}, {
+    "longName": "Callas",
+    "foreName": "Maria",
+    "id": 10,
+    "dids": [{
+        "id": 2
+    }],
+    "name": "Callas"
+}, {
+    "longName": "Cardinale",
+    "foreName": "Claudia",
+    "id": 28,
+    "dids": [{
+        "id": 2
+    }, {
+        "id": 3
+    }, {
+        "id": 4
+    }],
+    "name": "Card"
+}, {
+    "longName": "Cicero",
+    "foreName": "Marcus Tullius",
+    "id": 7,
+    "dids": [],
+    "name": "Cic"
+}, {
+    "longName": "Columbus",
+    "foreName": "Christoph",
+    "id": 13,
+    "dids": [],
+    "name": "Colu"
+}, {
+    "longName": "Curie",
+    "foreName": "Marie",
+    "id": 11,
+    "dids": [],
+    "name": "Curie"
+}, {
+    "longName": "d'Arc",
+    "foreName": "Jeanne",
+    "id": 36,
+    "dids": [{
+        "id": 3
+    }],
+    "name": "Arc"
+}, {
+    "longName": "Euler",
+    "foreName": "Leonhard",
+    "id": 15,
+    "dids": [],
+    "name": "Eul"
+}, {
+    "longName": "Fermat",
+    "foreName": "Pierre",
+    "id": 60,
+    "dids": [],
+    "name": "Fer"
+}, {
+    "longName": "Fonda",
+    "foreName": "Jane",
+    "id": 26,
+    "dids": [],
+    "name": "Fonda"
+}, {
+    "longName": "Fossey",
+    "foreName": "Dian",
+    "id": 2,
+    "dids": [],
+    "name": "Foss"
+}, {
+    "longName": "Galilei",
+    "foreName": "Galileio",
+    "id": 58,
+    "dids": [],
+    "name": "Gal"
+}, {
+    "longName": "Gandhi",
+    "foreName": "Indira",
+    "id": 43,
+    "dids": [],
+    "name": "Gand"
+}, {
+    "longName": "Gauss",
+    "foreName": "Karl Friedrich",
+    "id": 44,
+    "dids": [],
+    "name": "Gauss"
+}, {
+    "longName": "Goethe",
+    "foreName": "Johann Wolfgang",
+    "id": 4,
+    "dids": [],
+    "name": "Goethe"
+}, {
+    "longName": "Grillparzer",
+    "foreName": "Franz",
+    "id": 22,
+    "dids": [],
+    "name": "Grill"
+}, {
+    "longName": "Hari",
+    "foreName": "Mata",
+    "id": 25,
+    "dids": [],
+    "name": "Hari"
+}, {
+    "longName": "Herodot",
+    "foreName": "",
+    "id": 3,
+    "dids": [],
+    "name": "Hero"
+}, {
+    "longName": "Ionesco",
+    "foreName": "Eugène",
+    "id": 6,
+    "dids": [],
+    "name": "Ion"
+}, {
+    "longName": "Kelly",
+    "foreName": "Grace",
+    "id": 45,
+    "dids": [],
+    "name": "Kel"
+}, {
+    "longName": "Kepler",
+    "foreName": "Johannes",
+    "id": 51,
+    "dids": [],
+    "name": "Kep"
+}, {
+    "longName": "Lagerlöf",
+    "foreName": "Selma",
+    "id": 40,
+    "dids": [],
+    "name": "Lag"
+}, {
+    "longName": "Lindgren",
+    "foreName": "Astrid",
+    "id": 27,
+    "dids": [],
+    "name": "Lind"
+}, {
+    "longName": "Luther",
+    "foreName": "Martin",
+    "id": 31,
+    "dids": [],
+    "name": "Luth"
+}, {
+    "longName": "MacLaine",
+    "foreName": "Shirley",
+    "id": 48,
+    "dids": [],
+    "name": "MLa"
+}, {
+    "longName": "Magnus",
+    "foreName": "Albertus",
+    "id": 33,
+    "dids": [],
+    "name": "Mag"
+}, {
+    "longName": "Marx",
+    "foreName": "Karl",
+    "id": 9,
+    "dids": [],
+    "name": "Marx"
+}, {
+    "longName": "McDowell",
+    "foreName": "Andy",
+    "id": 17,
+    "dids": [],
+    "name": "McDow"
+}, {
+    "longName": "Meitner",
+    "foreName": "Lise",
+    "id": 5,
+    "dids": [],
+    "name": "Meit"
+}, {
+    "longName": "Mendel",
+    "foreName": "Gregor",
+    "id": 24,
+    "dids": [],
+    "name": "Mend"
+}, {
+    "longName": "Michelangelo",
+    "foreName": "",
+    "id": 50,
+    "dids": [],
+    "name": "Mich"
+}, {
+    "longName": "Moreau",
+    "foreName": "Jeanne",
+    "id": 35,
+    "dids": [],
+    "name": "Mor"
+}, {
+    "longName": "Mozart",
+    "foreName": "Nannerl",
+    "id": 49,
+    "dids": [],
+    "name": "Moz"
+}, {
+    "longName": "mpr",
+    "foreName": "Martin",
+    "id": 61,
+    "dids": [],
+    "name": "mpr"
+}, {
+    "longName": "Newton",
+    "foreName": "Isaac",
+    "id": 38,
+    "dids": [],
+    "name": "New"
+}, {
+    "longName": "Nightingale",
+    "foreName": "Florence",
+    "id": 29,
+    "dids": [],
+    "name": "Night"
+}, {
+    "longName": "Nobel",
+    "foreName": "Alfred",
+    "id": 56,
+    "dids": [],
+    "name": "Nobel"
+}, {
+    "longName": "Phidippides",
+    "foreName": "",
+    "id": 55,
+    "dids": [],
+    "name": "Phid"
+}, {
+    "longName": "Rigg",
+    "foreName": "Diana",
+    "id": 18,
+    "dids": [],
+    "name": "Rigg"
+}, {
+    "longName": "Rubens",
+    "foreName": "Peter Paul",
+    "id": 47,
+    "dids": [],
+    "name": "Rub"
+}, {
+    "longName": "Seneca",
+    "foreName": "Anneus",
+    "id": 57,
+    "dids": [],
+    "name": "Sen"
+}, {
+    "longName": "Shakespeare",
+    "foreName": "William",
+    "id": 46,
+    "dids": [],
+    "name": "Shak"
+}, {
+    "longName": "Stanley",
+    "foreName": "Henry Morton",
+    "id": 21,
+    "dids": [],
+    "name": "Stan"
+}, {
+    "longName": "Steiff",
+    "foreName": "Margarete",
+    "id": 39,
+    "dids": [],
+    "name": "Steiff"
+}, {
+    "longName": "Stone",
+    "foreName": "Sharon",
+    "id": 19,
+    "dids": [],
+    "name": "Stone"
+}, {
+    "longName": "Stuart",
+    "foreName": "Maria",
+    "id": 14,
+    "dids": [],
+    "name": "Stu"
+}, {
+    "longName": "test_chg",
+    "foreName": "",
+    "id": 63,
+    "dids": [{
+        "id": 1
+    }],
+    "name": "test_chg"
+}, {
+    "longName": "Tolkien",
+    "foreName": "John Ronald Reuel",
+    "id": 8,
+    "dids": [],
+    "name": "Tolk"
+}, {
+    "longName": "über???",
+    "foreName": "",
+    "id": 62,
+    "dids": [],
+    "name": "über"
+}, {
+    "longName": "von Aquitanien",
+    "foreName": "Eleonore",
+    "id": 54,
+    "dids": [{
+        "id": 2
+    }],
+    "name": "Aqu"
+}, {
+    "longName": "von Arnim",
+    "foreName": "Bettine",
+    "id": 23,
+    "dids": [{
+        "id": 2
+    }, {
+        "id": 3
+    }],
+    "name": "Arnim"
+}, {
+    "longName": "von Assisi",
+    "foreName": "Klara",
+    "id": 52,
+    "dids": [],
+    "name": "Ass"
+}, {
+    "longName": "von Bingen",
+    "foreName": "Hildegard",
+    "id": 53,
+    "dids": [],
+    "name": "Bin"
+}, {
+    "longName": "von Suttner",
+    "foreName": "Bertha",
+    "id": 12,
+    "dids": [],
+    "name": "Sutt"
+}]
