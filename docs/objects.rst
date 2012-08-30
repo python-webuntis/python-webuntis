@@ -7,10 +7,12 @@ Objects and ObjectLists
 Base Classes
 ============
 
-.. autoclass:: ObjectList
+.. autoclass:: Result
+
+.. autoclass:: ListResult
   :members:
 
-.. autoclass:: DataObject
+.. autoclass:: ListItem
 
 
 Departments
