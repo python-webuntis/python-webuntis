@@ -34,13 +34,7 @@ class DataObject(object):
         what type it is.'''
         return self.id
 
-
-class ObjectList(object):
-    '''ObjectLists define a type of data. They contain the datatype-specific
-    methods and fetch data simply given a valid session
-    This class should be inherited.
-    '''
-
+class Result(object):
     _jsonrpc_method = False
     _itemclass = DataObject
     _items = []
@@ -67,6 +61,11 @@ class ObjectList(object):
             self._jsonrpc_method,
             self._jsonrpc_parameters(**kwargs)
         )
+
+
+class ObjectList(Result):
+    '''ObjectList is an iterable version of :py:class:`webuntis.objects.Result`.
+    '''
 
     def filter(self, **criterions):
         '''
