@@ -45,17 +45,17 @@ class ListItem(object):
 
     noid = False
 
-    def __init__(self, session, parent, rawdata):
+    def __init__(self, session, parent, data):
         '''
         Keyword arguments:
         session -- a webuntis.session.Session object
-        rawdata -- the relevant part of a json result for this object
+        data -- the relevant part of a json result for this object
         '''
-        self.session = session
-        self.parent = parent
-        self.rawdata = rawdata
+        self._session = session
+        self._parent = parent
+        self._data = data
 
-        self.id = self.rawdata['id'] if 'id' in self.rawdata else None
+        self.id = self._data['id'] if 'id' in self._data else None
 
     def __int__(self):
         '''This is useful if the users pass a ListItem when a numerical ID
@@ -118,12 +118,12 @@ class DepartmentObject(ListItem):
     @lazyproperty
     def name(self):
         '''short name such as *R1A*'''
-        return self.rawdata['name']
+        return self._data['name']
 
     @lazyproperty
     def long_name(self):
         '''Long name, such as *Raum Erste A*. Not predictable.'''
-        return self.rawdata['longName']
+        return self._data['longName']
 
 
 class DepartmentList(ListResult):
@@ -144,22 +144,22 @@ class HolidayObject(ListItem):
     @lazyproperty
     def start(self):
         '''The start date of the holiday, as a datetime object.'''
-        return datetime_utils.parse_date(self.rawdata['startDate'])
+        return datetime_utils.parse_date(self._data['startDate'])
 
     @lazyproperty
     def end(self):
         '''The end of the holiday'''
-        return datetime_utils.parse_date(self.rawdata['endDate'])
+        return datetime_utils.parse_date(self._data['endDate'])
 
     @lazyproperty
     def name(self):
         '''Name, such as *Nationalfeiertag*.'''
-        return self.rawdata['longName']
+        return self._data['longName']
 
     @lazyproperty
     def short_name(self):
         '''Abbreviated form of the name'''
-        return self.rawdata['name']
+        return self._data['name']
 
 
 class HolidayList(ListResult):
@@ -179,12 +179,12 @@ class KlassenObject(ListItem):
     @lazyproperty
     def name(self):
         '''Name of class'''
-        return self.rawdata['name']
+        return self._data['name']
 
     @lazyproperty
     def long_name(self):
         '''Long name of class'''
-        return self.rawdata['longName']
+        return self._data['longName']
 
 
 class KlassenList(ListResult):
@@ -225,8 +225,8 @@ class PeriodObject(ListItem):
         '''The start date/time of the period, as datetime object.'''
 
         return datetime_utils.parse_datetime(
-            self.rawdata['date'],
-            self.rawdata['startTime']
+            self._data['date'],
+            self._data['startTime']
         )
 
     @lazyproperty
@@ -234,8 +234,8 @@ class PeriodObject(ListItem):
         '''The end date/time of the period.'''
 
         return datetime_utils.parse_datetime(
-            self.rawdata['date'],
-            self.rawdata['endTime']
+            self._data['date'],
+            self._data['endTime']
         )
 
     @lazyproperty
@@ -244,7 +244,7 @@ class PeriodObject(ListItem):
         which are attending this period.'''
 
         return self.session.klassen().filter(
-            id=[kl['id'] for kl in self.rawdata['kl']]
+            id=[kl['id'] for kl in self._data['kl']]
         )
 
     @lazyproperty
@@ -253,7 +253,7 @@ class PeriodObject(ListItem):
         which are attending this period.'''
 
         return self.session.teachers().filter(
-            id=[te['id'] for te in self.rawdata['te']]
+            id=[te['id'] for te in self._data['te']]
         )
 
     @lazyproperty
@@ -264,7 +264,7 @@ class PeriodObject(ListItem):
         those will get placed in their own period.'''
 
         return self.session.subjects().filter(
-            id=[su['id'] for su in self.rawdata['su']]
+            id=[su['id'] for su in self._data['su']]
         )
 
     @lazyproperty
@@ -274,7 +274,7 @@ class PeriodObject(ListItem):
         actually occuring at multiple locations.'''
 
         return self.session.rooms().filter(
-            id=[ro['id'] for ro in self.rawdata['ro']]
+            id=[ro['id'] for ro in self._data['ro']]
         )
 
     @lazyproperty
@@ -282,7 +282,7 @@ class PeriodObject(ListItem):
         '''May be "cancelled" or "irregular" -- the latter implies a
         substitution.'''
 
-        return self.rawdata['lstype'] if 'lstype' in self.rawdata else None
+        return self._data['lstype'] if 'lstype' in self._data else None
 
 
 class PeriodList(ListResult):
@@ -354,12 +354,12 @@ class RoomObject(ListItem):
     @lazyproperty
     def name(self):
         '''The short name of the room. Such as PHY.'''
-        return self.rawdata['name']
+        return self._data['name']
 
     @lazyproperty
     def long_name(self):
         '''The long name of the room. Such as "Physics lab".'''
-        return self.rawdata['longName']
+        return self._data['longName']
 
 
 class RoomList(ListResult):
@@ -381,17 +381,17 @@ class SchoolyearObject(ListItem):
     def name(self):
         '''"2010/2011"'''
 
-        return self.rawdata['name']
+        return self._data['name']
 
     @lazyproperty
     def start(self):
         '''The start date of the schoolyear, as datetime object'''
-        return datetime_utils.parse_date(self.rawdata['startDate'])
+        return datetime_utils.parse_date(self._data['startDate'])
 
     @lazyproperty
     def end(self):
         '''The end date'''
-        return datetime_utils.parse_date(self.rawdata['endDate'])
+        return datetime_utils.parse_date(self._data['endDate'])
 
     @lazyproperty
     def is_current(self):
@@ -424,8 +424,8 @@ class SchoolyearList(ListResult):
     def current(self):
         '''Returns the current schoolyear in form of a
         :py:class:`webuntis.objects.SchoolyearObject`'''
-        current_rawdata = self.session._request('getCurrentSchoolyear')
-        current = self.filter(id=current_rawdata['id'])[0]
+        current_data = self.session._request('getCurrentSchoolyear')
+        current = self.filter(id=current_data['id'])[0]
         return current
 
 
@@ -436,12 +436,12 @@ class SubjectObject(ListItem):
     @lazyproperty
     def name(self):
         '''Short name of subject, such as *PHY*'''
-        return self.rawdata['name']
+        return self._data['name']
 
     @lazyproperty
     def long_name(self):
         '''Long name of subject, such as *Physics*'''
-        return self.rawdata['longName']
+        return self._data['longName']
 
 
 class SubjectList(ListResult):
@@ -461,19 +461,19 @@ class TeacherObject(ListItem):
     @lazyproperty
     def fore_name(self):
         '''fore name of the teacher'''
-        return self.rawdata['foreName']
+        return self._data['foreName']
 
     @lazyproperty
     def long_name(self):
         '''surname of teacher'''
-        return self.rawdata['longName']
+        return self._data['longName']
 
     surname = long_name
 
     @lazyproperty
     def name(self):
         '''full name of the teacher'''
-        return self.rawdata['name']
+        return self._data['name']
 
 
 class TeacherList(ListResult):
@@ -501,13 +501,13 @@ class TimeunitObject(ListItem):
             (
                 datetime_utils.parse_time(unit['startTime']),
                 datetime_utils.parse_time(unit['endTime'])
-            ) for unit in self.rawdata['timeUnits']
+            ) for unit in self._data['timeUnits']
         ]
 
     @lazyproperty
     def day(self):
         '''The day the timeunit list is for'''
-        return self.rawdata['day']
+        return self._data['day']
 
 
 class TimeunitList(ListResult):
@@ -550,10 +550,11 @@ class ColorInfo(object):
         >>>
     '''
 
-    def __init__(self, rawdata):
-        self.name = list(rawdata.items())[0][0]
-        self.forecolor = rawdata[self.name]['foreColor']
-        self.backcolor = rawdata[self.name]['backColor']
+    def __init__(self, data):
+        self._data = data
+        self.name = list(data.items())[0][0]
+        self.forecolor = data[self.name]['foreColor']
+        self.backcolor = data[self.name]['backColor']
 
     @lazyproperty
     def name(self):
@@ -584,7 +585,7 @@ class StatusData(Result):
         '''A list of :py:class:`webuntis.objects.ColorInfo` objects, containing
         information about all lession types defined'''
         return [
-            ColorInfo(rawdata) for rawdata in self._data['lstypes']
+            ColorInfo(data) for data in self._data['lstypes']
         ]
 
     @lazyproperty
@@ -592,7 +593,7 @@ class StatusData(Result):
         '''A list of :py:class:`webuntis.objects.ColorInfo` objects, containing
         information about all period codes defined'''
         return [
-            ColorInfo(rawdata) for rawdata in self._data['codes']
+            ColorInfo(data) for data in self._data['codes']
         ]
 
 # Defines result classes that are accessible from outside
