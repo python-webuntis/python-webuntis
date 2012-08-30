@@ -227,20 +227,40 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
                 self.assertEqual(t_raw['name'], t.name)
 
 
-def test_gettimegrid_mock(self):
-    jsonstr = json.load(
-        open(self.data_path + '/gettimegrid_mock.json')
-    )
-    with mock.patch.object(
-        webuntis.objects.TimeunitList,
-        '_get_data',
-        return_value=jsonstr
-    ) as test_mock:
-        for t_raw, t in zip(jsonstr, self.session.timegrid()):
-            self.assertEqual(t_raw['day'], t.day)
-            for t2_raw, t2 in zip(t_raw['timeUnits'], t.times):
-                self.assertEqual(t2_raw['startTime'], t2[0].strftime('%H%M'))
-                self.assertEqual(t2_raw['endTime'], t2[1].strftime('%H%M'))
+    def test_gettimegrid_mock(self):
+        jsonstr = json.load(
+            open(self.data_path + '/gettimegrid_mock.json')
+        )
+        with mock.patch.object(
+            webuntis.objects.TimeunitList,
+            '_get_data',
+            return_value=jsonstr
+        ) as test_mock:
+            for t_raw, t in zip(jsonstr, self.session.timegrid()):
+                self.assertEqual(t_raw['day'], t.day)
+                for t2_raw, t2 in zip(t_raw['timeUnits'], t.times):
+                    self.assertEqual(t2_raw['startTime'],
+                                     int(t2[0].strftime('%H%M')))
+                    self.assertEqual(t2_raw['endTime'],
+                                     int(t2[1].strftime('%H%M')))
+
+    def test_getstatusdata_mock(self):
+        jsonstr = json.load(
+            open(self.data_path + '/getstatusdata_mock.json')
+        )
+        with mock.patch.object(
+            webuntis.objects.StatusData,
+            '_get_data',
+            return_value=jsonstr
+        ) as test_mock:
+            statusdata = self.session.statusdata()
+            for lstype_raw, lstype in zip(jsonstr['lstypes'],
+                                          statusdata.lession_types):
+                name = list(lstype_raw.items())[0][0]
+                colors = lstype_raw[name]
+                self.assertEqual(name, lstype.name)
+                self.assertEqual(colors['foreColor'], lstype.forecolor)
+                self.assertEqual(colors['backColor'], lstype.backcolor)
 
 
 class WebUntisRemoteTests(unittest.TestCase, WebUntisTests):
