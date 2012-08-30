@@ -49,6 +49,6 @@ Index
   quickstart
   session
   objects
-  utils
+  etc
   changelog
   license

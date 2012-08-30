@@ -73,10 +73,14 @@ For such reasons, Python has the with-statement, which you also can use to log y
 Where to go from here?
 ======================
 
-The basic idea is always that for each dataset there's a method in the session class. Each of these methods always return a list-like object containing other objects which have a few attributes.
+*  :doc:`session`
 
-So the next step would be learning about the other methods of your session object available:
+   This document provides a good starting point. It describes the only class you directly instantiate.
 
-*  :doc:`A short overview of all methods of a session object <session>`
-*  :doc:`The bigger and more low-level list of these <objects>`
-*  :doc:`How to import Options after creating the instance and other stuff <utils>`
+*  :doc:`objects`
+
+   A complete overview of things you can do with the API
+
+*  :doc:`etc`
+
+   Some implementation details and neat tricks.
