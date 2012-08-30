@@ -11,6 +11,8 @@ from webuntis.utils import datetime_utils, lazyproperty
 
 
 class Result(object):
+    '''Class used to represent most API method results.
+    '''
     _jsonrpc_method = False
     _data = False
 
@@ -18,7 +20,7 @@ class Result(object):
         if not self._jsonrpc_method:
             raise NotImplementedError
 
-        self.session = session
+        self._session = session
         self._data = self._get_data(**kwargs)
 
     def _jsonrpc_parameters(self, **kwargs):
@@ -32,7 +34,7 @@ class Result(object):
         '''A simple wrapper for the jsonrpc_parameters builder.
         Can be overwritten by subclasses, which may require more complex
         options'''
-        return self.session._request(
+        return self._session._request(
             self._jsonrpc_method,
             self._jsonrpc_parameters(**kwargs)
         )
@@ -64,15 +66,16 @@ class ListItem(object):
         return self.id
 
 
-class ListResult(Result):
-    '''ListResult is an iterable version of
-    :py:class:`webuntis.objects.Result`.
+class LazyObjectList(object):
+    '''A list-like object that takes a list and returns a list of objects,
+    containing a list value each.
     '''
 
     # When the Result returns an array, this is very useful. Every item of that
     # array will be fed to an instance of self._itemclass, with the session and
     # the array item as initialization arguments.
 
+    #: the class which should be used to instantiate an array item.
     _itemclass = ListItem
 
     def filter(self, **criterions):
@@ -102,13 +105,20 @@ class ListResult(Result):
         '''Makes the object iterable and behave like a list'''
         if not isinstance(self._data[i], ListItem):
             # if we don't have an object yet
-            self._data[i] = self._itemclass(self.session, self, self._data[i])
+            self._data[i] = self._itemclass(self._session, self, self._data[i])
 
         return self._data[i]
 
     def __len__(self):
         '''Return the length of the items'''
         return len(self._data)
+
+
+class ListResult(Result, LazyObjectList):
+    '''ListResult is an iterable version of
+    :py:class:`webuntis.objects.Result`.
+    '''
+    pass
 
 
 class DepartmentObject(ListItem):
@@ -243,7 +253,7 @@ class PeriodObject(ListItem):
         '''A list of :py:class:`webuntis.objects.KlassenObject` instances,
         which are attending this period.'''
 
-        return self.session.klassen().filter(
+        return self._session.klassen().filter(
             id=[kl['id'] for kl in self._data['kl']]
         )
 
@@ -252,7 +262,7 @@ class PeriodObject(ListItem):
         '''A list of :py:class:`webuntis.objects.TeacherObject` instances,
         which are attending this period.'''
 
-        return self.session.teachers().filter(
+        return self._session.teachers().filter(
             id=[te['id'] for te in self._data['te']]
         )
 
@@ -263,7 +273,7 @@ class PeriodObject(ListItem):
         multiple language lessons (*e.g.* Latin, Spanish, French) -- each of
         those will get placed in their own period.'''
 
-        return self.session.subjects().filter(
+        return self._session.subjects().filter(
             id=[su['id'] for su in self._data['su']]
         )
 
@@ -273,7 +283,7 @@ class PeriodObject(ListItem):
         used for multiple lessons, but rather for a single lesson that is
         actually occuring at multiple locations.'''
 
-        return self.session.rooms().filter(
+        return self._session.rooms().filter(
             id=[ro['id'] for ro in self._data['ro']]
         )
 
@@ -424,7 +434,7 @@ class SchoolyearList(ListResult):
     def current(self):
         '''Returns the current schoolyear in form of a
         :py:class:`webuntis.objects.SchoolyearObject`'''
-        current_data = self.session._request('getCurrentSchoolyear')
+        current_data = self._session._request('getCurrentSchoolyear')
         current = self.filter(id=current_data['id'])[0]
         return current
 
@@ -537,6 +547,7 @@ class TimeunitList(ListResult):
     _itemclass = TimeunitObject
     _jsonrpc_method = 'getTimegridUnits'
 
+
 class ColorInfo(object):
     '''An object containing information about a lession type or a period code::
 
@@ -550,7 +561,9 @@ class ColorInfo(object):
         >>>
     '''
 
-    def __init__(self, data):
+    def __init__(self, session, parent, data):
+        self._session = session
+        self._parent = parent
         self._data = data
         self.name = list(data.items())[0][0]
         self.forecolor = data[self.name]['foreColor']
@@ -571,10 +584,11 @@ class ColorInfo(object):
         '''The background color used in the web interface and elsewhere'''
         return self._data[self.name]['backColor']
 
+
 class StatusData(Result):
     '''
     Information about lession types and period codes and their colors::
-    
+
         s.statusdata()
 
     '''
@@ -585,7 +599,7 @@ class StatusData(Result):
         '''A list of :py:class:`webuntis.objects.ColorInfo` objects, containing
         information about all lession types defined'''
         return [
-            ColorInfo(data) for data in self._data['lstypes']
+            ColorInfo(self._session, self, data) for data in self._data['lstypes']
         ]
 
     @lazyproperty
@@ -593,7 +607,7 @@ class StatusData(Result):
         '''A list of :py:class:`webuntis.objects.ColorInfo` objects, containing
         information about all period codes defined'''
         return [
-            ColorInfo(data) for data in self._data['codes']
+            ColorInfo(self._session, self, data) for data in self._data['codes']
         ]
 
 # Defines result classes that are accessible from outside
