@@ -44,8 +44,8 @@ class SchoolOption(WhateverOption):
 
 class CredentialsOption(Option):
     '''The credentials option has a dictionary which has username and
-    password, or just the JSESSIONID. Available in the OptionStore as
-    "credentials".
+    password, and -- when logged in -- the JSESSIONID. Available in the
+    OptionStore as "credentials".
     '''
     def __init__(self, creds):
         if 'username' in creds and 'password' in creds \
@@ -69,7 +69,7 @@ class ServerOption(Option):
     '''The server option retrieves a hostname or an URL where the API calls
     should be sent to. Available in the OptionStore as "server".
 
-    You can nearly pass everything a server. Things that can't be read out of
+    You can nearly pass every string a server. Things that can't be read out of
     the string you pass get stuffed with default values::
         >>> s.options['server'] = 'thalia.webuntis.com'
         >>> s.options['server']

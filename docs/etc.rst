@@ -21,7 +21,7 @@ An instance of :py:class:`webuntis.utils.option_utils.OptionStore` is always cre
   >>> s = webuntis.Session()
   >>> s.options['credentials']  # a s.login() would fail.
   {}
-  >>> s.options.credentials = {  # but we can define creds afterwards 
+  >>> s.options['credentials'] = {  # but we can define creds afterwards 
   ...     'username': 'rambo',
   ...     'password': 'lel'
   ... }
@@ -32,20 +32,20 @@ An instance of :py:class:`webuntis.utils.option_utils.OptionStore` is always cre
   >>> s.options['school'] = 'Baumschule'
   >>> 
   >>> s.login()  # now that we have everything, we can login
-  >>> s.options.credentials
+  >>> s.options['credentials']
   {
       'username': 'rambo',
       'password': 'lel',
       'jsessionid': '5N8934796V7568NB7U586N9B576'
   }
   >>> s.logout()  # and out
-  >>> s.options.credentials
+  >>> s.options['credentials']
   {
       'username': 'rambo',
       'password': 'lel'
   }
   >>> s.login()  # and in ...
-  >>> s.options.credentials
+  >>> s.options['credentials']
   {
       'username': 'rambo',
       'password': 'lel',
