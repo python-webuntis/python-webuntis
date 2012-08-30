@@ -45,13 +45,14 @@ class ListItem(object):
 
     noid = False
 
-    def __init__(self, session, rawdata):
+    def __init__(self, session, parent, rawdata):
         '''
         Keyword arguments:
         session -- a webuntis.session.Session object
         rawdata -- the relevant part of a json result for this object
         '''
         self.session = session
+        self.parent = parent
         self.rawdata = rawdata
 
         self.id = self.rawdata['id'] if 'id' in self.rawdata else None
@@ -101,7 +102,7 @@ class ListResult(Result):
         '''Makes the object iterable and behave like a list'''
         if not isinstance(self._data[i], ListItem):
             # if we don't have an object yet
-            self._data[i] = self._itemclass(self.session, self._data[i])
+            self._data[i] = self._itemclass(self.session, self, self._data[i])
 
         return self._data[i]
 
@@ -392,16 +393,40 @@ class SchoolyearObject(ListItem):
         '''The end date'''
         return datetime_utils.parse_date(self.rawdata['endDate'])
 
+    @lazyproperty
+    def is_current(self):
+        '''
+        Boolean, check if this is the current schoolyear::
+
+            >>> y = s.schoolyears()
+            >>> y.current.id
+            7
+            >>> y.current.is_current
+            True
+            >>> y.filter(id=y.current.id).is_current
+            True
+
+        '''
+        return (self == self.parent.current)
+
 
 class SchoolyearList(ListResult):
-    '''Represents a list of school years::
+    '''
+    Represents a list of school years::
 
-        s.schoolyears()
+        >>> s.schoolyears()
 
-    ::
     '''
     _itemclass = SchoolyearObject
     _jsonrpc_method = 'getSchoolyears'
+
+    @lazyproperty
+    def current(self):
+        '''Returns the current schoolyear in form of a
+        :py:class:`webuntis.objects.SchoolyearObject`'''
+        current_rawdata = self.session._request('getCurrentSchoolyear')
+        current = self.filter(id=current_rawdata['id'])[0]
+        return current
 
 
 class SubjectObject(ListItem):

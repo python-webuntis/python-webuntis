@@ -1,6 +1,6 @@
-=====
-Utils
-=====
+===
+Etc
+===
 
 Timetable Utils
 ===============
@@ -9,7 +9,7 @@ Timetable Utils
 
 .. autofunction:: table
 
-Option Utils
+Options
 ============
 
 .. module:: webuntis.utils.option_utils
@@ -52,12 +52,7 @@ An instance of :py:class:`webuntis.utils.option_utils.OptionStore` is always cre
       'jsessionid': 'FDG748SB48S48R4SB84RS145VRB'
   }
 
-  
-
-
 The :py:meth:`webuntis.session.JSONRPCSession.authenticate` method saves the session id into the same dictionary where username and password are stored in.
-
-
 
 All Options
 +++++++++++
@@ -69,3 +64,13 @@ All Options
 .. autoclass:: ServerOption
 
 .. autoclass:: UserAgentOption
+
+Caching
+=======
+
+python-webuntis implements a LRU Cache which caches the latest 20 requests per default. You can set the length with::
+
+  >>> s = webuntis.Session(..., cachelen=40)
+
+Setting it to `0` obviously disables the cache.
+

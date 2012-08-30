@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 
 from . import datetime_utils
 from . import option_utils
+from collections import OrderedDict
 
 OptionStore = option_utils.OptionStore
 
@@ -28,3 +29,13 @@ class lazyproperty(object):
             return self
         obj.__dict__[self.__name__] = result = self.fget(obj)
         return result
+
+class LruDict(OrderedDict):
+    def __init__(self, maxlen=50):
+        super(LruDict, self).__init__()
+        self._maxlen = maxlen
+
+    def __setitem__(self, key, value):
+        super(LruDict, self).__setitem__(key, value)
+        while len(self.items()) > self._maxlen:
+            self.popitem(last=False)

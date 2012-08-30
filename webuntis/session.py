@@ -40,7 +40,8 @@ class JSONRPCSession(object):
             'useragent': None,
             'username': None,
             'password': None,
-            'jsessionid': None
+            'jsessionid': None,
+            'cachelen': 20
         }
         options.update(kwargs)
 
@@ -54,6 +55,8 @@ class JSONRPCSession(object):
                 'jsessionid': options['jsessionid']
             }
         })
+        if options['cachelen'] > 0:
+            self._cache = utils.LruDict(maxlen=options['cachelen'])
 
     def __enter__(self):
         '''Context-manager'''
@@ -113,7 +116,20 @@ class JSONRPCSession(object):
 
         return self
 
+
     def _request(self, method, params=None):
+        '''A wrapper for _make_request implementing a LRU Cache'''
+        key = (method, hash(tuple(params or {})))
+        caching = (method != 'logout' and method != 'authenticate')
+        
+        if caching:
+            if key not in self._cache:
+                self._cache[key] = self._make_request(method, params)
+            return self._cache[key]
+        else:
+            return self._make_request(method, params)
+
+    def _make_request(self, method, params=None):
         '''
         A method for sending a JSON-RPC request.
 
@@ -121,7 +137,7 @@ class JSONRPCSession(object):
         :type method: str
 
         :param params: JSON-RPC parameters to the method \
-                (should be JSON seriazible)
+                (should be JSON serializable)
         :type params: dict
         '''
 
@@ -140,14 +156,17 @@ class JSONRPCSession(object):
                 'Don\'t have JSESSIONID. Did you already log out?'
             )
 
+        if not params:
+            params = {}
+
         req_data = {
             'id': str(datetime.datetime.today()),
             'method': method,
-            'params': params or {},
+            'params': params,
             'jsonrpc': '2.0'
         }
 
-        req_data_json = json.dumps(req_data)
+        req_data_json = json.dumps(req_data).encode()
 
         logging.debug('Making new request:')
         logging.debug('URL: ' + url)
@@ -155,7 +174,7 @@ class JSONRPCSession(object):
 
         req = urlrequest.Request(
             url,
-            req_data_json.encode(),
+            req_data_json,
             {
                 'User-Agent': self.options['useragent'],
                 'Content-Type': 'application/json'
@@ -167,7 +186,8 @@ class JSONRPCSession(object):
                 'JSESSIONID=' + self.options['credentials']['jsessionid']
             )
 
-        # this will eventually raise errors
+        # this will eventually raise errors, e.g. if there's an unexpected http
+        # status code
         res = urlrequest.urlopen(req)
 
         res_str = res.read().decode('utf-8')
@@ -197,10 +217,6 @@ class JSONRPCSession(object):
 
 class Session(JSONRPCSession):
     '''Provides an abstraction layer above the JSON-RPC Instance.
-
-    The methods listed below are aliases to the classes associated with them.
-    The __init__ arguments described in a class' documentation can be passed to
-    such a method.
     '''
 
     def __getattr__(self, name):
