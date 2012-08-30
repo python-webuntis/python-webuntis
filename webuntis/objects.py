@@ -10,41 +10,16 @@ from __future__ import unicode_literals
 from webuntis.utils import datetime_utils, lazyproperty
 
 
-class DataObject(object):
-    '''DataObjects retrieve raw data, parse it and save it. They don\'t
-    contain methods to retrieve data. This class should be inherited.
-    '''
-
-    noid = False
-
-    def __init__(self, session, rawdata):
-        '''
-        Keyword arguments:
-        session -- a webuntis.session.Session object
-        rawdata -- the relevant part of a json result for this object
-        '''
-        self.session = session
-        self.rawdata = rawdata
-
-        self.id = self.rawdata['id'] if 'id' in self.rawdata else None
-
-    def __int__(self):
-        '''This is useful if the users pass a DataObject when a numerical ID
-        is expected, so we just can put the thing through int(), regardless of
-        what type it is.'''
-        return self.id
-
 class Result(object):
     _jsonrpc_method = False
-    _itemclass = DataObject
-    _items = []
+    _data = False
 
     def __init__(self, session, kwargs={}):
         if not self._jsonrpc_method:
             raise NotImplementedError
 
         self.session = session
-        self.items = self._get_data(**kwargs)
+        self._data = self._get_data(**kwargs)
 
     def _jsonrpc_parameters(self, **kwargs):
         '''This method returns all methods that should be passed to the
@@ -63,9 +38,41 @@ class Result(object):
         )
 
 
-class ObjectList(Result):
-    '''ObjectList is an iterable version of :py:class:`webuntis.objects.Result`.
+class ListItem(object):
+    '''ListItems represent an item in a
+    :py:class:`webuntis.objects.ListResult`. They don\'t contain methods to
+    retrieve data.'''
+
+    noid = False
+
+    def __init__(self, session, rawdata):
+        '''
+        Keyword arguments:
+        session -- a webuntis.session.Session object
+        rawdata -- the relevant part of a json result for this object
+        '''
+        self.session = session
+        self.rawdata = rawdata
+
+        self.id = self.rawdata['id'] if 'id' in self.rawdata else None
+
+    def __int__(self):
+        '''This is useful if the users pass a ListItem when a numerical ID
+        is expected, so we just can put the thing through int(), regardless of
+        what type it is.'''
+        return self.id
+
+
+class ListResult(Result):
+    '''ListResult is an iterable version of
+    :py:class:`webuntis.objects.Result`.
     '''
+
+    # When the Result returns an array, this is very useful. Every item of that
+    # array will be fed to an instance of self._itemclass, with the session and
+    # the array item as initialization arguments.
+
+    _itemclass = ListItem
 
     def filter(self, **criterions):
         '''
@@ -92,21 +99,18 @@ class ObjectList(Result):
 
     def __getitem__(self, i):
         '''Makes the object iterable and behave like a list'''
-        if not isinstance(self.items[i], DataObject):
+        if not isinstance(self._data[i], ListItem):
             # if we don't have an object yet
-            self.items[i] = self._itemclass(
-                session=self.session,
-                rawdata=self.items[i]
-            )
+            self._data[i] = self._itemclass(self.session, self._data[i])
 
-        return self.items[i]
+        return self._data[i]
 
     def __len__(self):
         '''Return the length of the items'''
-        return len(self.items)
+        return len(self._data)
 
 
-class DepartmentObject(DataObject):
+class DepartmentObject(ListItem):
     '''Represents a department
     '''
 
@@ -121,7 +125,7 @@ class DepartmentObject(DataObject):
         return self.rawdata['longName']
 
 
-class DepartmentList(ObjectList):
+class DepartmentList(ListResult):
     '''A list of all departments::
 
         departments = s.departments()
@@ -132,7 +136,7 @@ class DepartmentList(ObjectList):
     _jsonrpc_method = 'getDepartments'
 
 
-class HolidayObject(DataObject):
+class HolidayObject(ListItem):
     '''Represents a single holiday.
     '''
 
@@ -157,7 +161,7 @@ class HolidayObject(DataObject):
         return self.rawdata['name']
 
 
-class HolidayList(ObjectList):
+class HolidayList(ListResult):
     '''A list of all holidays::
 
         s.holidays()
@@ -168,7 +172,7 @@ class HolidayList(ObjectList):
     _jsonrpc_method = 'getHolidays'
 
 
-class KlassenObject(DataObject):
+class KlassenObject(ListItem):
     '''Represents a school class.'''
 
     @lazyproperty
@@ -182,7 +186,7 @@ class KlassenObject(DataObject):
         return self.rawdata['longName']
 
 
-class KlassenList(ObjectList):
+class KlassenList(ListResult):
     '''A list of all school classes. Callable through s.klassen().
 
     :param schoolyear:
@@ -211,7 +215,7 @@ class KlassenList(ObjectList):
         return jsonrpc_parameters
 
 
-class PeriodObject(DataObject):
+class PeriodObject(ListItem):
     '''Represents a time range, where lessons/subjects may be held.
     '''
 
@@ -280,7 +284,7 @@ class PeriodObject(DataObject):
         return self.rawdata['lstype'] if 'lstype' in self.rawdata else None
 
 
-class PeriodList(ObjectList):
+class PeriodList(ListResult):
     '''
     Aka timetable
 
@@ -342,7 +346,7 @@ class PeriodList(ObjectList):
         return parameters
 
 
-class RoomObject(DataObject):
+class RoomObject(ListItem):
     '''Represents a physical room. Such as a classroom, but also the physics
     laboratory or whatever.
     '''
@@ -357,7 +361,7 @@ class RoomObject(DataObject):
         return self.rawdata['longName']
 
 
-class RoomList(ObjectList):
+class RoomList(ListResult):
     '''
     Represents a list of rooms::
 
@@ -368,7 +372,7 @@ class RoomList(ObjectList):
     _jsonrpc_method = 'getRooms'
 
 
-class SchoolyearObject(DataObject):
+class SchoolyearObject(ListItem):
     '''Represents a schoolyear.
     '''
 
@@ -389,7 +393,7 @@ class SchoolyearObject(DataObject):
         return datetime_utils.parse_date(self.rawdata['endDate'])
 
 
-class SchoolyearList(ObjectList):
+class SchoolyearList(ListResult):
     '''Represents a list of school years::
 
         s.schoolyears()
@@ -400,7 +404,7 @@ class SchoolyearList(ObjectList):
     _jsonrpc_method = 'getSchoolyears'
 
 
-class SubjectObject(DataObject):
+class SubjectObject(ListItem):
     '''Represents a subject.
     '''
 
@@ -415,7 +419,7 @@ class SubjectObject(DataObject):
         return self.rawdata['longName']
 
 
-class SubjectList(ObjectList):
+class SubjectList(ListResult):
     '''Represents a list of subjects::
 
         s.subjects()
@@ -426,7 +430,7 @@ class SubjectList(ObjectList):
     _jsonrpc_method = 'getSubjects'
 
 
-class TeacherObject(DataObject):
+class TeacherObject(ListItem):
     '''Represents a teacher.
     '''
     @lazyproperty
@@ -447,7 +451,7 @@ class TeacherObject(DataObject):
         return self.rawdata['name']
 
 
-class TeacherList(ObjectList):
+class TeacherList(ListResult):
     '''
     Represents a list of teachers::
 
@@ -459,7 +463,7 @@ class TeacherList(ObjectList):
     _jsonrpc_method = 'getTeachers'
 
 
-class TimeunitObject(DataObject):
+class TimeunitObject(ListItem):
     '''A bunch of timeunits for a specific day.
     '''
 
@@ -481,7 +485,7 @@ class TimeunitObject(DataObject):
         return self.rawdata['day']
 
 
-class TimeunitList(ObjectList):
+class TimeunitList(ListResult):
     '''A list of times and dates for the current week. Doesn't contain actual
     data, but is useful when you want to generate a timetable::
 
@@ -507,7 +511,6 @@ class TimeunitList(ObjectList):
 
     _itemclass = TimeunitObject
     _jsonrpc_method = 'getTimegridUnits'
-
 
 # Defines some methods/"object-list" type classes that are accessible
 # from outside
