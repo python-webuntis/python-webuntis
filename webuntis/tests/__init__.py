@@ -344,17 +344,11 @@ class WebUntisRemoteTests(unittest.TestCase, WebUntisTests):
     def test_loggedout(self):
         self.session.logout()
         creds = self.session.options['credentials']
-        if creds != {}:
+        if 'jsessionid' in creds:
             raise Exception('Expected to be logged out, \
                 but this is what i\'ve got in creds: ' + str(creds))
 
-        try:
-            self.session.klassen()
-        except webuntis.errors.AuthError:
-            pass
-
-        else:
-            raise Exception('No AuthError risen')
+        self.assertRaises(webuntis.errors.AuthError, self.session.klassen)
 
 
 def main():
