@@ -1,6 +1,6 @@
-=======================
-Objects and ObjectLists
-=======================
+==================
+Objects and Models
+==================
 
 .. module:: webuntis.objects
 
@@ -87,8 +87,5 @@ Lession Types and Period Codes
 .. autoclass:: StatusData
   :members:
 
-.. autoclass:: LessionType
-  :members:
-
-.. autoclass:: PeriodCode
+.. autoclass:: ColorInfo
   :members:

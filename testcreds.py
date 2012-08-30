@@ -1,4 +1,6 @@
 import webuntis
+import logging
+logging.basicConfig(level=logging.DEBUG)
 s = webuntis.Session(
     username='api',
     password='api',
