@@ -512,8 +512,65 @@ class TimeunitList(ListResult):
     _itemclass = TimeunitObject
     _jsonrpc_method = 'getTimegridUnits'
 
-# Defines some methods/"object-list" type classes that are accessible
-# from outside
+class ColorInfo(object):
+    '''An object containing information about a lession type or a period code::
+
+        >>> lstype = s.statusdata().lession_types['ls']
+        >>> lstype.name
+        'ls'
+        >>> lstype.forecolor
+        '000000'
+        >>> lstype.backcolor
+        'ee7f00'
+        >>>
+    '''
+
+    def __init__(self, rawdata):
+        self.name = list(rawdata.items())[0][0]
+        self.forecolor = rawdata[self.name]['foreColor']
+        self.backcolor = rawdata[self.name]['backColor']
+
+    @lazyproperty
+    def name(self):
+        '''The name of the LessionType or PeriodCode'''
+        return list(self._data.items())[0][0]
+
+    @lazyproperty
+    def forecolor(self):
+        '''The foreground color used in the web interfacei and elsewhere'''
+        return self._data[self.name]['foreColor']
+
+    @lazyproperty
+    def backcolor(self):
+        '''The background color used in the web interface and elsewhere'''
+        return self._data[self.name]['backColor']
+
+class StatusData(Result):
+    '''
+    Information about lession types and period codes and their colors::
+    
+        >>> data = s.statusdata()
+
+    '''
+    _jsonrpc_method = 'getStatusData'
+
+    @lazyproperty
+    def lession_types(self):
+        '''A list of :py:class:`webuntis.objects.ColorInfo` objects, containing
+        information about all lession types defined'''
+        return [
+            ColorInfo(rawdata) for rawdata in self._data['lstypes']
+        ]
+
+    @lazyproperty
+    def period_codes(self):
+        '''A list of :py:class:`webuntis.objects.ColorInfo` objects, containing
+        information about all period codes defined'''
+        return [
+            ColorInfo(rawdata) for rawdata in self._data['codes']
+        ]
+
+# Defines result classes that are accessible from outside
 object_lists = {
     'departments': DepartmentList,
     'holidays': HolidayList,
@@ -525,6 +582,7 @@ object_lists = {
 
     'timegrid': TimeunitList,
     'timeunits': TimeunitList,
+    'statusdata': StatusData,
 
     'timetable': PeriodList,
     'periods': PeriodList

@@ -1,0 +1,13 @@
+{
+    "lstypes": [
+        {"ls": {"foreColor": "000000", "backColor": "f49f25"}},
+        {"oh": {"foreColor": "000000", "backColor": "f49f25"}},
+        {"sb": {"foreColor": "000000", "backColor": "f49f25"}},
+        {"bs": {"foreColor": "000000", "backColor": "ea6ea3"}},
+        {"ex": {"foreColor": "000000", "backColor": "ffed00"}}
+    ],
+    "codes": [
+        {"cancelled": {"foreColor": "000000", "backColor": "b1b3b4"}},
+        {"irregular": {"foreColor": "000000", "backColor": "a781b5"}}
+    ]
+}
