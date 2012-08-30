@@ -188,7 +188,7 @@ class KlassenObject(ListItem):
 
 
 class KlassenList(ListResult):
-    '''A list of all school classes. Callable through s.klassen().
+    '''A list of all school classes.
 
     :param schoolyear:
         The schoolyear where we should get all our school \
@@ -294,7 +294,7 @@ class PeriodList(ListResult):
     :param end: a ending date in the same form as the starting date.
 
     Furthermore you have to explicitly define a klasse, teacher, subject, room
-    or student parameter containing the id or the of the thing you want
+    or student parameter containing the id or the object of the thing you want
     to get a timetable about::
 
         schoolclass = s.klassen().filter(id=1)  # schoolclass #1
@@ -414,7 +414,7 @@ class SchoolyearList(ListResult):
     '''
     Represents a list of school years::
 
-        >>> s.schoolyears()
+        s.schoolyears()
 
     '''
     _itemclass = SchoolyearObject
@@ -574,7 +574,7 @@ class StatusData(Result):
     '''
     Information about lession types and period codes and their colors::
     
-        >>> data = s.statusdata()
+        s.statusdata()
 
     '''
     _jsonrpc_method = 'getStatusData'
