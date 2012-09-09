@@ -76,7 +76,7 @@ class JSONRPCSession(object):
         '''
         #Send a JSON-RPC 'logout' method without parameters to log out
         if 'jsessionid' in self.options['credentials']:
-            self._request('logout')
+            self._make_request('logout')
             del self.options['credentials']['jsessionid']
         elif not suppress_errors:
             raise errors.RemoteError('Already logged out!')
@@ -101,7 +101,7 @@ class JSONRPCSession(object):
                       self.options['credentials']['username'] +
                       ' Password: ' +
                       self.options['credentials']['password'])
-        res = self._request('authenticate', {
+        res = self._make_request('authenticate', {
             'user': self.options['credentials']['username'],
             'password': self.options['credentials']['password'],
             'client': self.options['useragent']
@@ -121,14 +121,10 @@ class JSONRPCSession(object):
     def _request(self, method, params=None):
         '''A wrapper for _make_request implementing a LRU Cache'''
         key = (method, hash(tuple(params or {})))
-        caching = (method != 'logout' and method != 'authenticate')
         
-        if caching:
-            if key not in self._cache:
-                self._cache[key] = self._make_request(method, params)
-            return self._cache[key]
-        else:
-            return self._make_request(method, params)
+        if key not in self._cache:
+            self._cache[key] = self._make_request(method, params)
+        return self._cache[key]
 
     def _make_request(self, method, params=None):
         '''
