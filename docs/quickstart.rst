@@ -40,7 +40,7 @@ So what does this do?
 
 *webuntis.Session* is a shortcut for :py:class:`webuntis.session.Session`. This class represents a new session on a WebUntis server, which is bound to a school. This means that you will have to create a new session if you want to read data from a different school, even if it's on the same server.
 
-:py:class:`webuntis.session.Session` takes arguments such as the hostname, username and password. These options could also be imported later through the *options* object of your session, see :py:class:`webuntis.utils.option_utils.OptionStore`.
+:py:class:`webuntis.session.Session` takes arguments such as the hostname, username and password. These options could also be imported later through the *options* object of your session, see :doc:`etc`.
 
 But passing the credentials doesn't mean a session is started immediately. You have to do it manually::
 
