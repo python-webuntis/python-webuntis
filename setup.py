@@ -16,7 +16,7 @@ setup(
     packages=['webuntis', 'webuntis.utils', 'webuntis.tests'],
     include_package_data=True,
     url='http://dev.unterwaditzer.net/python-webuntis/',
-    license='LICENSE',
+    license='new-style BSD',
     description='Bindings for WebUntis API',
     long_description=open('README.rst').read(),
     install_requires=dependencies
