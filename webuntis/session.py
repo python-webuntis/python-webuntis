@@ -85,11 +85,10 @@ class JSONRPCSession(object):
         '''Initializes an authentication, provided we have the credentials for
         it.
 
-        .. note::
+        :returns: The session. This is useful for jQuery-like command
+            chaining::
 
-            When authenticating, the username and password will be deleted from
-            memory and only the jsessionid will be kept in the
-            :py:class:`webuntis.utils.option_utils.OptionStore` instance.
+                s = webuntis.Session(...).login()
         '''
 
         if 'username' not in self.options['credentials'] \

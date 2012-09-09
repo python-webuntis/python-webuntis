@@ -36,11 +36,6 @@ Output::
 
 :doc:`Read More <quickstart>`
 
-.. toctree::
- :hidden:
-
- quickstart
-
 Index
 =====
 .. toctree::
