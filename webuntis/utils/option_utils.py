@@ -16,6 +16,7 @@ except ImportError:
 def careless_parser(value):
     return value
 
+
 def credentials_parser(creds):
     if 'username' in creds and 'password' in creds \
        and creds['username'] and creds['password']:
@@ -29,6 +30,7 @@ def credentials_parser(creds):
         }
     else:
         return {}
+
 
 def server_parser(value):
     if not value:
@@ -55,9 +57,9 @@ should be /. That is uncommon. If you didn't mean to do so, remove the slash at
 the end of your "server" parameter.''')
 
         return urlobj.scheme + \
-                '://' + \
-                urlobj.netloc + \
-                (urlobj.path or '/WebUntis/jsonrpc')
+            '://' + \
+            urlobj.netloc + \
+            (urlobj.path or '/WebUntis/jsonrpc')
     else:
         return None  # Doesn't seem like we have a value.
 
