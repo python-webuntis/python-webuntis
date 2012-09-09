@@ -42,15 +42,15 @@ class Result(object):
 
 class ListItem(object):
     '''ListItems represent an item in a
-    :py:class:`webuntis.objects.ListResult`. They don\'t contain methods to
+    :py:class:`ListResult`. They don\'t contain methods to
     retrieve data.'''
 
     #: the raw JSON data returned from the server
     _data = None
 
-    #: the ID of this element. When dealing with arrays as result, it is very
-    #  common for a item to have its own ID.
     id = None
+    '''the ID of this element. When dealing with arrays as result, it is very
+    common for an item to have its own ID.'''
 
     def __init__(self, session, parent, data):
         '''
@@ -72,8 +72,8 @@ class ListItem(object):
 
 
 class ListResult(Result):
-    '''A list-like version of *Result* that takes a list and returns a list of
-    objects, containing a list value each.
+    '''A list-like version of :py:class:`Result` that takes a list and returns
+    a list of objects, containing a list value each.
     '''
 
     # When the Result returns an array, this is very useful. Every item of that
@@ -87,10 +87,10 @@ class ListResult(Result):
         '''
         Returns a list of all objects, filtered by attributes::
 
-            foo = s.klassen().filter(id=1)  # returns the same as...
+            foo = s.klassen().filter(id=1)  # is the same as...
             foo = [kl for kl in s.klassen() if kl.id == 1]
 
-            bar = s.klassen().filter(id=(1,2,3,4))  # returns the same as...
+            bar = s.klassen().filter(id=(1,2,3,4))  # is the same as...
             bar = [kl for kl in s.klassen() if kl.id in (1,2,3,4)]
 
         ::
@@ -141,7 +141,7 @@ class DepartmentObject(ListItem):
 class DepartmentList(ListResult):
     '''A list of all departments::
 
-        departments = s.departments()
+        s.departments()
 
     ::
     '''
@@ -205,7 +205,7 @@ class KlassenList(ListResult):
     :param schoolyear:
         The schoolyear where we should get all our school \
         classes from. Either a \
-        :py:class:`webuntis.objects.SchoolyearObject` or an \
+        :py:class:`SchoolyearObject` or an \
         id of it.
 
     ::
@@ -252,7 +252,7 @@ class PeriodObject(ListItem):
 
     @lazyproperty
     def klassen(self):
-        '''A list of :py:class:`webuntis.objects.KlassenObject` instances,
+        '''A list of :py:class:`KlassenObject` instances,
         which are attending this period.'''
 
         return self._session.klassen().filter(
@@ -261,7 +261,7 @@ class PeriodObject(ListItem):
 
     @lazyproperty
     def teachers(self):
-        '''A list of :py:class:`webuntis.objects.TeacherObject` instances,
+        '''A list of :py:class:`TeacherObject` instances,
         which are attending this period.'''
 
         return self._session.teachers().filter(
@@ -270,7 +270,7 @@ class PeriodObject(ListItem):
 
     @lazyproperty
     def subjects(self):
-        '''A list of :py:class:`webuntis.objects.SubjectObject` instances,
+        '''A list of :py:class:`SubjectObject` instances,
         which are topic of this period. This is not used for things like
         multiple language lessons (*e.g.* Latin, Spanish, French) -- each of
         those will get placed in their own period.'''
@@ -434,7 +434,7 @@ class SchoolyearList(ListResult):
     @lazyproperty
     def current(self):
         '''Returns the current schoolyear in form of a
-        :py:class:`webuntis.objects.SchoolyearObject`'''
+        :py:class:`SchoolyearObject`'''
         current_data = self._session._request('getCurrentSchoolyear')
         current = self.filter(id=current_data['id'])[0]
         return current
@@ -595,7 +595,7 @@ class StatusData(Result):
 
     @lazyproperty
     def lession_types(self):
-        '''A list of :py:class:`webuntis.objects.ColorInfo` objects, containing
+        '''A list of :py:class:`ColorInfo` objects, containing
         information about all lession types defined'''
         return [
             ColorInfo(self._session, self, data)
@@ -604,7 +604,7 @@ class StatusData(Result):
 
     @lazyproperty
     def period_codes(self):
-        '''A list of :py:class:`webuntis.objects.ColorInfo` objects, containing
+        '''A list of :py:class:`ColorInfo` objects, containing
         information about all period codes defined'''
         return [
             ColorInfo(self._session, self, data)
