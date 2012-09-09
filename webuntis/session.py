@@ -112,8 +112,7 @@ class JSONRPCSession(object):
             self.options['credentials']['jsessionid'] = res['sessionId']
             logging.debug(self.options['credentials']['jsessionid'])
         else:
-            raise errors.AuthError('Something went wrong while \
-                    authenticating', res)
+            raise errors.AuthError('Something went wrong while authenticating', res)
 
         return self
 
@@ -144,9 +143,7 @@ class JSONRPCSession(object):
         if method == 'authenticate':
             cookie_header = False
         elif 'jsessionid' not in self.options['credentials']:
-            raise errors.AuthError(
-                'Don\'t have JSESSIONID. Did you already log out?'
-            )
+            raise errors.AuthError('Don\'t have JSESSIONID. Did you already log out?')
 
         if not params:
             params = {}
@@ -189,13 +186,10 @@ class JSONRPCSession(object):
             logging.debug('Valid JSON found')
             logging.debug(res_data)
         except ValueError as e:
-            logging.error('Error: Invalid JSON')
-            logging.debug(res_str)
-            raise errors.RemoteError('Invalid JSON')
+            raise errors.RemoteError('Invalid JSON', str(res_str))
 
         if res_data['id'] != req_data['id']:
-            raise errors.RemoteError('Request id was not the same as \
-                the one returned')
+            raise errors.RemoteError('Request id was not the same as the one returned')
         elif 'result' in res_data:
             return res_data['result']
         else:
@@ -223,4 +217,4 @@ class Session(JSONRPCSession):
         if name in objects.object_lists:
             return get_objectlist
         else:
-            raise AttributeError('There is no such datatype')
+            raise AttributeError(name)

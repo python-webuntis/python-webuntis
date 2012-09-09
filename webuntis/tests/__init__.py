@@ -19,6 +19,9 @@ class WebUntisTests:
 
 
 class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
+    '''
+    Mocking tests. New tests should be written here.
+    '''
     def setUp(self):
         self.request_patcher = patcher = mock.patch(
             'webuntis.Session._request',
@@ -32,19 +35,15 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
         self.request_patcher.stop()
         self.session = None
 
-    def test_credentials(self):
-        self.assertRaises(KeyError, self.session.options.__getitem__, ('credentials'))
-
     def test_options_invalidattribute(self):
-        try:
-            self.session.options['nigglywiggly']
-        except KeyError:
-            pass
-        else:
-            raise Exception('Expected that OptionStore fails with invalid \
-                attribute')
+        self.assertFalse('nigglywiggly' in self.session.options)
+        self.assertRaises(
+            KeyError,
+            self.session.options.__getitem__,
+            'nigglywiggly'
+        )
 
-    def test_options_no_attribute(self):
+    def test_options_isempty(self):
         self.assertEqual(self.session.options, {})
 
     def test_getdepartments_mock(self):
@@ -253,13 +252,18 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
         self.assertEqual(store['always_whoop'], 'whoop')
 
         del store['whatever']
-        self.assertRaises(KeyError, store.__getitem__, ('whatever'))
+        self.assertRaises(KeyError, store.__getitem__, 'whatever')
 
         del store['always_whoop']
-        self.assertRaises(KeyError, store.__getitem__, ('always_whoop'))
+        self.assertRaises(KeyError, store.__getitem__, 'always_whoop')
 
 
 class WebUntisRemoteTests(unittest.TestCase, WebUntisTests):
+    '''
+    DEPRECATED. This only should be used if you want to test the library
+    against actually against a public test-server, which will take a very long
+    time and will stress that server unneccessarily.
+    '''
     def setUp(self):
         self.session = webuntis.session.Session(
             school='demo_inf',
@@ -279,8 +283,8 @@ class WebUntisRemoteTests(unittest.TestCase, WebUntisTests):
             self.session = None
 
     def test_timetableutils_table_emptyinput(self):
-        if len(webuntis.utils.timetable_utils.table([])):
-            raise Exception
+        self.assertEqual(len(webuntis.utils.timetable_utils.table([])), 0)
+
     ## OBJECTS
 
     def test_getdepartments(self):
@@ -346,19 +350,12 @@ class WebUntisRemoteTests(unittest.TestCase, WebUntisTests):
             self.session.klassen().filter(),
             range(len(self.session.klassen()))
         ):
-            if klasse.id != klasse_filtered.id:
-                raise Exception(
-                    'test_emptyfilter failed: On position no. ' +
-                    str(i) + ' there are not the same two klassen'
-                )
+            self.assertEqual(klasse.id, klasse_filtered.id)
 
     def test_loggedout(self):
         self.session.logout()
         creds = self.session.options['credentials']
-        if 'jsessionid' in creds:
-            raise Exception('Expected to be logged out, \
-                but this is what i\'ve got in creds: ' + str(creds))
-
+        self.assertFalse('jsessionid' in creds)
         self.assertRaises(webuntis.errors.AuthError, self.session.klassen)
 
 
@@ -377,9 +374,10 @@ def main():
     tests = [WebUntisOfflineTests, WebUntisRemoteTests]
 
     if len(sys.argv) == 1:
-        print('ERROR: No tests specified.\n\nAdd a number to the command-line arguments to execute the test:')
+        print('ERROR: No tests specified.\nAdd a number to the command-line arguments to execute the test:\n')
         for i, test in enumerate(tests):
-            print('#{}: {}'.format(i, test.__name__))
+            print('###{}: {}'.format(i, test.__name__))
+            print(test.__doc__)
         exit(1)
 
     checked_tests = [tests[int(x)] for x in sys.argv[1:]]
