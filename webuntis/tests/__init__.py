@@ -38,11 +38,14 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
     def test_options_invalidattribute(self):
         try:
             self.session.options['nigglywiggly']
-        except:
+        except KeyError:
             pass
         else:
             raise Exception('Expected that OptionStore fails with invalid \
                 attribute')
+
+    def test_options_no_attribute(self):
+        self.assertEqual(self.session.options, {})
 
     def test_getdepartments_mock(self):
         jsonstr = json.load(

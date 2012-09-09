@@ -72,16 +72,17 @@ class FilterDict(dict):
         else:
             raise KeyError('No value or filter for key: {}'.format(name))
 
-    def __setitem__(self, name, value):
-        if value:
+    def __setitem__(self, key, value):
+        new_value = self.filters[key](value)
+        if new_value:
             dict.__setitem__(
                 self,
-                name,
-                self.filters[name](value)
+                key,
+                new_value
             )
-        elif name in self:
-            dict.__delitem__(self, name)
+        elif key in self:
+            dict.__delitem__(self, key)
 
     def update(self, *args, **kwargs):
         for key, value in dict(*args, **kwargs).items():
-            self[key] = value
+            self.__setitem__(key, value)
