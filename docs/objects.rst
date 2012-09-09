@@ -7,89 +7,89 @@ Objects and Models
 Base Classes
 ============
 
-.. autoclass:: Result
+.. autoclass::Result
   :members:
 
 
-.. autoclass:: ListResult
+.. autoclass::ListResult
   :members:
 
 
-.. autoclass:: ListItem
+.. autoclass::ListItem
   :members:
 
 
 Departments
 ===========
-.. autoclass:: DepartmentList
+.. autoclass::DepartmentList
   :members:
 
-.. autoclass:: DepartmentObject
+.. autoclass::DepartmentObject
   :members:
 
 
 Holidays
 ========
-.. autoclass:: HolidayList
+.. autoclass::HolidayList
 
-.. autoclass:: HolidayObject
+.. autoclass::HolidayObject
   :members:
 
 Klassen
 =======
-.. autoclass:: KlassenList
+.. autoclass::KlassenList
 
-.. autoclass:: KlassenObject
+.. autoclass::KlassenObject
   :members:
 
 Timetables and Periods
 ======================
-.. autoclass:: PeriodList
+.. autoclass::PeriodList
 
-.. autoclass:: PeriodObject
+.. autoclass::PeriodObject
   :members:
 
 Rooms
 =====
-.. autoclass:: RoomList
+.. autoclass::RoomList
 
-.. autoclass:: RoomObject
+.. autoclass::RoomObject
   :members:
 
 Schoolyears
 ===========
-.. autoclass:: SchoolyearList
+.. autoclass::SchoolyearList
 
-.. autoclass:: SchoolyearObject
+.. autoclass::SchoolyearObject
   :members:
 
 
 
 Subjects
 ========
-.. autoclass:: SubjectList
+.. autoclass::SubjectList
 
-.. autoclass:: SubjectObject
+.. autoclass::SubjectObject
   :members:
 
 Teachers
 ========
-.. autoclass:: TeacherList
+.. autoclass::TeacherList
 
-.. autoclass:: TeacherObject
+.. autoclass::TeacherObject
   :members:
 
 Timegrid and Timeunits
 ======================
-.. autoclass:: TimeunitList
+.. autoclass::TimeunitList
 
-.. autoclass:: TimeunitObject
+.. autoclass::TimeunitObject
   :members:
 
 Lession Types and Period Codes
 ==============================
-.. autoclass:: StatusData
+.. autoclass::StatusData
   :members:
 
-.. autoclass:: ColorInfo
+.. autoclass::ColorInfo
   :members:

@@ -12,58 +12,32 @@ Timetable Utils
 Options
 ============
 
-.. module:: webuntis.utils.option_utils
+In an instance of :py:class:`webuntis.session.Session`, a dictionary-like object is created. It accepts the following keys:
 
-.. autoclass:: OptionStore
+  - *credentials*: A dictionary containing *username* and  *password*. Before the session is used, :py:meth:`webuntis.session.Session.login` must be called, in order to add a *jsessionid* key, which will be deleted when calling :py:meth:`webuntis.session.Session.logout`.
+    
+    In theory, you can obtain the jsessionid yourself and add it to the *credentials* dictionary. In this case, the other two keys are obviously not needed.
 
-An instance of :py:class:`webuntis.utils.option_utils.OptionStore` is always created in a session instance at ``s.options``::
+  - *school*: A string containing a valid school name.
 
-  >>> s = webuntis.Session()
-  >>> s.options['credentials']  # a s.login() would fail.
-  {}
-  >>> s.options['credentials'] = {  # but we can define creds afterwards 
-  ...     'username': 'rambo',
-  ...     'password': 'lel'
-  ... }
-  >>> s.options['server'] = 'thalia.webuntis.com'  # change the server
-  >>> s.options['server']
-  'http://thalia.webuntis.com/WebUntis/jsonrpc.do'
-  >>> s.options['useragent'] = 'FooBar'
-  >>> s.options['school'] = 'Baumschule'
-  >>> 
-  >>> s.login()  # now that we have everything, we can login
-  >>> s.options['credentials']
-  {
-      'username': 'rambo',
-      'password': 'lel',
-      'jsessionid': '5N8934796V7568NB7U586N9B576'
-  }
-  >>> s.logout()  # and out
-  >>> s.options['credentials']
-  {
-      'username': 'rambo',
-      'password': 'lel'
-  }
-  >>> s.login()  # and in ...
-  >>> s.options['credentials']
-  {
-      'username': 'rambo',
-      'password': 'lel',
-      'jsessionid': 'FDG748SB48S48R4SB84RS145VRB'
-  }
+  - *server*: A string containing a host name, a URL, or a URL without path::
 
-The :py:meth:`webuntis.session.JSONRPCSession.authenticate` method saves the session id into the same dictionary where username and password are stored in.
-
-All Options
-+++++++++++
-
-.. autoclass:: CredentialsOption
-
-.. autoclass:: SchoolOption
-
-.. autoclass:: ServerOption
-
-.. autoclass:: UserAgentOption
+        >>> s.options['server'] = 'thalia.webuntis.com'
+        >>> s.options['server']
+        'http://thalia.webuntis.com/WebUntis/jsonrpc.do'
+        >>> # notice that there's NO SLASH at the end!
+        >>> s.options['server'] = 'https://thalia.webuntis.com'
+        >>> s.options['server']
+        'https://thalia.webuntis.com/WebUntis/jsonrpc.do'
+        >>> s.options['server'] = 'https://thalia.webuntis.com/'
+        >>> # because a slash gets interpreted as the full path to the API
+        >>> # endpoint, which would crash during login
+        >>> s.options['server']
+        'http://thalia.webuntis.com/'
+  
+  - *useragent*: A string containing a useragent.
+    
+      Please include useful information, such an email address, for the server maintainer. Just like you would do with the HTTP useragents of bots.
 
 Caching
 =======
