@@ -331,8 +331,7 @@ class PeriodList(ListResult):
 
         if len(type_and_id) != 1:
             raise ValueError(
-                'You have to specify exactly one of the following parameters \
-                    by keyword: ' +
+                'You have to specify exactly one of the following parameters by keyword: ' +
                 ', '.join(element_type_table.keys())
             )
 
