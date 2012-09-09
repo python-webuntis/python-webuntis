@@ -7,12 +7,9 @@
 
 from __future__ import unicode_literals
 
-from . import datetime_utils
-from . import option_utils
+from . import datetime_utils, option_utils
+
 from collections import OrderedDict
-
-OptionStore = option_utils.OptionStore
-
 
 class lazyproperty(object):
     '''A read-only @property that is only evaluated once.
@@ -39,3 +36,48 @@ class LruDict(OrderedDict):
         super(LruDict, self).__setitem__(key, value)
         while len(self.items()) > self._maxlen:
             self.popitem(last=False)
+
+
+class FilterDict(dict):
+    '''A dictionary which passes new values to a function found at the
+    corresponding key in self.filters
+
+    :param filters: A dictionary containing functions. If a new key is set into
+    an instance of FilterDict, the filter dictionary will be consulted to
+    filter the value with a function.
+    
+    >>> options = FilterDict({
+    ...    'foo': lambda x: 'whoopdeedoo'
+    ... })
+    >>>
+    >>> options['foo'] = 'somethingelse'
+    >>> options['foo']
+    'whoopdeedoo'
+
+    '''
+    filters = None
+
+    def __init__(self, filters):
+        self.filters = filters
+
+    def __getitem__(self, name):
+        if name in self and dict.__getitem__(self, name):  # check if we got a real Option subclass
+            return dict.__getitem__(self, name)  # every Option subclass has this
+        elif name in self.filters:
+            raise KeyError('No value for key: {}'.format(name))
+        else:
+            raise KeyError('No value or filter for key: {}'.format(name))
+
+    def __setitem__(self, name, value):
+        if value:
+            dict.__setitem__(
+                self,
+                name,
+                self.filters[name](value)
+            )
+        elif name in self:
+            dict.__delitem__(self, name)
+
+    def update(self, *args, **kwargs):
+        for key, value in dict(*args, **kwargs).items():
+            self[key] = value

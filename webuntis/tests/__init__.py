@@ -8,12 +8,10 @@ import unittest
 import mock
 import os
 import sys
-import logging
 import webuntis
-from webuntis.utils import timetable_utils, datetime_utils
+from webuntis.utils import timetable_utils, datetime_utils, option_utils
+import webuntis.utils as utils
 import json
-logging.basicConfig(level=logging.DEBUG)
-
 
 class WebUntisTests:
     tests_path = os.path.abspath(os.path.dirname(__file__))
@@ -40,15 +38,6 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
                 'Expected not to have credentials during offline session'
             )
 
-    def test_optionstore(self):
-        if type(self.session.options.ready_for_request) != bool:
-            raise Exception('Expected that ready_for_request is boolean')
-
-    def test_options_not_ready_for_request(self):
-        if self.session.options.ready_for_request is not False:
-            raise Exception('Expected that ready_for_request is false, \
-                since we\'ve got no creds')
-
     def test_options_invalidattribute(self):
         try:
             self.session.options['nigglywiggly']
@@ -57,16 +46,6 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
         else:
             raise Exception('Expected that OptionStore fails with invalid \
                 attribute')
-
-    def test_options_values(self):
-        try:
-            values = self.session.options.values
-        except:
-            raise Exception('Expected that OptionStore.values is available')
-
-        if type(values) != dict:
-                raise Exception('Expected that OptionStore.values is a \
-                    dictionary')
 
     def test_getdepartments_mock(self):
         jsonstr = json.load(
@@ -262,6 +241,23 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
                 self.assertEqual(colors['foreColor'], lstype.forecolor)
                 self.assertEqual(colors['backColor'], lstype.backcolor)
 
+    def test_filterdict(self):
+        store = utils.FilterDict({
+            'whatever': lambda x: x,
+            'always_whoop': lambda x: 'whoop'
+        })
+        store['whatever'] = 'lel'
+        self.assertEqual(store['whatever'], 'lel')
+        
+        store['always_whoop'] = 'what'
+        self.assertEqual(store['always_whoop'], 'whoop')
+
+        del store['whatever']
+        self.assertRaises(KeyError, store.__getitem__, ('whatever'))
+
+        del store['always_whoop']
+        self.assertRaises(KeyError, store.__getitem__, ('always_whoop'))
+
 
 class WebUntisRemoteTests(unittest.TestCase, WebUntisTests):
     def setUp(self):
@@ -281,11 +277,6 @@ class WebUntisRemoteTests(unittest.TestCase, WebUntisTests):
             logging.warning('Was not able to log out!')
         finally:
             self.session = None
-
-    def test_options_ready_for_request(self):
-        if self.session.options.ready_for_request is not True:
-            raise Exception('Expected that ready_for_request is true, \
-                since we\'ve got creds')
 
     def test_timetableutils_table_emptyinput(self):
         if len(webuntis.utils.timetable_utils.table([])):

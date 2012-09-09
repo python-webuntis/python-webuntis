@@ -33,7 +33,7 @@ class JSONRPCSession(object):
     def __init__(self, **kwargs):
         # The OptionStore is an extended dictionary, associating validators
         # and other helper methods with each key
-        self.options = utils.OptionStore()
+        self.options = utils.FilterDict(utils.option_utils.option_parsers)
         options = {
             'server': None,
             'school': None,
@@ -137,11 +137,6 @@ class JSONRPCSession(object):
                 (should be JSON serializable)
         :type params: dict
         '''
-
-        if not self.options.ready_for_request:
-            raise errors.AuthError('Not enough settings set: \
-                school, server, useragent and username/password \
-                or jsessionid')
 
         url = self.options['server']
         url += '?school=' + self.options['school']
