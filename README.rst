@@ -19,4 +19,4 @@ Bindings for WebUntis API
     for klasse in s.klassen():
         print(klasse.name)
 
-For the full documentation, check out [the documentation](http://dev.unterwaditzer.net/python-webuntis/).
+For the full documentation, check out `the documentation <http://dev.unterwaditzer.net/python-webuntis/>`_.
