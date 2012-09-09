@@ -549,16 +549,17 @@ class TimeunitList(ListResult):
 
 
 class ColorInfo(object):
-    '''An object containing information about a lession type or a period code::
+    '''
+    An object containing information about a lession type or a period code::
 
-        >>> lstype = s.statusdata().lession_types['ls']
+        >>> lstype = s.statusdata().lession_types[ls]
         >>> lstype.name
         'ls'
         >>> lstype.forecolor
         '000000'
         >>> lstype.backcolor
         'ee7f00'
-        >>>
+
     '''
 
     def __init__(self, session, parent, data):
@@ -599,7 +600,8 @@ class StatusData(Result):
         '''A list of :py:class:`webuntis.objects.ColorInfo` objects, containing
         information about all lession types defined'''
         return [
-            ColorInfo(self._session, self, data) for data in self._data['lstypes']
+            ColorInfo(self._session, self, data)
+            for data in self._data['lstypes']
         ]
 
     @lazyproperty
@@ -607,7 +609,8 @@ class StatusData(Result):
         '''A list of :py:class:`webuntis.objects.ColorInfo` objects, containing
         information about all period codes defined'''
         return [
-            ColorInfo(self._session, self, data) for data in self._data['codes']
+            ColorInfo(self._session, self, data)
+            for data in self._data['codes']
         ]
 
 # Defines result classes that are accessible from outside

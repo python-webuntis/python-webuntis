@@ -68,10 +68,11 @@ class JSONRPCSession(object):
         self.logout()
 
     def logout(self, suppress_errors=False):
-        '''Log out of session
+        '''
+        Log out of session
 
         :param suppress_errors: boolean, whether to not raise an error if we
-        already were logged out.
+            already were logged out.
         '''
         #Send a JSON-RPC 'logout' method without parameters to log out
         if 'jsessionid' in self.options['credentials']:

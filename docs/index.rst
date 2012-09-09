@@ -5,7 +5,7 @@ Introduction
 Bindings for WebUntis
 =====================
 
-`python-webuntis <https://github.com/untitaker/python-webuntis>`_ is a handy library which provides a thin abstraction layer on top of the API of `WebUntis <http://grupet.at>`_, a timetable system used for schools all around Europe. It is compatible with Python 3 and Python 2::
+`python-webuntis <https://github.com/untitaker/python-webuntis>`_ is a module for the API of `WebUntis <http://grupet.at>`_, a timetable system used for schools all around Europe. It is compatible with Python 3 and Python 2.6::
 
     import webuntis
 

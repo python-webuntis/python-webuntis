@@ -8,11 +8,15 @@ Base Classes
 ============
 
 .. autoclass:: Result
+  :members:
+
 
 .. autoclass:: ListResult
   :members:
 
+
 .. autoclass:: ListItem
+  :members:
 
 
 Departments

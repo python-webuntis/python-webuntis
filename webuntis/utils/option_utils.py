@@ -71,6 +71,7 @@ class ServerOption(Option):
 
     You can nearly pass every string a server. Things that can't be read out of
     the string you pass get stuffed with default values::
+
         >>> s.options['server'] = 'thalia.webuntis.com'
         >>> s.options['server']
         'http://thalia.webuntis.com/WebUntis/jsonrpc.do'
