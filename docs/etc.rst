@@ -14,7 +14,7 @@ Options
 
 In an instance of :py:class:`webuntis.session.Session`, a dictionary-like object is created. It accepts the following keys:
 
-  - *credentials*: A dictionary containing *username* and  *password*. Before the session is used, :py:meth:`webuntis.session.Session.login` must be called, in order to add a *jsessionid* key, which will be deleted when calling :py:meth:`webuntis.session.Session.logout`.
+  - *credentials*: A dictionary containing *username* and  *password*. Before the session is used, :py:meth:`webuntis.session.JSONRPCSession.login` must be called, in order to add a *jsessionid* key, which will be deleted when calling :py:meth:`webuntis.session.JSONRPCSession.logout`.
     
     In theory, you can obtain the jsessionid yourself and add it to the *credentials* dictionary. In this case, the other two keys are obviously not needed.
 
