@@ -12,11 +12,11 @@ import itertools
 def table(timetable):
     '''
     Creates a table-like nested list out of an instance of
-    :py:class:`webuntis.objects.periods.PeriodList`.
+    :py:class:`webuntis.objects.PeriodList`.
 
     Returns a list containing tuples of "rows" and a datetime object, which in
     turn contain tuples of "hours" and their weekday number, which
-    contain :py:class:`webuntis.objects.periods.PeriodObject` instances which
+    contain :py:class:`webuntis.objects.PeriodObject` instances which
     are happening at the same time.
 
     >>> from webuntis.utils.timetable_utils import table
