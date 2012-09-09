@@ -16,7 +16,7 @@ class Result(object):
     _jsonrpc_method = False
     _data = False
 
-    def __init__(self, session, kwargs={}):
+    def __init__(self, session, kwargs):
         if not self._jsonrpc_method:
             raise NotImplementedError
 
@@ -45,7 +45,12 @@ class ListItem(object):
     :py:class:`webuntis.objects.ListResult`. They don\'t contain methods to
     retrieve data.'''
 
-    noid = False
+    #: the raw JSON data returned from the server
+    _data = None
+
+    #: the ID of this element. When dealing with arrays as result, it is very
+    #  common for a item to have its own ID.
+    id = None
 
     def __init__(self, session, parent, data):
         '''
@@ -66,9 +71,9 @@ class ListItem(object):
         return self.id
 
 
-class LazyObjectList(object):
-    '''A list-like object that takes a list and returns a list of objects,
-    containing a list value each.
+class ListResult(Result):
+    '''A list-like version of *Result* that takes a list and returns a list of
+    objects, containing a list value each.
     '''
 
     # When the Result returns an array, this is very useful. Every item of that
@@ -82,15 +87,19 @@ class LazyObjectList(object):
         '''
         Returns a list of all objects, filtered by attributes::
 
-            foo = s.klassen().filter(id=1)  # returns basically the same as...
+            foo = s.klassen().filter(id=1)  # returns the same as...
             foo = [kl for kl in s.klassen() if kl.id == 1]
+
+            bar = s.klassen().filter(id=(1,2,3,4))  # returns the same as...
+            bar = [kl for kl in s.klassen() if kl.id in (1,2,3,4)]
 
         ::
         '''
         def meets_criterions(item):
+            '''Returns true if the item meets the criterions'''
             for key, value in criterions.items():
                 # if the attribute value isn't one we're looking for
-                if type(value) == list and getattr(item, key) in value:
+                if getattr(item, key) in value:
                     continue
                 elif getattr(item, key) == value:
                     continue
@@ -112,13 +121,6 @@ class LazyObjectList(object):
     def __len__(self):
         '''Return the length of the items'''
         return len(self._data)
-
-
-class ListResult(Result, LazyObjectList):
-    '''ListResult is an iterable version of
-    :py:class:`webuntis.objects.Result`.
-    '''
-    pass
 
 
 class DepartmentObject(ListItem):
@@ -417,7 +419,7 @@ class SchoolyearObject(ListItem):
             True
 
         '''
-        return (self == self.parent.current)
+        return (self == self._parent.current)
 
 
 class SchoolyearList(ListResult):
@@ -566,9 +568,6 @@ class ColorInfo(object):
         self._session = session
         self._parent = parent
         self._data = data
-        self.name = list(data.items())[0][0]
-        self.forecolor = data[self.name]['foreColor']
-        self.backcolor = data[self.name]['backColor']
 
     @lazyproperty
     def name(self):

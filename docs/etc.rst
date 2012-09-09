@@ -5,9 +5,9 @@ Etc
 Timetable Utils
 ===============
 
-.. module:: webuntis.utils.timetable_utils
+.. module::webuntis.utils.timetable_utils
 
-.. autofunction:: table
+.. autofunction::table
 
 Options
 ============
@@ -44,7 +44,7 @@ Caching
 
 python-webuntis implements a LRU Cache which caches the latest 20 requests per default. You can set the length with::
 
-  >>> s = webuntis.Session(..., cachelen=40)
+    s = webuntis.Session(..., cachelen=40)
 
 Setting it to `0` obviously disables the cache.
 

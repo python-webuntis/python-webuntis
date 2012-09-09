@@ -37,4 +37,4 @@ def format_time(obj):
 
 
 def _format(obj, formatting):
-        return int(datetime.strftime(obj, formatting))
+    return int(datetime.strftime(obj, formatting))

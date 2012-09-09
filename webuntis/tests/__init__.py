@@ -33,10 +33,7 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
         self.session = None
 
     def test_credentials(self):
-        if self.session.options['credentials']:
-            raise Exception(
-                'Expected not to have credentials during offline session'
-            )
+        self.assertRaises(KeyError, self.session.options.__getitem__, ('credentials'))
 
     def test_options_invalidattribute(self):
         try:

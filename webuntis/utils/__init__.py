@@ -11,6 +11,7 @@ from . import datetime_utils, option_utils
 
 from collections import OrderedDict
 
+
 class lazyproperty(object):
     '''A read-only @property that is only evaluated once.
 
@@ -26,6 +27,7 @@ class lazyproperty(object):
             return self
         obj.__dict__[self.__name__] = result = self.fget(obj)
         return result
+
 
 class LruDict(OrderedDict):
     def __init__(self, maxlen=50):
@@ -45,7 +47,7 @@ class FilterDict(dict):
     :param filters: A dictionary containing functions. If a new key is set into
     an instance of FilterDict, the filter dictionary will be consulted to
     filter the value with a function.
-    
+
     >>> options = FilterDict({
     ...    'foo': lambda x: 'whoopdeedoo'
     ... })
@@ -61,8 +63,10 @@ class FilterDict(dict):
         self.filters = filters
 
     def __getitem__(self, name):
-        if name in self and dict.__getitem__(self, name):  # check if we got a real Option subclass
-            return dict.__getitem__(self, name)  # every Option subclass has this
+        # check if we got a real Option subclass
+        if name in self and dict.__getitem__(self, name):
+            # every Option subclass has this
+            return dict.__getitem__(self, name)
         elif name in self.filters:
             raise KeyError('No value for key: {}'.format(name))
         else:
