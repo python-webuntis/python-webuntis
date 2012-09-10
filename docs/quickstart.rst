@@ -20,7 +20,7 @@ Here's the example from the :doc:`index` again::
 
     s.login()
 
-    for klasse in klassen:
+    for klasse in s.klassen():
         print(klasse.name)
 
     s.logout()

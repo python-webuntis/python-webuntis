@@ -19,7 +19,7 @@ Bindings for WebUntis
 
     s.login()
 
-    for klasse in klassen:
+    for klasse in s.klassen():
         print(klasse.name)
 
     s.logout()
