@@ -59,7 +59,7 @@ the end of your "server" parameter.''')
         return urlobj.scheme + \
             '://' + \
             urlobj.netloc + \
-            (urlobj.path or '/WebUntis/jsonrpc')
+            (urlobj.path or '/WebUntis/jsonrpc.do')
     else:
         return None  # Doesn't seem like we have a value.
 
