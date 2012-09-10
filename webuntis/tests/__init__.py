@@ -12,6 +12,7 @@ import webuntis
 from webuntis.utils import timetable_utils, datetime_utils, option_utils
 import webuntis.utils as utils
 import json
+import logging
 
 class WebUntisTests:
     tests_path = os.path.abspath(os.path.dirname(__file__))
