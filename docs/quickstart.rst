@@ -2,7 +2,7 @@
 Getting Started
 ===============
 
-Okay, before you can get started, you need the module itself::
+Okay, before you can get started, you need the package itself::
 
     pip install webuntis
 
