@@ -6,9 +6,6 @@
 '''
 
 from __future__ import unicode_literals
-
-from . import datetime_utils, option_utils
-
 from collections import OrderedDict
 
 
@@ -87,9 +84,10 @@ class FilterDict(dict):
         for key, value in dict(*args, **kwargs).items():
             self.__setitem__(key, value)
 
+
 def is_iterable(obj):
     try:
-        dev_null = iter(obj)
+        iter(obj)
     except TypeError:
         return False
     else:
