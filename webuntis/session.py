@@ -6,7 +6,6 @@
 '''
 from __future__ import unicode_literals
 from webuntis import utils, objects, errors
-import re
 
 try:
     import urllib.request as urlrequest

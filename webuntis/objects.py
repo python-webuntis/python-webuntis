@@ -7,7 +7,7 @@
 
 from __future__ import unicode_literals
 
-from webuntis.utils import datetime_utils, lazyproperty
+from webuntis.utils import datetime_utils, lazyproperty, is_iterable
 
 
 class Result(object):
@@ -99,9 +99,10 @@ class ListResult(Result):
             '''Returns true if the item meets the criterions'''
             for key, value in criterions.items():
                 # if the attribute value isn't one we're looking for
-                if getattr(item, key) in value:
+                attribute = getattr(item, key)
+                if attribute == value:
                     continue
-                elif getattr(item, key) == value:
+                elif is_iterable(value) and attribute in value:
                     continue
                 else:
                     return False

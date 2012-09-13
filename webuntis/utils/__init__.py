@@ -86,3 +86,11 @@ class FilterDict(dict):
     def update(self, *args, **kwargs):
         for key, value in dict(*args, **kwargs).items():
             self.__setitem__(key, value)
+
+def is_iterable(obj):
+    try:
+        dev_null = iter(obj)
+    except TypeError:
+        return False
+    else:
+        return True
