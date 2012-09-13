@@ -104,10 +104,34 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
             '_get_data',
             return_value=jsonstr
         ) as test_mock:
-            for klasse_raw, klasse in zip(jsonstr, self.session.klassen()):
+            klassen = self.session.klassen()
+            for klasse_raw, klasse in zip(jsonstr, klassen):
                 self.assertEqual(klasse_raw['longName'], klasse.long_name)
                 self.assertEqual(klasse_raw['name'], klasse.name)
                 self.assertEqual(klasse_raw['id'], klasse.id)
+
+            self.assertEqual(self.session.klassen().filter(id=129)[0].id, 129)
+            self.assertEqual(
+                {129,130,137},
+                set(
+                    kl.id for kl in
+                    klassen.filter(id={129,130,137})
+                )
+            )
+            self.assertEqual(
+                {129,130,137},
+                set(
+                    kl.id for kl in
+                    klassen.filter(id=[129,130,137])
+                )
+            )
+            self.assertEqual(
+                {129,130,137},
+                set(
+                    kl.id for kl in 
+                    klassen.filter(id=(129,130,137))
+                )
+            )
 
     def test_gettimetables_mock(self):
         jsonstr = json.load(
@@ -257,6 +281,7 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
 
         del store['always_whoop']
         self.assertRaises(KeyError, store.__getitem__, 'always_whoop')
+
 
 
 class WebUntisRemoteTests(unittest.TestCase, WebUntisTests):
