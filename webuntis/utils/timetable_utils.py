@@ -6,8 +6,8 @@
 '''
 
 from __future__ import unicode_literals
-
 import itertools
+
 
 def table(timetable):
     '''

@@ -8,9 +8,9 @@ from __future__ import unicode_literals
 import re
 import logging
 try:
-    from urllib import parse as urlparse
+    from urllib import parse as urlparse  # Python 3
 except ImportError:
-    import urlparse
+    import urlparse  # Python 2
 
 
 def careless_parser(value):

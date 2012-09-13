@@ -8,11 +8,13 @@ from __future__ import unicode_literals
 from webuntis import utils, objects, errors
 
 try:
+    # Python 3
     import urllib.request as urlrequest
     import urllib.error as urlerrors
 except ImportError:
-    import urllib2 as urlrequest
-    import urllib2 as urlerrors
+    # Python 3
+    import urllib2
+    urlrequest = urlerrors = urllib2
 import logging
 import datetime
 
@@ -114,11 +116,10 @@ class JSONRPCSession(object):
 
         return self
 
-
     def _request(self, method, params=None):
         '''A wrapper for _make_request implementing a LRU Cache'''
         key = (method, hash(tuple(params or {})))
-        
+
         if key not in self._cache:
             self._cache[key] = self._make_request(method, params)
         return self._cache[key]
@@ -183,7 +184,7 @@ class JSONRPCSession(object):
             res_data = json.loads(res_str)
             logging.debug('Valid JSON found')
             logging.debug(res_data)
-        except ValueError as e:
+        except ValueError:
             raise errors.RemoteError('Invalid JSON', str(res_str))
 
         if res_data['id'] != req_data['id']:
