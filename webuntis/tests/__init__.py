@@ -30,7 +30,7 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
         )
         patcher.start()
 
-        self.session = webuntis.Session()
+        self.session = webuntis.Session(useragent='foobar')
 
     def tearDown(self):
         self.request_patcher.stop()
@@ -45,7 +45,7 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
         )
 
     def test_options_isempty(self):
-        self.assertEqual(self.session.options, {})
+        self.assertEqual(self.session.options, {'useragent': 'foobar'})
 
     def test_getdepartments_mock(self):
         jsonstr = json.load(
@@ -287,8 +287,8 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
 class WebUntisRemoteTests(unittest.TestCase, WebUntisTests):
     '''
     DEPRECATED. This only should be used if you want to test the library
-    against actually against a public test-server, which will take a very long
-    time and will stress that server unneccessarily.
+    actually against a public test-server, which will take a very long time and
+    will stress that server unneccessarily.
     '''
     def setUp(self):
         self.session = webuntis.session.Session(
