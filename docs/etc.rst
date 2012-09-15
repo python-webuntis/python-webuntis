@@ -39,7 +39,7 @@ In an instance of :py:class:`webuntis.session.Session`, a dictionary-like object
   
   - *useragent*: A string containing a useragent.
     
-      Please include useful information, such as an email address, for the server maintainer. Just like you would do with the HTTP useragents of bots.
+    Please include useful information, such as an email address, for the server maintainer. Just like you would do with the HTTP useragents of bots.
 
 Caching
 =======
