@@ -356,7 +356,7 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
             ('webuntis.grupet.at:8080', 'http://webuntis.grupet.at:8080/WebUntis/jsonrpc.do'),
             ('webuntis.grupet.at/a/b/c', 'http://webuntis.grupet.at/a/b/c'),
             ('webuntis.grupet.at/', 'http://webuntis.grupet.at/'),
-            ('!"$%', 'http://!"$%/WebUntis/jsonrpc.do')
+            ('!"$%', None)
         ]
 
         for parser_input, expected_output in tests:

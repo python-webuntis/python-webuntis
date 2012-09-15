@@ -34,9 +34,9 @@ In an instance of :py:class:`webuntis.session.Session`, a dictionary-like object
         >>> # endpoint, which would crash during login
         >>> s.options['server']
         'http://thalia.webuntis.com/'
-        >>> s.options['server'] = '!"$%/WebUntis/jsonrpc.do'  # unfortunately, this is not well handled right now
-        'http://!"$%'
-  
+        >>> s.options['server'] = '!"$%/WebUntis/jsonrpc.do'
+        KeyError  
+
   - *useragent*: A string containing a useragent.
     
     Please include useful information, such as an email address, for the server maintainer. Just like you would do with the HTTP useragents of bots.
