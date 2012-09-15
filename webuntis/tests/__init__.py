@@ -25,7 +25,7 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
     '''
     def setUp(self):
         self.request_patcher = patcher = mock.patch(
-            'webuntis.Session._request',
+            'webuntis.Session._make_request',
             side_effect=Exception('This is an OFFLINE testsuite!')
         )
         patcher.start()
@@ -110,7 +110,7 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
                 self.assertEqual(klasse_raw['name'], klasse.name)
                 self.assertEqual(klasse_raw['id'], klasse.id)
 
-            self.assertEqual(self.session.klassen().filter(id=129)[0].id, 129)
+            self.assertEqual(klassen.filter(id=129)[0].id, 129)
             self.assertEqual(
                 {129,130,137},
                 set(
@@ -137,10 +137,8 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
         jsonstr = json.load(
             open(self.data_path + '/gettimetables_mock.json')
         )
-        periodlist_class = webuntis.objects.PeriodList
-
         with mock.patch.object(
-            periodlist_class,
+            webuntis.objects.PeriodList,
             '_get_data',
             return_value=jsonstr
         ) as test_mock:
@@ -282,6 +280,90 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
         del store['always_whoop']
         self.assertRaises(KeyError, store.__getitem__, 'always_whoop')
 
+    def test_session_invalidattribute(self):
+        self.assertRaises(AttributeError, getattr, self.session, 'foobar')
+
+    def test_requestcaching(self):
+        caching_data = [
+            {'foo': 'bar'},
+            {'boo': 'far'}
+        ]
+        def make_request_mock(session, method, params=None):
+            self.assertEqual(method, 'example_method')
+            return caching_data
+
+        with mock.patch.object(
+            webuntis.session.Session,
+            '_make_request',
+            new=make_request_mock
+        ) as test_mock:
+            self.assertEqual(caching_data, self.session._request('example_method')) 
+
+        self.assertEqual(caching_data, self.session._request('example_method'))
+
+    def test_listitem(self):
+        session = None
+        parent = None
+        data = {'id': 42}
+        item = webuntis.objects.ListItem(session, parent, data)
+
+        self.assertEqual(item._session, session)
+        self.assertEqual(item._parent, parent)
+        self.assertEqual(item._data, data)
+        self.assertEqual(item.id, data['id'])
+        self.assertEqual(int(item), item.id)
+
+    def test_result_object_without_parameters_method(self):
+        with mock.patch.object(
+            webuntis.objects.Result,
+            '_jsonrpc_parameters',
+            new=False
+        ) as test_mock:
+            self.assertRaises(
+                NotImplementedError,
+                webuntis.objects.Result, None, {}
+            )
+
+
+    def test_optionparsers_credentials(self):
+        jsessionid = {'jsessionid': '123ABC'}
+        void_jsessionid = {'jsessionid': None}
+        user_and_pwd = {'username': 'markus', 'password': 'hunter2'}
+        void_user_and_pwd = {'username': None, 'password': 'hunter2'}
+        user_and_void_pwd = {'username': 'markus', 'password': None}
+        void_user_and_void_pwd = {'username': None, 'password': None}
+
+        tests = [
+            (jsessionid, jsessionid),
+            (void_jsessionid, {}),
+            (user_and_pwd, user_and_pwd),
+            (void_user_and_pwd, {}),
+            (user_and_void_pwd, {}),
+            (void_user_and_void_pwd, {}),
+            (dict(user_and_pwd.items() + void_jsessionid.items()), user_and_pwd)
+        ]
+
+        for parser_input, expected_output in tests:
+            self.assertEqual(
+                webuntis.utils.option_utils.credentials_parser(parser_input),
+                expected_output
+            )
+
+    def test_optionparsers_server(self):
+        tests = [
+            ('webuntis.grupet.at', 'http://webuntis.grupet.at/WebUntis/jsonrpc.do'),
+            ('https://webuntis.grupet.at', 'https://webuntis.grupet.at/WebUntis/jsonrpc.do'),
+            ('webuntis.grupet.at:8080', 'http://webuntis.grupet.at:8080/WebUntis/jsonrpc.do'),
+            ('webuntis.grupet.at/a/b/c', 'http://webuntis.grupet.at/a/b/c'),
+            ('webuntis.grupet.at/', 'http://webuntis.grupet.at/'),
+            ('!"$%', 'http://!"$%/WebUntis/jsonrpc.do')
+        ]
+
+        for parser_input, expected_output in tests:
+            self.assertEqual(
+                webuntis.utils.option_utils.server_parser(parser_input),
+                expected_output
+            )
 
 
 class WebUntisRemoteTests(unittest.TestCase, WebUntisTests):
