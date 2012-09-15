@@ -340,7 +340,7 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
             (void_user_and_pwd, {}),
             (user_and_void_pwd, {}),
             (void_user_and_void_pwd, {}),
-            (dict(user_and_pwd.items() + void_jsessionid.items()), user_and_pwd)
+            (dict(user_and_pwd, **void_jsessionid), user_and_pwd)
         ]
 
         for parser_input, expected_output in tests:
@@ -466,33 +466,26 @@ class WebUntisRemoteTests(unittest.TestCase, WebUntisTests):
         self.assertFalse('jsessionid' in creds)
         self.assertRaises(webuntis.errors.AuthError, self.session.klassen)
 
+class test_cases(object):
+    offline = WebUntisOfflineTests
+    online = WebUntisRemoteTests
+
+def mk_suite(tests):
+    loader = unittest.TestLoader()
+    suite = unittest.TestSuite()
+    for test in tests:
+        suite.addTest(loader.loadTestsFromName(test, test_cases))
+
+    return suite
+
+default_suite = ['offline']
+
 
 def main():
-    try:
-        raw_input  # check if we have python2
-    except NameError:
-        prompt = input
-    else:
-        prompt = raw_input
-
-    def load(test):
-        suite = unittest.TestLoader().loadTestsFromTestCase(test)
-        unittest.TextTestRunner(verbosity=2).run(suite)
-
-    tests = [WebUntisOfflineTests, WebUntisRemoteTests]
-
-    if len(sys.argv) == 1:
-        print('ERROR: No tests specified.\nAdd a number to the command-line arguments to execute the test:\n')
-        for i, test in enumerate(tests):
-            print('###{}: {}'.format(i, test.__name__))
-            print(test.__doc__)
-        exit(1)
-
-    checked_tests = [tests[int(x)] for x in sys.argv[1:]]
-
-    for test in checked_tests:
-        prompt('Hit enter to continue.')
-        load(test)
+    suite = mk_suite(sys.argv[1:] or default_suite)
+    result = unittest.TextTestRunner(verbosity=2).run(suite) 
+    if result.errors or result.failures:
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()
