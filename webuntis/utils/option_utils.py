@@ -35,7 +35,7 @@ def server_parser(url):
     if not url:
         return url  # either it's None or we have a dictionary
 
-    if not re.match(r'^http(s?)\:\/\/', url):  # if we just have the domain
+    if not re.match(r'^http(s?)\:\/\/', url):  # if we just have the hostname
         logging.debug('The URL given doesn\'t seem to be a valid URL, \
             just gonna prepend "http://"')
 
@@ -44,21 +44,26 @@ def server_parser(url):
 
     urlobj = urlparse.urlparse(url)
 
-    if urlobj.scheme and urlobj.netloc:
-        if urlobj.path == '/':
-            # A bit weird, but it formats kinda nicely in the log.
-            # I am not logging line each, because other threads might
-            # interfere this and fuck everything up.
-            logging.warning('''You specified that the API endpoint
+    if not urlobj.scheme or not urlobj.netloc:
+        # urlparse failed
+        return None
+
+    if not re.match(r'^[a-zA-Z0-9\.\:-]+$', urlobj.netloc):
+        # That's not even a valid hostname
+        return None
+
+    if urlobj.path == '/':
+        # A bit weird, but it formats kinda nicely in the log.
+        # I am not logging line each, because other threads might
+        # interfere this and fuck everything up.
+        logging.warning('''You specified that the API endpoint
 should be /. That is uncommon. If you didn't mean to do so, remove the slash at
 the end of your "server" parameter.''')
 
-        return urlobj.scheme + \
-            '://' + \
-            urlobj.netloc + \
-            (urlobj.path or '/WebUntis/jsonrpc.do')
-    else:
-        return None  # Doesn't seem like we have a value.
+    return urlobj.scheme + \
+        '://' + \
+        urlobj.netloc + \
+        (urlobj.path or '/WebUntis/jsonrpc.do')
 
 option_parsers = {
     'credentials': credentials_parser,
