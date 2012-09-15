@@ -2,3 +2,5 @@ __pycache__
 *.pyc
 docs/_build/
 dist/
+.coverage
+htmlcov
