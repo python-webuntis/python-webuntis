@@ -26,24 +26,21 @@ def credentials_parser(creds):
         }
     elif 'jsessionid' in creds and creds['jsessionid']:
         return {
-            creds['jsessionid']
+            'jsessionid': creds['jsessionid']
         }
     else:
         return {}
 
+def server_parser(url):
+    if not url:
+        return url  # either it's None or we have a dictionary
 
-def server_parser(value):
-    if not value:
-        return value  # either it's None or we have a dictionary
-
-    if re.match(r'^http(s?)\:\/\/', value):
-        url = value
-    else:  # if we just have the domain
+    if not re.match(r'^http(s?)\:\/\/', url):  # if we just have the domain
         logging.debug('The URL given doesn\'t seem to be a valid URL, \
             just gonna prepend "http://"')
 
         # append the http prefix and hope for the best
-        url = 'http://' + value
+        url = 'http://' + url
 
     urlobj = urlparse.urlparse(url)
 

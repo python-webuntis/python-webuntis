@@ -66,7 +66,7 @@ class JSONRPCSession(object):
     def __exit__(self, exc_type, exc_value, traceback):
         '''Context-manager -- the only thing we need to clean up is to log out
         '''
-        self.logout()
+        self.logout(suppress_errors=True)
 
     def logout(self, suppress_errors=False):
         '''
@@ -75,12 +75,14 @@ class JSONRPCSession(object):
         :param suppress_errors: boolean, whether to not raise an error if we
             already were logged out.
         '''
-        #Send a JSON-RPC 'logout' method without parameters to log out
-        if 'jsessionid' in self.options['credentials']:
+        # Send a JSON-RPC 'logout' method without parameters to log out
+        try:
+            self.options['credentials']['jsessionid']  # aborts if we don't have creds
             self._make_request('logout')
             del self.options['credentials']['jsessionid']
-        elif not suppress_errors:
-            raise errors.RemoteError('Already logged out!')
+        except KeyError as e:
+            if not suppress_errors:
+                raise e
 
     def login(self):
         '''Initializes an authentication, provided we have the credentials for
