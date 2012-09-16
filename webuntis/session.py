@@ -20,9 +20,9 @@ import datetime
 
 
 try:
-    import json
+    import json  # Python >= 2.6
 except ImportError:
-    import simplejson as json
+    import simplejson as json  # from dependency "simplejson"
 
 
 class JSONRPCSession(object):

@@ -6,7 +6,10 @@
 '''
 
 from __future__ import unicode_literals
-from collections import OrderedDict
+try:
+    from collections import OrderedDict  # Python >= 2.7
+except ImportError:
+    from ordereddict import OrderedDict  # from dependency "ordereddict"
 
 from . import datetime_utils, option_utils
 
@@ -67,9 +70,9 @@ class FilterDict(dict):
             # every Option subclass has this
             return dict.__getitem__(self, name)
         elif name in self.filters:
-            raise KeyError('No value for key: {}'.format(name))
+            raise KeyError('No value for key: ' + name)
         else:
-            raise KeyError('No value or filter for key: {}'.format(name))
+            raise KeyError('No value or filter for key: ' + name)
 
     def __setitem__(self, key, value):
         new_value = self.filters[key](value)

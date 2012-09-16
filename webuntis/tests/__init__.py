@@ -112,22 +112,8 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
 
             self.assertEqual(klassen.filter(id=129)[0].id, 129)
             self.assertEqual(
-                {129,130,137},
-                set(
-                    kl.id for kl in
-                    klassen.filter(id={129,130,137})
-                )
-            )
-            self.assertEqual(
-                {129,130,137},
-                set(
-                    kl.id for kl in
-                    klassen.filter(id=[129,130,137])
-                )
-            )
-            self.assertEqual(
-                {129,130,137},
-                set(
+                [129,130,137],
+                sorted(
                     kl.id for kl in 
                     klassen.filter(id=(129,130,137))
                 )
