@@ -4,6 +4,7 @@
 .coverage
 .tox
 __pycache__
+build
 dist
 docs/_build/
 env
