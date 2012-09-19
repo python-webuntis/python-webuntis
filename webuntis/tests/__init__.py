@@ -11,6 +11,7 @@ import sys
 import webuntis
 from webuntis.utils import timetable_utils, datetime_utils, option_utils
 import webuntis.utils as utils
+import datetime
 import json
 import logging
 
@@ -167,12 +168,23 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
         jsonstr = json.load(
             open(self.data_path + '/getschoolyears_mock.json')
         )
+        current_json = jsonstr[3]
+
         with mock.patch.object(
             webuntis.objects.SchoolyearList,
             '_get_data',
             return_value=jsonstr
         ) as test_mock:
-            for year_raw, year in zip(jsonstr, self.session.schoolyears()):
+            schoolyears = self.session.schoolyears()
+
+        with mock.patch.object(
+            webuntis.session.Session,
+            '_request',
+            return_value=current_json
+        ) as test_mock:
+            self.assertEqual(current_json['id'], schoolyears.current.id)
+            self.assertTrue(schoolyears.current.is_current)
+            for year_raw, year in zip(jsonstr, schoolyears):
                 self.assertEqual(
                     year_raw['startDate'],
                     int(year.start.strftime('%Y%m%d'))
@@ -183,6 +195,8 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
                 )
                 self.assertEqual(year_raw['name'], year.name)
                 self.assertEqual(year_raw['id'], year.id)
+                if year.is_current:
+                    self.assertEqual(year, schoolyears.current)
 
     def test_getsubjects_mock(self):
         jsonstr = json.load(
@@ -350,6 +364,78 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
                 webuntis.utils.option_utils.server_parser(parser_input),
                 expected_output
             )
+
+    def test_resultobject_get_data(self):
+        kwargs = {}
+        testclass = webuntis.objects.DepartmentList
+        testobj = testclass(self.session, kwargs)
+
+        def request_mock(session, method, params):
+            self.assertEqual(method, testclass._jsonrpc_method)
+            self.assertEqual(method, testobj._jsonrpc_method)
+            self.assertEqual(params, testobj._jsonrpc_parameters(**kwargs))
+            return {}
+
+        with mock.patch.object(
+            webuntis.session.Session,
+            '_request',
+            new=request_mock
+        ) as test_mock:
+            testobj.store_data()
+
+    def test_objects_klassenlist_jsonrpc_parameters(self):
+        tests = [
+            ({'schoolyear': 13}, {'schoolyearId': 13}),
+            ({'schoolyear': "123"}, {'schoolyearId': 123})
+        ]
+
+        for given_input, expected_output in tests:
+            output = webuntis.objects.KlassenList(
+                self.session, {}
+            )._jsonrpc_parameters(
+                **given_input
+            )
+
+            self.assertEqual(expected_output, output)
+
+    def test_objects_periodlist_jsonrpc_parameters(self):
+        def get_result_from_parameter_builder(kwargs):
+            return webuntis.objects.PeriodList(
+                self.session,
+                {}
+            )._jsonrpc_parameters(
+                **kwargs
+            )
+        dtobj = datetime.datetime.now()
+        dtobj_formatted = int(dtobj.strftime('%Y%m%d'))
+        tests = [
+            ({'start': None, 'end': None, 'klasse': 123},
+                {'id': 123, 'type': 1}),
+            ({'start': None, 'end': None, 'teacher': 124},
+                {'id': 124, 'type': 2}),
+            ({'start': None, 'end': None, 'subject': 154},
+                {'id': 154, 'type': 3}),
+            ({'start': None, 'end': dtobj, 'subject': 1337},
+                {
+                    'id': 1337,
+                    'type': 3,
+                    'startDate': dtobj_formatted,
+                    'endDate': dtobj_formatted
+                }),
+            ({'end': None, 'start': dtobj, 'subject': 1337},
+                {
+                    'id': 1337,
+                    'type': 3,
+                    'startDate': dtobj_formatted,
+                    'endDate': dtobj_formatted
+                })
+        ]
+        for given_input, expected_output in tests:
+            self.assertEqual(get_result_from_parameter_builder(given_input), expected_output)
+
+        self.assertRaises(ValueError, get_result_from_parameter_builder, {})
+        self.assertRaises(ValueError,
+                get_result_from_parameter_builder, {'foobar': 123})
 
 
 class WebUntisRemoteTests(unittest.TestCase, WebUntisTests):

@@ -21,7 +21,7 @@ class Result(object):
             raise NotImplementedError
 
         self._session = session
-        self._data = self._get_data(**kwargs)
+        self._kwargs = kwargs
 
     def _jsonrpc_parameters(self, **kwargs):
         '''This method returns all methods that should be passed to the
@@ -30,14 +30,17 @@ class Result(object):
         # really need to overwrite this if they actually have no parameters
         return {}
 
-    def _get_data(self, **kwargs):
+    def _get_data(self):
         '''A simple wrapper for the jsonrpc_parameters builder.
         Can be overwritten by subclasses, which may require more complex
         options'''
         return self._session._request(
             self._jsonrpc_method,
-            self._jsonrpc_parameters(**kwargs)
+            self._jsonrpc_parameters(**self._kwargs)
         )
+
+    def store_data(self):
+        self._data = self._get_data()
 
 
 class ListItem(object):
@@ -82,6 +85,11 @@ class ListResult(Result):
 
     #: the class which should be used to instantiate an array item.
     _itemclass = ListItem
+    _items = None
+
+    def store_data(self, *args, **kwargs):
+        Result.store_data(self, *args, **kwargs)
+        self._items = [None] * len(self._data)
 
     def filter(self, **criterions):
         '''
@@ -113,11 +121,11 @@ class ListResult(Result):
 
     def __getitem__(self, i):
         '''Makes the object iterable and behave like a list'''
-        if not isinstance(self._data[i], ListItem):
+        if self._items[i] is None:
             # if we don't have an object yet
-            self._data[i] = self._itemclass(self._session, self, self._data[i])
+            self._items[i] = self._itemclass(self._session, self, self._data[i])
 
-        return self._data[i]
+        return self._items[i]
 
     def __len__(self):
         '''Return the length of the items'''
@@ -330,11 +338,18 @@ class PeriodList(ListResult):
             'student': 5
         }
 
+        invalid_type_error = ValueError(
+            'You have to specify exactly one of the following parameters by keyword: ' +
+            ', '.join(element_type_table.keys())
+        )
+
         if len(type_and_id) != 1:
-            raise ValueError(
-                'You have to specify exactly one of the following parameters by keyword: ' +
-                ', '.join(element_type_table.keys())
-            )
+            raise invalid_type_error
+
+        element_type, element_id = list(type_and_id.items())[0]
+
+        if element_type not in element_type_table:
+            raise invalid_type_error
 
         # apply end to start and vice-versa if one of them is missing
         if not start and end:
@@ -342,7 +357,6 @@ class PeriodList(ListResult):
         elif not end and start:
             end = start
 
-        element_type, element_id = list(type_and_id.items())[0]
 
         # if we have to deal with an object in element_id,
         # its id gets placed here anyway
@@ -613,7 +627,7 @@ class StatusData(Result):
         ]
 
 # Defines result classes that are accessible from outside
-object_lists = {
+result_objects = {
     'departments': DepartmentList,
     'holidays': HolidayList,
     'klassen': KlassenList,

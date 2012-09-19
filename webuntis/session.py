@@ -210,12 +210,12 @@ class Session(JSONRPCSession):
         '''Returns a callable which creates an instance (or reuses an old one)
         of the appropriate object-list class
         '''
-        def get_objectlist(**kwargs):
-            '''Returns the corrent objectclass after checking in the cache
-            '''
-            return objects.object_lists[name](session=self, kwargs=kwargs)
+        def get_result_object(**kwargs):
+            obj = objects.result_objects[name](session=self, kwargs=kwargs)
+            obj.store_data()
+            return obj
 
-        if name in objects.object_lists:
-            return get_objectlist
+        if name in objects.result_objects:
+            return get_result_object
         else:
             raise AttributeError(name)
