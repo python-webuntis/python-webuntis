@@ -5,7 +5,7 @@ python-webuntis
 Bindings for WebUntis API
 =========================
 
-::
+.. code-block:: python
 
     import webuntis
 
