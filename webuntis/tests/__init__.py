@@ -360,7 +360,6 @@ class InternalTests(OfflineTestCase):
             ('webuntis.grupet.at:8080', 'http://webuntis.grupet.at:8080/WebUntis/jsonrpc.do'),
             ('webuntis.grupet.at/a/b/c', 'http://webuntis.grupet.at/a/b/c'),
             ('webuntis.grupet.at/', 'http://webuntis.grupet.at/'),
-            ('!"$%', None)
         ]
 
         for parser_input, expected_output in tests:
@@ -368,6 +367,9 @@ class InternalTests(OfflineTestCase):
                 webuntis.utils.option_utils.server_parser(parser_input),
                 expected_output
             )
+
+        self.assertRaises(ValueError,
+                webuntis.utils.option_utils.server_parser, '!"$%Ä')
 
     def test_resultobject_get_data(self):
         kwargs = {}

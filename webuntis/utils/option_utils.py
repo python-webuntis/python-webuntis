@@ -46,11 +46,11 @@ def server_parser(url):
 
     if not urlobj.scheme or not urlobj.netloc:
         # urlparse failed
-        return None
+        raise ValueError('Not a valid URL or hostname')
 
     if not re.match(r'^[a-zA-Z0-9\.\:-]+$', urlobj.netloc):
         # That's not even a valid hostname
-        return None
+        raise ValueError('Not a valid hostname')
 
     if urlobj.path == '/':
         # A bit weird, but it formats kinda nicely in the log.
