@@ -15,15 +15,12 @@ import datetime
 import json
 import logging
 
-class WebUntisTests:
+class TestCaseBase(unittest.TestCase):
     tests_path = os.path.abspath(os.path.dirname(__file__))
     data_path = tests_path + '/static'
 
 
-class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
-    '''
-    Mocking tests. New tests should be written here.
-    '''
+class OfflineTestCase(TestCaseBase):
     def setUp(self):
         self.request_patcher = patcher = mock.patch(
             'webuntis.Session._make_request',
@@ -37,17 +34,9 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
         self.request_patcher.stop()
         self.session = None
 
-    def test_options_invalidattribute(self):
-        self.assertFalse('nigglywiggly' in self.session.options)
-        self.assertRaises(
-            KeyError,
-            self.session.options.__getitem__,
-            'nigglywiggly'
-        )
-
-    def test_options_isempty(self):
-        self.assertEqual(self.session.options, {'useragent': 'foobar'})
-
+class BasicUsageTests(OfflineTestCase):
+    '''Mocks the _get_data method of all result objects and tests the package
+    against basic usage.'''
     def test_getdepartments_mock(self):
         jsonstr = json.load(
             open(self.data_path + '/getdepartments_mock.json')
@@ -263,6 +252,21 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
                 self.assertEqual(colors['foreColor'], lstype.forecolor)
                 self.assertEqual(colors['backColor'], lstype.backcolor)
 
+
+class InternalTests(OfflineTestCase):
+    '''Tests certain areas of the whole package, such as the utils'''
+    def test_options_invalidattribute(self):
+        self.assertFalse('nigglywiggly' in self.session.options)
+        self.assertRaises(
+            KeyError,
+            self.session.options.__getitem__,
+            'nigglywiggly'
+        )
+
+    def test_options_isempty(self):
+        self.assertEqual(self.session.options, {'useragent': 'foobar'})
+
+
     def test_filterdict(self):
         store = utils.FilterDict({
             'whatever': lambda x: x,
@@ -383,6 +387,19 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
         ) as test_mock:
             testobj.store_data()
 
+    def helper_jsonrpc_parameters(self, resultclass):
+        '''A wrapper for the _jsonrpc_parameters method of any result-type
+        class.'''
+        def jsonrpc_parameters(kwargs):
+            return resultclass(
+                self.session,
+                {}
+            )._jsonrpc_parameters(
+                **kwargs
+            )
+
+        return jsonrpc_parameters
+
     def test_objects_klassenlist_jsonrpc_parameters(self):
         tests = [
             ({'schoolyear': 13}, {'schoolyearId': 13}),
@@ -390,22 +407,13 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
         ]
 
         for given_input, expected_output in tests:
-            output = webuntis.objects.KlassenList(
-                self.session, {}
-            )._jsonrpc_parameters(
-                **given_input
+            self.assertEqual(
+                self.helper_jsonrpc_parameters(webuntis.objects.KlassenList)(given_input),
+                expected_output
             )
-
-            self.assertEqual(expected_output, output)
 
     def test_objects_periodlist_jsonrpc_parameters(self):
-        def get_result_from_parameter_builder(kwargs):
-            return webuntis.objects.PeriodList(
-                self.session,
-                {}
-            )._jsonrpc_parameters(
-                **kwargs
-            )
+        parambuilder = self.helper_jsonrpc_parameters(webuntis.objects.PeriodList)
         dtobj = datetime.datetime.now()
         dtobj_formatted = int(dtobj.strftime('%Y%m%d'))
         tests = [
@@ -431,14 +439,16 @@ class WebUntisOfflineTests(unittest.TestCase, WebUntisTests):
                 })
         ]
         for given_input, expected_output in tests:
-            self.assertEqual(get_result_from_parameter_builder(given_input), expected_output)
+            self.assertEqual(
+                parambuilder(given_input),
+                expected_output
+            )
 
-        self.assertRaises(ValueError, get_result_from_parameter_builder, {})
-        self.assertRaises(ValueError,
-                get_result_from_parameter_builder, {'foobar': 123})
+        self.assertRaises(ValueError, parambuilder, {})
+        self.assertRaises(ValueError, parambuilder, {'foobar': 123})
 
 
-class WebUntisRemoteTests(unittest.TestCase, WebUntisTests):
+class RemoteTests(TestCaseBase):
     '''
     DEPRECATED. This only should be used if you want to test the library
     actually against a public test-server, which will take a very long time and
@@ -538,23 +548,31 @@ class WebUntisRemoteTests(unittest.TestCase, WebUntisTests):
         self.assertFalse('jsessionid' in creds)
         self.assertRaises(webuntis.errors.AuthError, self.session.klassen)
 
-class test_cases(object):
-    offline = WebUntisOfflineTests
-    online = WebUntisRemoteTests
 
-def mk_suite(tests):
-    loader = unittest.TestLoader()
-    suite = unittest.TestSuite()
-    for test in tests:
-        suite.addTest(loader.loadTestsFromName(test, test_cases))
 
+def suite_from_cases(*cases):
+    return unittest.TestSuite(map(unittest.TestLoader().loadTestsFromTestCase,
+        cases))
+
+# This is the test suite that should cover everything. Should.
+usual_tests = suite_from_cases(BasicUsageTests, InternalTests)
+
+# This is a deprecated test suite whose test cases, for example, just use the
+# API with an actual server and just check if it didn't raise exceptions.
+deprecated_tests = suite_from_cases(RemoteTests)
+
+# This includes all of the above.
+all_tests = unittest.TestSuite((usual_tests, deprecated_tests))
+
+
+def get_suite(names):
+    '''Builds a suite from the list of case/suite names'''
+    suite = unittest.TestSuite([globals()[name] for name in names])
     return suite
-
-default_suite = ['offline']
 
 
 def main():
-    suite = mk_suite(sys.argv[1:] or default_suite)
+    suite = get_suite(sys.argv[1:] or ['usual_tests'])
     result = unittest.TextTestRunner(verbosity=2).run(suite) 
     if result.errors or result.failures:
         sys.exit(1)
