@@ -4,6 +4,8 @@
     :copyright: (c) 2012 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
 '''
+from __future__ import unicode_literals
+
 import unittest
 import mock
 import os
@@ -14,6 +16,7 @@ import webuntis.utils as utils
 import datetime
 import json
 import logging
+
 
 class TestCaseBase(unittest.TestCase):
     tests_path = os.path.abspath(os.path.dirname(__file__))
@@ -369,7 +372,7 @@ class InternalTests(OfflineTestCase):
             )
 
         self.assertRaises(ValueError,
-                webuntis.utils.option_utils.server_parser, '!"$%Ä')
+                webuntis.utils.option_utils.server_parser, '!"$%')
 
     def test_resultobject_get_data(self):
         kwargs = {}
