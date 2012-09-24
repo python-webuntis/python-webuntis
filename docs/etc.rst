@@ -35,7 +35,7 @@ In an instance of :py:class:`webuntis.session.Session`, a dictionary-like object
         >>> s.options['server']
         'http://thalia.webuntis.com/'
         >>> s.options['server'] = '!"$%/WebUntis/jsonrpc.do'
-        KeyError  
+        ValueError
 
   - *useragent*: A string containing a useragent.
     

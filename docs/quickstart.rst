@@ -2,7 +2,15 @@
 Getting Started
 ===============
 
-Okay, before you can get started, you need the package itself::
+Before we are getting started, there are a few things to know about WebUntis and its API:
+
+.. note::
+
+    - **You need an account for the API.** You can't access the API anonymously. It's designated that schools give each student a user account for the WebUntis server they're using. Many schools just make the timetable world-accessible though, preventing any use of the API. If you happen to be at such a school, you're a pitiful bastard.
+
+    - **The API is read-only.** And there's nothing you can do about it.
+
+Are you still reading? Okay, let's install the webuntis package::
 
     pip install webuntis
 
