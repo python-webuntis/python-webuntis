@@ -19,7 +19,7 @@ Bindings for WebUntis API
     for klasse in s.klassen():
         print(klasse.name)
 
-`read more <http://dev.unterwaditzer.net/python-webuntis/>`_.
+`read more... <http://dev.unterwaditzer.net/python-webuntis/>`_
 
 Installation
 ============
