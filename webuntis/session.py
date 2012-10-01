@@ -12,7 +12,7 @@ try:
     import urllib.request as urlrequest
     import urllib.error as urlerrors
 except ImportError:
-    # Python 3
+    # Python 2
     import urllib2
     urlrequest = urlerrors = urllib2
 import logging
