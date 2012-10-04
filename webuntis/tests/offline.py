@@ -225,7 +225,7 @@ class BasicUsageTests(OfflineTestCase):
         ):
             statusdata = self.session.statusdata()
             for lstype_raw, lstype in zip(jsonstr['lstypes'],
-                                          statusdata.lession_types):
+                                          statusdata.lesson_types):
                 name = list(lstype_raw.items())[0][0]
                 colors = lstype_raw[name]
                 self.assertEqual(name, lstype.name)

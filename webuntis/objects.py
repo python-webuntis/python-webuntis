@@ -572,9 +572,9 @@ class TimeunitList(ListResult):
 
 class ColorInfo(object):
     '''
-    An object containing information about a lession type or a period code::
+    An object containing information about a lesson type or a period code::
 
-        >>> lstype = s.statusdata().lession_types[ls]
+        >>> lstype = s.statusdata().lesson_types[ls]
         >>> lstype.name
         'ls'
         >>> lstype.forecolor
@@ -591,7 +591,7 @@ class ColorInfo(object):
 
     @lazyproperty
     def name(self):
-        '''The name of the LessionType or PeriodCode'''
+        '''The name of the LessonType or PeriodCode'''
         return list(self._data.items())[0][0]
 
     @lazyproperty
@@ -607,7 +607,7 @@ class ColorInfo(object):
 
 class StatusData(Result):
     '''
-    Information about lession types and period codes and their colors::
+    Information about lesson types and period codes and their colors::
 
         s.statusdata()
 
@@ -615,9 +615,9 @@ class StatusData(Result):
     _jsonrpc_method = 'getStatusData'
 
     @lazyproperty
-    def lession_types(self):
+    def lesson_types(self):
         '''A list of :py:class:`ColorInfo` objects, containing
-        information about all lession types defined'''
+        information about all lesson types defined'''
         return [
             ColorInfo(self._session, self, data)
             for data in self._data['lstypes']

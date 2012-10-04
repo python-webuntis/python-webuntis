@@ -81,7 +81,7 @@ Timegrid and Timeunits
 .. autoclass:: TimeunitObject
     :members:
 
-Lession Types and Period Codes
+Lesson Types and Period Codes
 ==============================
 .. autoclass:: StatusData
     :members:
