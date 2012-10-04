@@ -3,6 +3,7 @@ Changelog
 =========
 
 * 0.1.1:
+
   * Bugfixes
   * Added support for tox
   * Actual Python 2.6 support
