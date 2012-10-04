@@ -14,7 +14,7 @@ Are you still reading? Okay, let's install the webuntis package::
 
     pip install webuntis
 
-Here's the example from the :doc:`index` again::
+Here's the example from the :doc:`Intro <index>` again::
 
     import webuntis
 
