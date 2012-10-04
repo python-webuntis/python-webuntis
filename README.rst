@@ -6,6 +6,7 @@ Bindings for WebUntis API
 =========================
 
 ::
+
     import webuntis
 
     s = webuntis.Session(
