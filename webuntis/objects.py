@@ -483,6 +483,12 @@ class SubjectList(ListResult):
 
 class TeacherObject(ListItem):
     '''Represents a teacher.
+
+    .. note::
+        The naming convention for teachers seem to vary between schools.
+        Schools might provide, for example, just the initials of a teacher in
+        the name attribute and leave everything else blank. Testing with the
+        original data is the only way to be sure.
     '''
     @lazyproperty
     def fore_name(self):
