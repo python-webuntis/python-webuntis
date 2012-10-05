@@ -246,6 +246,9 @@ class InternalTests(OfflineTestCase):
     def test_options_isempty(self):
         self.assertEqual(self.session.options, {'useragent': 'foobar'})
 
+    def test_datetime_utils(self):
+        obj = utils.datetime_utils.parse_datetime(20121005, 0)
+
     def test_filterdict(self):
         store = utils.FilterDict({
             'whatever': lambda x: x,
