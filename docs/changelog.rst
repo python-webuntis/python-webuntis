@@ -2,6 +2,10 @@
 Changelog
 =========
 
+* 0.1.3:
+
+  * Bugfix: Would crash at midnight times.
+
 * 0.1.2:
 
   * Another bugfix wave.
