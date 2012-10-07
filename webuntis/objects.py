@@ -7,7 +7,7 @@
 
 from __future__ import unicode_literals
 
-from webuntis.utils import datetime_utils, lazyproperty, is_iterable
+from webuntis.utils import datetime_utils, lazyproperty, is_iterable, timetable_utils
 
 
 class Result(object):
@@ -300,8 +300,12 @@ class PeriodObject(ListItem):
 
     @lazyproperty
     def type(self):
-        '''May be "cancelled" or "irregular" -- the latter implies a
-        substitution.'''
+        '''May be:
+
+          - ``None`` -- There's nothing special about this period.
+          - ``"cancelled"`` -- Cancelled
+          - ``"irregular"`` -- Substitution/"Supplierung"/Not planned event
+        '''
 
         return self._data['lstype'] if 'lstype' in self._data else None
 
@@ -323,11 +327,13 @@ class PeriodList(ListResult):
         s.timetable(klasse=schoolclass)  # which is the same as...
         s.periods(klasse=schoolclass)
 
-    .. note:: See :py:mod:`webuntis.utils.timetable_utils` for various tools
-        around the timetable.
     '''
     _itemclass = PeriodObject
     _jsonrpc_method = 'getTimetable'
+
+    def to_table(self):
+        '''A shortcut for :py:func:`webuntis.utils.timetable_utils.table`'''
+        return timetable_utils.table(self)
 
     def _jsonrpc_parameters(self, start=None, end=None, **type_and_id):
         element_type_table = {
@@ -483,12 +489,6 @@ class SubjectList(ListResult):
 
 class TeacherObject(ListItem):
     '''Represents a teacher.
-
-    .. note::
-        The naming convention for teachers seem to vary between schools.
-        Schools might provide, for example, just the initials of a teacher in
-        the name attribute and leave everything else blank. Testing with the
-        original data is the only way to be sure.
     '''
     @lazyproperty
     def fore_name(self):

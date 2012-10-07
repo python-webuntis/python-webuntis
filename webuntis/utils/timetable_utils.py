@@ -14,13 +14,55 @@ def table(timetable):
     Creates a table-like nested list out of an instance of
     :py:class:`webuntis.objects.PeriodList`.
 
-    Returns a list containing tuples of "rows" and a datetime object, which in
-    turn contain tuples of "hours" and their weekday number, which
-    contain :py:class:`webuntis.objects.PeriodObject` instances which
-    are happening at the same time.
+    Returns a list containing "rows", which in turn contain "hours", which
+    contain :py:class:`webuntis.objects.PeriodObject` instances which are
+    happening at the same time.
 
-    >>> from webuntis.utils.timetable_utils import table
-    >>> table(s.timetable(klasse=109))
+    Example::
+
+        # monday and friday belong to the same week
+
+        hours = s.timetable(start=monday, end=friday)
+        table = webuntis.utils.timetable_utils.table(hours)
+
+        print('<table><thead>')
+        for weekday in range(5):
+            print('<th>' + weekday + '</th>')
+
+        print('</thead><tbody>')
+        for time, row in table:
+            for weekday_number, cell in row:
+                for hour in cell:
+                    for subject in hour.subjects:
+                        print(subject.name + ', ')
+
+        print('</tbody></table>')
+
+    Gives you HTML like this:
+
+    +--------+--------+--------+--------+--------+
+    | 0      | 1      | 2      | 3      | 4      |
+    +========+========+========+========+========+
+    | ME     | M      | PH     | M      | GSK    |
+    +--------+--------+--------+--------+--------+
+    | M      | BU     | D      | FRA    | D      |
+    +--------+--------+--------+--------+--------+
+    | E      | BU     | FRA    | BU     | E      |
+    +--------+--------+--------+--------+--------+
+    | RK,    | GSK    | E      | ME     | GWK    |
+    | RISL   |        |        |        |        |
+    +--------+--------+--------+--------+--------+
+    | D      | BE     | M      | PH     | PH     |
+    +--------+--------+--------+--------+--------+
+    | FRA    |        |        |        |        |
+    +--------+--------+--------+--------+--------+
+    | INF+   |        |        |        |        |
+    +--------+--------+--------+--------+--------+
+    | INF+   |        |        |        |        |
+    +--------+--------+--------+--------+--------+
+    | BSP    | RKO    |        |        |        |
+    +--------+--------+--------+--------+--------+
+
     '''
 
     if not len(timetable):

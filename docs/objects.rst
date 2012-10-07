@@ -28,6 +28,7 @@ Departments
 Holidays
 ========
 .. autoclass:: HolidayList
+    :members:
 
 .. autoclass:: HolidayObject
     :members:
@@ -42,6 +43,7 @@ Klassen
 Timetables and Periods
 ======================
 .. autoclass:: PeriodList
+    :members:
 
 .. autoclass:: PeriodObject
     :members:
@@ -49,6 +51,7 @@ Timetables and Periods
 Rooms
 =====
 .. autoclass:: RoomList
+    :members:
 
 .. autoclass:: RoomObject
     :members:
@@ -56,6 +59,7 @@ Rooms
 Schoolyears
 ===========
 .. autoclass:: SchoolyearList
+    :members:
 
 .. autoclass:: SchoolyearObject
     :members:
@@ -63,6 +67,7 @@ Schoolyears
 Subjects
 ========
 .. autoclass:: SubjectList
+    :members:
 
 .. autoclass:: SubjectObject
     :members:
@@ -77,6 +82,7 @@ Teachers
 Timegrid and Timeunits
 ======================
 .. autoclass:: TimeunitList
+    :members:
 
 .. autoclass:: TimeunitObject
     :members:

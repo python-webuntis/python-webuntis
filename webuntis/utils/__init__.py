@@ -11,7 +11,7 @@ try:
 except ImportError:
     from ordereddict import OrderedDict  # from dependency "ordereddict"
 
-from . import datetime_utils, option_utils
+from . import datetime_utils, option_utils, timetable_utils
 
 
 class lazyproperty(object):
