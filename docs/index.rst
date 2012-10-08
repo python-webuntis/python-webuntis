@@ -7,7 +7,9 @@ Bindings for WebUntis
 :Project Page: `on GitHub <https://github.com/untitaker/python-webuntis>`_
 :License: :doc:`new-style BSD <license>`
 
-`python-webuntis` is a package for the API of `WebUntis <http://www.grupet.at>`_, a timetable system used for schools all around Europe. It is compatible with Python >= 2.6::
+`python-webuntis` is a package for the API of `WebUntis
+<http://www.grupet.at>`_, a timetable system used for schools all around
+Europe. It is compatible with Python >= 2.6::
 
     import webuntis
 

@@ -15,7 +15,7 @@ def table(periods, include_cancelled=False):
 
     :param timetable: A :py:class:`webuntis.objects.PeriodList` instance.
     :param include_cancelled: Defaults to false, defines whether cancelled
-    periods should be included in the timetable.
+           periods should be included in the timetable.
 
     Returns a list containing "rows", which in turn contain "hours", which
     contain :py:class:`webuntis.objects.PeriodObject` instances which are

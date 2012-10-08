@@ -12,11 +12,17 @@ Timetable Utils
 Options
 ============
 
-In an instance of :py:class:`webuntis.session.Session`, a dictionary-like object is created. It accepts the following keys:
+In an instance of :py:class:`webuntis.session.Session`, a dictionary-like
+object named ``options`` is created. It accepts the following keys:
 
-  - *credentials*: A dictionary containing *username* and  *password*. Before the session is used, :py:meth:`webuntis.session.JSONRPCSession.login` must be called, in order to add a *jsessionid* key, which will be deleted when calling :py:meth:`webuntis.session.JSONRPCSession.logout`.
+  - *credentials*: A dictionary containing *username* and  *password*. Before
+    the session is used, :py:meth:`webuntis.session.JSONRPCSession.login` must
+    be called, in order to add a *jsessionid* key, which will be deleted when
+    calling :py:meth:`webuntis.session.JSONRPCSession.logout`.
     
-    In theory, you can obtain the jsessionid yourself and add it to the *credentials* dictionary. In this case, the other two keys are obviously not needed.
+    In theory, you can obtain the jsessionid yourself and add it to the
+    *credentials* dictionary. In this case, the other two keys are obviously
+    not needed.
 
   - *school*: A string containing a valid school name.
 
@@ -39,14 +45,15 @@ In an instance of :py:class:`webuntis.session.Session`, a dictionary-like object
 
   - *useragent*: A string containing a useragent.
     
-    Please include useful information, such as an email address, for the server maintainer. Just like you would do with the HTTP useragents of bots.
+    Please include useful information, such as an email address, for the server
+    maintainer. Just like you would do with the HTTP useragents of bots.
 
 Caching
 =======
 
-python-webuntis implements a LRU Cache which caches the latest 20 requests per default. You can set the length with::
+python-webuntis implements a LRU Cache which caches the latest 20 requests per
+default. You can set the length with::
 
     s = webuntis.Session(..., cachelen=40)
 
 Setting it to `0` obviously disables the cache.
-
