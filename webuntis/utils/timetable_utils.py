@@ -9,13 +9,13 @@ from __future__ import unicode_literals
 import itertools
 
 
-def table(periods, include_cancelled=False):
+def table(periods):
     '''
     Creates a table-like nested list out of a list of periods.
 
-    :param timetable: A :py:class:`webuntis.objects.PeriodList` instance.
-    :param include_cancelled: Defaults to false, defines whether cancelled
-           periods should be included in the timetable.
+    :param timetable: A :py:class:`webuntis.objects.PeriodList` instance or any
+    other iterable containing :py:class:`webuntis.objects.PeriodObject`
+    instances.
 
     Returns a list containing "rows", which in turn contain "hours", which
     contain :py:class:`webuntis.objects.PeriodObject` instances which are
@@ -79,9 +79,6 @@ def table(periods, include_cancelled=False):
 
     if not len(periods):
         return []
-
-    if not include_cancelled:
-        periods = (period for period in periods if period.type != 'cancelled')
 
     time = lambda x: int(x.start.strftime('%H%M%S'))
     date = lambda x: int(x.start.strftime('%Y%m%d'))
