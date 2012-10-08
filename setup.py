@@ -23,7 +23,7 @@ setup(
     version='0.1.3',
     author='Markus Unterwaditzer',
     author_email='markus@unterwaditzer.net',
-    packages=['webuntis', 'webuntis.tests'],
+    packages=['webuntis', 'webuntis.utils', 'webuntis.tests'],
     include_package_data=True,
     url='http://dev.unterwaditzer.net/python-webuntis/',
     license='new-style BSD',
