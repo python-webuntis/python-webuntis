@@ -43,3 +43,15 @@ From latest commit in master
 If you want to remove the -dev flag in the version for whatever reason, replace the last line with::
 
     python setup.py release install
+
+ 
+Unittests
+=========
+
+The unittests need `mock <http://www.voidspace.org.uk/python/mock/>`_ and `nose <https://nose.readthedocs.org/en/latest/index.html>`_ installed.
+
+You can run the default testsuites using::
+
+    $ nosetests
+
+For the single testsuites and their descriptions, look at the docstrings of the modules in ``webuntis.tests``.

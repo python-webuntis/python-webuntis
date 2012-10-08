@@ -66,17 +66,3 @@ default. You can set the length with::
     s = webuntis.Session(..., cachelen=40)
 
 Setting it to `0` obviously disables the cache.
-
-Unittests
-=========
-
-.. module:: webuntis.tests
-
-
-The unittests need `mock <http://www.voidspace.org.uk/python/mock/>`_ and `nose <https://nose.readthedocs.org/en/latest/index.html>`_ installed.
-
-You can run the default testsuites using::
-
-    $ nosetests
-
-For the single testsuites and their descriptions, look at the docstrings of the modules in :py:mod:`webuntis.tests`.
