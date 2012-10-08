@@ -35,8 +35,8 @@ def table(periods, include_cancelled=False):
         print('</thead><tbody>')
         for time, row in table:
             for weekday_number, cell in row:
-                for hour in cell:
-                    for subject in hour.subjects:
+                for period in cell:
+                    for subject in period.subjects:
                         print(subject.name + ', ')
 
         print('</tbody></table>')
