@@ -307,7 +307,7 @@ class PeriodObject(ListItem):
           - ``"irregular"`` -- Substitution/"Supplierung"/Not planned event
         '''
 
-        return self._data['lstype'] if 'lstype' in self._data else None
+        return (self._data['code'] if 'code' in self._data else None)
 
 
 class PeriodList(ListResult):
