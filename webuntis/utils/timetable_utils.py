@@ -23,21 +23,30 @@ def table(periods, include_cancelled=False):
 
     Example::
 
-        # monday and friday belong to the same week
+        monday = datetime.datetime.strptime('20121008', '%Y%m%d')
+        friday = datetime.datetime.strptime('20121012', '%Y%m%d')
 
-        hours = s.timetable(start=monday, end=friday)
-        table = webuntis.utils.timetable_utils.table(hours)
+        table = s.timetable(klasse=878, start=monday, end=friday).to_table()
+
 
         print('<table><thead>')
         for weekday in range(5):
-            print('<th>' + weekday + '</th>')
+            print('<th>' + str(weekday) + '</th>')
 
         print('</thead><tbody>')
         for time, row in table:
+            print('<tr>')
             for weekday_number, cell in row:
-                for period in cell:
-                    for subject in period.subjects:
-                        print(subject.name + ', ')
+                print('<td>')
+                for hour in cell:
+                    print('<small>' + str(hour.type) + ', ' + str(hour.id) + '</small>')
+                    print('<div>')
+                    print(', '.join(su.name for su in hour.subjects))
+                    print('</div>')
+
+                print('</td>')
+
+            print('</tr>')
 
         print('</tbody></table>')
 
