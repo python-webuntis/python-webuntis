@@ -2,6 +2,10 @@
 Etc
 ===
 
+Here is random stuff that doesn't fit anywhere else.
+
+.. module:: webuntis.utils
+
 Timetable Utils
 ===============
 
@@ -9,8 +13,13 @@ Timetable Utils
 
 .. autofunction:: table
 
+.. module:: datetime_utils
+    :members:
+
 Options
 ============
+
+.. module:: webuntis.utils.option_utils
 
 In an instance of :py:class:`webuntis.session.Session`, a dictionary-like
 object named ``options`` is created. It accepts the following keys:
@@ -57,3 +66,17 @@ default. You can set the length with::
     s = webuntis.Session(..., cachelen=40)
 
 Setting it to `0` obviously disables the cache.
+
+Unittests
+=========
+
+.. module:: webuntis.tests
+
+
+The unittests need `mock <http://www.voidspace.org.uk/python/mock/>`_ and `nose <https://nose.readthedocs.org/en/latest/index.html>`_ installed.
+
+You can run the default testsuites using::
+
+    $ nosetests
+
+For the single testsuites and their descriptions, look at the docstrings of the modules in :py:mod:`webuntis.tests`.

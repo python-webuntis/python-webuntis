@@ -2,7 +2,7 @@
 Session
 =======
 
-.. currentmodule:: webuntis.session
+.. module:: webuntis.session
 
 .. autoclass:: JSONRPCSession
     :members:
