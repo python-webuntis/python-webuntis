@@ -21,6 +21,11 @@ and its API:
       write the teacher's initials in it. Testing is the only sane way out of
       this.
 
+    - **Don't like something about the usage of my package?** Please, `let me
+      know! <https://github.com/untitaker/python-webuntis/issues/new>`_ I don't
+      want python-webuntis to become as inconsistent and *weird* as the API it
+      is wrapping.
+
 Are you still reading? Okay, let's install the webuntis package::
 
     pip install webuntis
