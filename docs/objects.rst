@@ -7,90 +7,92 @@ Objects and Models
 Base Classes
 ============
 .. autoclass:: Result
-    :members:
+  :members:
 
 
 .. autoclass:: ListResult
-    :members:
+  :members:
 
 
 .. autoclass:: ListItem
-    :members:
+  :members:
+
 
 Departments
 ===========
 .. autoclass:: DepartmentList
-    :members:
+  :members:
 
 .. autoclass:: DepartmentObject
-    :members:
+  :members:
 
 Holidays
 ========
 .. autoclass:: HolidayList
-    :members:
+  :members:
 
 .. autoclass:: HolidayObject
-    :members:
+  :members:
 
 Klassen
 =======
 .. autoclass:: KlassenList
 
 .. autoclass:: KlassenObject
-    :members:
+  :members:
 
 Timetables and Periods
 ======================
 .. autoclass:: PeriodList
-    :members:
+  :members:
 
 .. autoclass:: PeriodObject
-    :members:
+  :members:
 
 Rooms
 =====
 .. autoclass:: RoomList
-    :members:
+  :members:
 
 .. autoclass:: RoomObject
-    :members:
+  :members:
 
 Schoolyears
 ===========
 .. autoclass:: SchoolyearList
-    :members:
+  :members:
 
 .. autoclass:: SchoolyearObject
-    :members:
+  :members:
 
 Subjects
 ========
 .. autoclass:: SubjectList
-    :members:
+  :members:
 
 .. autoclass:: SubjectObject
-    :members:
+  :members:
 
 Teachers
 ========
 .. autoclass:: TeacherList
+  :members:
 
 .. autoclass:: TeacherObject
-    :members:
+  :members:
 
 Timegrid and Timeunits
 ======================
 .. autoclass:: TimeunitList
-    :members:
+  :members:
 
 .. autoclass:: TimeunitObject
-    :members:
+  :members:
 
 Lesson Types and Period Codes
 ==============================
 .. autoclass:: StatusData
-    :members:
+  :members:
 
 .. autoclass:: ColorInfo
-    :members:
+  :members:

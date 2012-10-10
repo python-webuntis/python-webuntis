@@ -13,9 +13,6 @@ Timetable Utils
 
 .. autofunction:: table
 
-.. module:: datetime_utils
-    :members:
-
 Options
 ============
 
@@ -24,18 +21,18 @@ Options
 In an instance of :py:class:`webuntis.session.Session`, a dictionary-like
 object named ``options`` is created. It accepts the following keys:
 
-  - *credentials*: A dictionary containing *username* and  *password*. Before
+  - ``credentials``: A dictionary containing ``username`` and  ``password``. Before
     the session is used, :py:meth:`webuntis.session.JSONRPCSession.login` must
-    be called, in order to add a *jsessionid* key, which will be deleted when
+    be called, in order to add a ``jsessionid`` key, which will be deleted when
     calling :py:meth:`webuntis.session.JSONRPCSession.logout`.
     
     In theory, you can obtain the jsessionid yourself and add it to the
-    *credentials* dictionary. In this case, the other two keys are obviously
+    ``credentials`` dictionary. In this case, the other two keys are obviously
     not needed.
 
-  - *school*: A string containing a valid school name.
+  - ``school``: A string containing a valid school name.
 
-  - *server*: A string containing a host name, a URL, or a URL without path::
+  - ``server``: A string containing a host name, a URL, or a URL without path::
 
         >>> s.options['server'] = 'thalia.webuntis.com'
         >>> s.options['server']
@@ -50,9 +47,9 @@ object named ``options`` is created. It accepts the following keys:
         >>> s.options['server']
         'http://thalia.webuntis.com/'
         >>> s.options['server'] = '!"$%/WebUntis/jsonrpc.do'
-        ValueError
+        Traceback blah blah something ValueError
 
-  - *useragent*: A string containing a useragent.
+  - ``useragent``: A string containing a useragent.
     
     Please include useful information, such as an email address, for the server
     maintainer. Just like you would do with the HTTP useragents of bots.
@@ -65,4 +62,14 @@ default. You can set the length with::
 
     s = webuntis.Session(..., cachelen=40)
 
-Setting it to `0` obviously disables the cache.
+Setting it to ``0`` obviously disables the cache.
+
+Errors and Exceptions
+=====================
+
+`python-webuntis` tries to cover as many error codes recieved by the API as possible.
+
+.. automodule:: webuntis.errors
+    :members:
+    :show-inheritance:
+    :member-order: bysource

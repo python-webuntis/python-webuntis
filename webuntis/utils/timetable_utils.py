@@ -14,12 +14,12 @@ def table(periods):
     Creates a table-like nested list out of a list of periods.
 
     :param timetable: A :py:class:`webuntis.objects.PeriodList` instance or any
-    other iterable containing :py:class:`webuntis.objects.PeriodObject`
-    instances.
+        other iterable containing :py:class:`webuntis.objects.PeriodObject`
+        instances.
 
-    Returns a list containing "rows", which in turn contain "hours", which
-    contain :py:class:`webuntis.objects.PeriodObject` instances which are
-    happening at the same time.
+    :returns: A list containing "rows", which in turn contain "hours", which
+        contain :py:class:`webuntis.objects.PeriodObject` instances which are
+        happening at the same time.
 
     Example::
 

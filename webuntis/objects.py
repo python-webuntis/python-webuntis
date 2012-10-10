@@ -218,10 +218,11 @@ class KlassenList(ListResult):
         id of it.
 
     ::
-        >>> s.klassen()
-        >>>
-        >>> year = s.schoolyears().filter(id=2)
-        >>> s.klassen(schoolyear=year)
+
+        s.klassen()
+
+        year = s.schoolyears().filter(id=2)
+        s.klassen(schoolyear=year)
 
     '''
     _itemclass = KlassenObject
@@ -327,6 +328,8 @@ class PeriodList(ListResult):
         s.timetable(klasse=schoolclass)  # which is the same as...
         s.periods(klasse=schoolclass)
 
+    :raises: :py:class:`builtins.ValueError` -- if something was wrong with the
+        arguments supplied.
     '''
     _itemclass = PeriodObject
     _jsonrpc_method = 'getTimetable'

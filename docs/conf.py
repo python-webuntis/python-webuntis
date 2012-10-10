@@ -251,3 +251,12 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
+
+
+# http://stackoverflow.com/a/8415805
+def skip_modules_docstring(app, what, name, obj, options, lines):
+    if what == 'module':
+        del lines[:]
+
+def setup(app):
+    app.connect('autodoc-process-docstring', skip_modules_docstring)

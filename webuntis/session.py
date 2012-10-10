@@ -26,10 +26,19 @@ except ImportError:
 
 
 class JSONRPCSession(object):
-    '''Contains the functions for not much more than a simple JSON-RPC Session.
-    Can be used as a context-handler.
-    '''
+    '''Lower-level version of :py:class:`Session`. Do not use this.'''
+
     options = None
+    '''Contains a options dict upon initialization. See
+    :py:class:`webuntis.utils.option_utils` for more information.'''
+
+    _errorcodes = {
+        -32601: errors.MethodNotFoundError,
+        -8504: errors.BadCredentialsError,
+        -8520: errors.NotLoggedInError
+    }
+    '''This lists the API-errorcodes python-webuntis is able to interpret,
+    together with the exception that will be thrown.'''
 
     def __init__(self, **kwargs):
         # The OptionStore is an extended dictionary, associating validators
@@ -72,17 +81,21 @@ class JSONRPCSession(object):
         '''
         Log out of session
 
-        :param suppress_errors: boolean, whether to not raise an error if we
+        :param suppress_errors: boolean, whether to suppress errors if we
             already were logged out.
+
+        :raises: :py:class:`webuntis.errors.NotLoggedInError`
         '''
         # Send a JSON-RPC 'logout' method without parameters to log out
         try:
-            self.options['credentials']['jsessionid']  # aborts if we don't have creds
+            # aborts if we don't have creds
+            self.options['credentials']['jsessionid']
+
             self._make_request('logout')
             del self.options['credentials']['jsessionid']
         except KeyError as e:
             if not suppress_errors:
-                raise e
+                raise errors.NotLoggedInError('We already were logged out.')
 
     def login(self):
         '''Initializes an authentication, provided we have the credentials for
@@ -92,6 +105,9 @@ class JSONRPCSession(object):
             chaining::
 
                 s = webuntis.Session(...).login()
+
+        :raises: :py:class:`webuntis.errors.BadCredentialsError`
+        :raises: :py:class:`webuntis.errors.AuthError`
         '''
 
         if 'username' not in self.options['credentials'] \
@@ -114,7 +130,10 @@ class JSONRPCSession(object):
             self.options['credentials']['jsessionid'] = res['sessionId']
             logging.debug(self.options['credentials']['jsessionid'])
         else:
-            raise errors.AuthError('Something went wrong while authenticating', res)
+            raise errors.AuthError(
+                'Something went wrong while authenticating',
+                res
+            )
 
         return self
 
@@ -126,6 +145,23 @@ class JSONRPCSession(object):
             self._cache[key] = self._make_request(method, params)
         return self._cache[key]
 
+    def _handle_json_error(self, req_data, res_data):
+        '''Given the request and response objects, this raises the appropriate
+        exceptions.'''
+        logging.error(res_data)
+        try:
+            error = res_data['error']
+            your_weapon = self._errorcodes[error['code']](error['message'])
+        except KeyError:
+            your_weapon = errors.RemoteError(
+                'Some JSON-RPC-ish error happened. Please report this to the \
+developer so he can implement a proper handling.',
+                str(res_data),
+                str(req_data)
+            )
+
+        raise your_weapon
+
     def _make_request(self, method, params=None):
         '''
         A method for sending a JSON-RPC request.
@@ -133,8 +169,8 @@ class JSONRPCSession(object):
         :param method: The JSON-RPC method to be executed
         :type method: str
 
-        :param params: JSON-RPC parameters to the method \
-                (should be JSON serializable)
+        :param params: JSON-RPC parameters to the method (should be JSON
+        serializable)
         :type params: dict
         '''
 
@@ -194,17 +230,12 @@ class JSONRPCSession(object):
         elif 'result' in res_data:
             return res_data['result']
         else:
-            logging.error(res_data)
-            raise errors.RemoteError(
-                'Some JSON-RPC-ish error happened',
-                str(res_data),
-                str(req_data)
-            )
+            self._handle_json_error(req_data, res_data)
 
 
 class Session(JSONRPCSession):
-    '''Provides an abstraction layer above the JSON-RPC Instance.
-    '''
+    '''The origin of everything you want to do with the WebUntis API. Can be
+    used as a context-handler.'''
 
     def __getattr__(self, name):
         '''Returns a callable which creates an instance (or reuses an old one)
