@@ -114,15 +114,10 @@ with-statement, which you also can use to log yourself out automatically::
 Where to go from here?
 ======================
 
-*  :doc:`session`
-
-   This document provides a good starting point. It describes the only class
-   you directly instantiate.
-
-*  :doc:`objects`
-
-   A complete overview of things you can do with the API
-
-*  :doc:`etc`
-
-   Some implementation details and neat tricks.
+:doc:`session`
+       This document provides a good starting point. It describes the only class
+       you directly instantiate.
+:doc:`objects`
+       A complete overview of things you can do with the API.
+:doc:`etc`
+       Some implementation details and neat tricks.
