@@ -103,9 +103,10 @@ class ListResult(Result):
 
         ::
         '''
+        criterions = list(criterions.items())
         def meets_criterions(item):
             '''Returns true if the item meets the criterions'''
-            for key, value in criterions.items():
+            for key, value in criterions:
                 # if the attribute value isn't one we're looking for
                 attribute = getattr(item, key)
                 if attribute == value:
@@ -334,9 +335,12 @@ class PeriodList(ListResult):
     _itemclass = PeriodObject
     _jsonrpc_method = 'getTimetable'
 
-    def to_table(self):
-        '''A shortcut for :py:func:`webuntis.utils.timetable_utils.table`'''
-        return timetable_utils.table(self)
+    def to_table(self, *args, **kwargs):
+        '''A shortcut for :py:func:`webuntis.utils.timetable_utils.table`.
+        Given arguments will be passed to that function.
+        '''
+
+        return timetable_utils.table(self, *args, **kwargs)
 
     def _jsonrpc_parameters(self, start=None, end=None, **type_and_id):
         element_type_table = {

@@ -235,6 +235,20 @@ class BasicUsageTests(OfflineTestCase):
 
 class InternalTests(OfflineTestCase):
     '''Tests certain areas of the whole package, such as the utils'''
+
+    def test_is_iterable_util(self):
+        tests = [
+            ((), True),
+            (None, False),
+            ([], True),
+            ({}, True),
+            ("FOO", True),
+            (123, False)
+        ]
+
+        for given_input, expected_output in tests:
+            self.assertEqual(utils.is_iterable(given_input), expected_output)
+
     def test_options_invalidattribute(self):
         self.assertFalse('nigglywiggly' in self.session.options)
         self.assertRaises(

@@ -9,13 +9,17 @@ from __future__ import unicode_literals
 import itertools
 
 
-def table(periods):
+def table(periods, width=None):
     '''
     Creates a table-like nested list out of a list of periods.
 
     :param timetable: A :py:class:`webuntis.objects.PeriodList` instance or any
         other iterable containing :py:class:`webuntis.objects.PeriodObject`
         instances.
+
+    :param width: Optionally, a fixed width for the table. The function will
+        fill every row with empty cells until that width is met. If the timetable
+        is too big, it will raise a ``ValueError``.
 
     :returns: A list containing "rows", which in turn contain "hours", which
         contain :py:class:`webuntis.objects.PeriodObject` instances which are
@@ -109,7 +113,10 @@ def table(periods):
         times.append(starttime)
 
     # expand each row to the maximal length
-    longest_row = len(max(grouped, key=len))
+    if not width:
+        longest_row = len(max(grouped, key=len))
+    else:
+        longest_row = width
     for row in grouped:
         while len(row) < longest_row:
             row.append(list())
