@@ -2,6 +2,14 @@
 Changelog
 =========
 
+* 0.1.4:
+
+    * Updates to match changes in API.
+
+    * Better docs.
+
+    * Less bugs.
+
 * 0.1.3:
 
     * Bugfix: Would crash at midnight times.
