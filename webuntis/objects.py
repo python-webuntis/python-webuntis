@@ -101,6 +101,10 @@ class ListResult(Result):
             bar = s.klassen().filter(id=(1,2,3,4))  # is the same as...
             bar = [kl for kl in s.klassen() if kl.id in (1,2,3,4)]
 
+        .. note::
+            This is only available because it looks nicer than list
+            comprehensions or generator expressions. Depending on your usecase
+            alternatives to this method may be faster.
         ::
         '''
         criterions = list(criterions.items())
