@@ -6,9 +6,8 @@
     :license: BSD, see LICENSE for more details.
 '''
 
-from setuptools import setup, find_packages
+from setuptools import setup
 from sys import version_info
-import pkg_resources
 
 dependencies = []
 
@@ -32,11 +31,14 @@ setup(
     install_requires=dependencies,
     classifiers=[
         'Intended Audience :: Developers',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Operating System :: OS Independent',
         'License :: OSI Approved :: BSD License',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: Implementation :: PyPy'
     ],
     test_suite='webuntis.tests'

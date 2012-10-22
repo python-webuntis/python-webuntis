@@ -93,7 +93,7 @@ class JSONRPCSession(object):
 
             self._make_request('logout')
             del self.options['credentials']['jsessionid']
-        except KeyError as e:
+        except KeyError:
             if not suppress_errors:
                 raise errors.NotLoggedInError('We already were logged out.')
 
