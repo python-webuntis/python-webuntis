@@ -27,11 +27,11 @@ def table(periods, width=None):
 
     Example::
 
-        monday = datetime.datetime.strptime('20121008', '%Y%m%d')
-        friday = datetime.datetime.strptime('20121012', '%Y%m%d')
+        today = datetime.datetime.today()
+        monday = today - datetime.timedelta(days=today.weekday())
+        friday = monday + datetime.timedelta(days=4)
 
-        table = s.timetable(klasse=878, start=monday, end=friday).to_table()
-
+        table = s.timetable(klasse=878, start=monday, end=friday).to_table(width=5)
 
         print('<table><thead>')
         for weekday in range(5):
@@ -43,7 +43,6 @@ def table(periods, width=None):
             for weekday_number, cell in row:
                 print('<td>')
                 for hour in cell:
-                    print('<small>' + str(hour.type) + ', ' + str(hour.id) + '</small>')
                     print('<div>')
                     print(', '.join(su.name for su in hour.subjects))
                     print('</div>')
@@ -62,15 +61,21 @@ def table(periods, width=None):
     | ME     | M      | PH     | M      | GSK    |
     +--------+--------+--------+--------+--------+
     | M      | BU     | D      | FRA    | D      |
+    |        |        |        | LAT    |        |
+    |        |        |        | SPA    |        |
     +--------+--------+--------+--------+--------+
     | E      | BU     | FRA    | BU     | E      |
+    |        |        | LAT    |        |        |
+    |        |        | SPA    |        |        |
     +--------+--------+--------+--------+--------+
-    | RK,    | GSK    | E      | ME     | GWK    |
+    | RK     | GSK    | E      | ME     | GWK    |
     | RISL   |        |        |        |        |
     +--------+--------+--------+--------+--------+
     | D      | BE     | M      | PH     | PH     |
     +--------+--------+--------+--------+--------+
     | FRA    |        |        |        |        |
+    | LAT    |        |        |        |        |
+    | SPA    |        |        |        |        |
     +--------+--------+--------+--------+--------+
     | INF+   |        |        |        |        |
     +--------+--------+--------+--------+--------+
@@ -113,10 +118,13 @@ def table(periods, width=None):
         times.append(starttime)
 
     # expand each row to the maximal length
-    if not width:
-        longest_row = len(max(grouped, key=len))
-    else:
-        longest_row = width
+    longest_row = len(max(grouped, key=len))
+
+    if width and longest_row > width:
+        raise ValueError('Fixed width too small. Need at least ' + str(longest_row))
+
+    longest_row = width
+
     for row in grouped:
         while len(row) < longest_row:
             row.append(list())
