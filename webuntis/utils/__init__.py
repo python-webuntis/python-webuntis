@@ -6,6 +6,13 @@
 '''
 
 from __future__ import unicode_literals
+
+try:
+    unicode
+except NameError:
+    # Python 3
+    basestring = unicode = str
+
 try:
     from collections import OrderedDict  # Python >= 2.7
 except ImportError:
@@ -89,11 +96,10 @@ class FilterDict(dict):
         for key, value in dict(*args, **kwargs).items():
             self.__setitem__(key, value)
 
-
 def is_iterable(obj):
     try:
         iter(obj)
     except TypeError:
         return False
     else:
-        return True
+        return not isinstance(obj, basestring)

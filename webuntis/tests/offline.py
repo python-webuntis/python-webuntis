@@ -242,7 +242,8 @@ class InternalTests(OfflineTestCase):
             (None, False),
             ([], True),
             ({}, True),
-            ("FOO", True),
+            ("FOO", False),
+            (str("FOO"), False),
             (123, False)
         ]
 
