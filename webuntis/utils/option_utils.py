@@ -16,7 +16,6 @@ except ImportError:
 def careless_parser(value):
     return value
 
-
 def credentials_parser(creds):
     if 'username' in creds and 'password' in creds \
        and creds['username'] and creds['password']:
@@ -69,5 +68,6 @@ option_parsers = {
     'credentials': credentials_parser,
     'school': careless_parser,
     'server': server_parser,
-    'useragent': careless_parser
+    'useragent': careless_parser,
+    'keep_session_alive': bool
 }

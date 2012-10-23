@@ -30,15 +30,11 @@ class JSONRPCSession(object):
 
     options = None
     '''Contains a options dict upon initialization. See
-    :py:class:`webuntis.utils.option_utils` for more information.'''
+    :py:class:`webuntis.utils.option_utils` for more information.
+    '''
 
-    _errorcodes = {
-        -32601: errors.MethodNotFoundError,
-        -8504: errors.BadCredentialsError,
-        -8520: errors.NotLoggedInError
-    }
-    '''This lists the API-errorcodes python-webuntis is able to interpret,
-    together with the exception that will be thrown.'''
+    _cache = None
+    '''Contains the caching dictionary for requests.'''
 
     def __init__(self, **kwargs):
         # The OptionStore is an extended dictionary, associating validators
@@ -51,7 +47,8 @@ class JSONRPCSession(object):
             'username': None,
             'password': None,
             'jsessionid': None,
-            'cachelen': 20
+            'cachelen': 20,  # Not implemented in LruDict
+            'keep_session_alive': True
         }
         options.update(kwargs)
 
@@ -63,7 +60,8 @@ class JSONRPCSession(object):
                 'username': options['username'],
                 'password': options['password'],
                 'jsessionid': options['jsessionid']
-            }
+            },
+            'keep_session_alive': options['keep_session_alive']
         })
         if options['cachelen'] > 0:
             self._cache = utils.LruDict(maxlen=options['cachelen'])
@@ -138,29 +136,25 @@ class JSONRPCSession(object):
         return self
 
     def _request(self, method, params=None):
-        '''A wrapper for _make_request implementing a LRU Cache'''
-        key = (method, hash(tuple(params or {})))
+        '''A wrapper for _make_request using the LRU Cache'''
 
-        if key not in self._cache:
-            self._cache[key] = self._make_request(method, params)
-        return self._cache[key]
+        if self._cache is None:
+            return self._make_request(method, params)
+        else:
+            key = (method, hash(tuple(params or {})))
+            if key not in self._cache:
+                self._cache[key] = self._make_request(method, params)
+            return self._cache[key]
 
-    def _handle_json_error(self, req_data, res_data):
-        '''Given the request and response objects, this raises the appropriate
-        exceptions.'''
-        logging.error(res_data)
-        try:
-            error = res_data['error']
-            your_weapon = self._errorcodes[error['code']](error['message'])
-        except KeyError:
-            your_weapon = errors.RemoteError(
-                'Some JSON-RPC-ish error happened. Please report this to the \
-developer so he can implement a proper handling.',
-                str(res_data),
-                str(req_data)
-            )
+    _errorcodes = {
+        -32601: errors.MethodNotFoundError,
+        -8504: errors.BadCredentialsError,
+        -8520: errors.NotLoggedInError
+    }
+    '''This lists the API-errorcodes python-webuntis is able to interpret,
+    together with the exception that will be thrown.'''
 
-        raise your_weapon
+
 
     def _make_request(self, method, params=None):
         '''
@@ -173,6 +167,27 @@ developer so he can implement a proper handling.',
         serializable)
         :type params: dict
         '''
+
+        def _handle_json_error():
+            '''A helper function for handling JSON error codes.'''
+            logging.error(res_data)
+            try:
+                error = res_data['error']
+                exc = self._errorcodes[error['code']](error['message'])
+            except KeyError:
+                exc = errors.RemoteError(
+                    'Some JSON-RPC-ish error happened. Please report this to the \
+    developer so he can implement a proper handling.',
+                    str(res_data),
+                    str(req_data)
+                )
+
+            if type(exc) is errors.NotLoggedInError and self.options['keep_session_alive']:
+                self.logout(suppress_errors=True)
+                self.login()
+                return self._make_request(method, params)
+            else:
+                raise exc
 
         url = self.options['server']
         url += '?school=' + self.options['school']
@@ -230,7 +245,7 @@ developer so he can implement a proper handling.',
         elif 'result' in res_data:
             return res_data['result']
         else:
-            self._handle_json_error(req_data, res_data)
+            return handle_json_error(req_data, res_data)
 
 
 class Session(JSONRPCSession):

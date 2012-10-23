@@ -18,8 +18,10 @@ Options
 
 .. module:: webuntis.utils.option_utils
 
-In an instance of :py:class:`webuntis.session.Session`, a dictionary-like
-object named ``options`` is created. It accepts the following keys:
+Configuration options can be set with keyword arguments when initializing
+_:py:class:`webuntis.session.Session`. Unless noted otherwise, they get saved
+in a dictionary located in the instance's ``options`` attribute and can be
+modified afterwards.
 
   - ``credentials``: A dictionary containing ``username`` and  ``password``. Before
     the session is used, :py:meth:`webuntis.session.JSONRPCSession.login` must
@@ -54,15 +56,11 @@ object named ``options`` is created. It accepts the following keys:
     Please include useful information, such as an email address, for the server
     maintainer. Just like you would do with the HTTP useragents of bots.
 
-Caching
-=======
+  - ``cachelen``: Amount of API requests kept in cache. Default to 20. Isn't
+    saved in the ``options`` object and cannot be modified afterwards.
 
-python-webuntis implements a LRU Cache which caches the latest 20 requests per
-default. You can set the length with::
-
-    s = webuntis.Session(..., cachelen=40)
-
-Setting it to ``0`` obviously disables the cache.
+  - ``keep_session_alive``: Boolean, whether or not to re-login when the
+    session has expired. Enabled by default.
 
 Errors and Exceptions
 =====================

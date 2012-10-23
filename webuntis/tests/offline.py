@@ -259,7 +259,7 @@ class InternalTests(OfflineTestCase):
         )
 
     def test_options_isempty(self):
-        self.assertEqual(self.session.options, {'useragent': 'foobar'})
+        self.assertEqual(self.session.options, {'useragent': 'foobar', 'keep_session_alive': True})
 
     def test_datetime_utils(self):
         obj = utils.datetime_utils.parse_datetime(20121005, 0)
@@ -449,26 +449,3 @@ class InternalTests(OfflineTestCase):
 
         self.assertRaises(ValueError, parambuilder, {})
         self.assertRaises(ValueError, parambuilder, {'foobar': 123})
-
-    def test_handle_json_error_general(self):
-        for code, exception in self.session._errorcodes.items():
-            msg = 'FooBar'
-            try:
-                self.session._handle_json_error(
-                    {},
-                    {'error': {'message': msg, 'code': code}}
-                )
-            except BaseException as e:
-                self.assertEqual(type(e), exception)
-                self.assertEqual(e.msg, msg)
-            else:
-                self.fail("Didn't raise exception:", exception)
-
-    def test_handle_json_error_misc(self):
-        def raiser():
-            raise webuntis.errors.MethodNotFoundError
-
-        self.assertRaises(
-            webuntis.errors.RemoteError,
-            raiser
-        )
