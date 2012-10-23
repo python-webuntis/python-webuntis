@@ -25,138 +25,29 @@ except ImportError:
     import simplejson as json  # from dependency "simplejson"
 
 
-class JSONRPCSession(object):
-    '''Lower-level version of :py:class:`Session`. Do not use this.'''
+class JSONRPCRequest(object):
+    def __init__(self, session, method, params=None):
+        self._session = session
+        self._method = method
+        self._params = params or {}
 
-    options = None
-    '''Contains a options dict upon initialization. See
-    :py:class:`webuntis.utils.option_utils` for more information.
-    '''
+    def request(self):
+        data = None
+        i = 0
+        while data is None and i <= self._session.options['login_repeat']:
+            i += 1
+            try:
+                data = self._make_request()
+            except errors.NotLoggedInError as e:
+                if self._session.options['login_repeat'] > 0:
+                    self._session.logout(suppress_errors=True)
+                    self._session.login()
+                else:
+                    raise e
 
-    _cache = None
-    '''Contains the caching dictionary for requests.'''
+        return data
 
-    def __init__(self, **kwargs):
-        # The OptionStore is an extended dictionary, associating validators
-        # and other helper methods with each key
-        self.options = utils.FilterDict(utils.option_utils.option_parsers)
-        options = {
-            'server': None,
-            'school': None,
-            'useragent': None,
-            'username': None,
-            'password': None,
-            'jsessionid': None,
-            'cachelen': 20,  # Not implemented in LruDict
-            'keep_session_alive': True
-        }
-        options.update(kwargs)
-
-        self.options.update({
-            'server': options['server'],
-            'school': options['school'],
-            'useragent': options['useragent'],
-            'credentials': {
-                'username': options['username'],
-                'password': options['password'],
-                'jsessionid': options['jsessionid']
-            },
-            'keep_session_alive': options['keep_session_alive']
-        })
-        if options['cachelen'] > 0:
-            self._cache = utils.LruDict(maxlen=options['cachelen'])
-
-    def __enter__(self):
-        '''Context-manager'''
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        '''Context-manager -- the only thing we need to clean up is to log out
-        '''
-        self.logout(suppress_errors=True)
-
-    def logout(self, suppress_errors=False):
-        '''
-        Log out of session
-
-        :param suppress_errors: boolean, whether to suppress errors if we
-            already were logged out.
-
-        :raises: :py:class:`webuntis.errors.NotLoggedInError`
-        '''
-        # Send a JSON-RPC 'logout' method without parameters to log out
-        try:
-            # aborts if we don't have creds
-            self.options['credentials']['jsessionid']
-
-            self._make_request('logout')
-            del self.options['credentials']['jsessionid']
-        except KeyError:
-            if not suppress_errors:
-                raise errors.NotLoggedInError('We already were logged out.')
-
-    def login(self):
-        '''Initializes an authentication, provided we have the credentials for
-        it.
-
-        :returns: The session. This is useful for jQuery-like command
-            chaining::
-
-                s = webuntis.Session(...).login()
-
-        :raises: :py:class:`webuntis.errors.BadCredentialsError`
-        :raises: :py:class:`webuntis.errors.AuthError`
-        '''
-
-        if 'username' not in self.options['credentials'] \
-                or 'password' not in self.options['credentials']:
-            raise errors.AuthError('No login data specified.')
-
-        logging.debug('Trying to authenticate with username/password...')
-        logging.debug('Username: ' +
-                      self.options['credentials']['username'] +
-                      ' Password: ' +
-                      self.options['credentials']['password'])
-        res = self._make_request('authenticate', {
-            'user': self.options['credentials']['username'],
-            'password': self.options['credentials']['password'],
-            'client': self.options['useragent']
-        })
-        logging.debug(res)
-        if 'sessionId' in res:
-            logging.debug('Did get a jsessionid from the server:')
-            self.options['credentials']['jsessionid'] = res['sessionId']
-            logging.debug(self.options['credentials']['jsessionid'])
-        else:
-            raise errors.AuthError(
-                'Something went wrong while authenticating',
-                res
-            )
-
-        return self
-
-    def _request(self, method, params=None):
-        '''A wrapper for _make_request using the LRU Cache'''
-
-        if self._cache is None:
-            return self._make_request(method, params)
-        else:
-            key = (method, hash(tuple(params or {})))
-            if key not in self._cache:
-                self._cache[key] = self._make_request(method, params)
-            return self._cache[key]
-
-    _errorcodes = {
-        -32601: errors.MethodNotFoundError,
-        -8504: errors.BadCredentialsError,
-        -8520: errors.NotLoggedInError
-    }
-    '''This lists the API-errorcodes python-webuntis is able to interpret,
-    together with the exception that will be thrown.'''
-
-
-
-    def _make_request(self, method, params=None):
+    def _make_request(self):
         '''
         A method for sending a JSON-RPC request.
 
@@ -182,28 +73,20 @@ class JSONRPCSession(object):
                     str(req_data)
                 )
 
-            if type(exc) is errors.NotLoggedInError and self.options['keep_session_alive']:
-                self.logout(suppress_errors=True)
-                self.login()
-                return self._make_request(method, params)
-            else:
-                raise exc
+            raise exc
 
-        url = self.options['server']
-        url += '?school=' + self.options['school']
+        url = self._session.options['server']
+        url += '?school=' + self._session.options['school']
         cookie_header = True
-        if method == 'authenticate':
+        if self._method == 'authenticate':
             cookie_header = False
-        elif 'jsessionid' not in self.options['credentials']:
+        elif 'jsessionid' not in self._session.options:
             raise errors.AuthError('Don\'t have JSESSIONID. Did you already log out?')
-
-        if not params:
-            params = {}
 
         req_data = {
             'id': str(datetime.datetime.today()),
-            'method': method,
-            'params': params,
+            'method': self._method,
+            'params': self._params,
             'jsonrpc': '2.0'
         }
 
@@ -217,14 +100,14 @@ class JSONRPCSession(object):
             url,
             req_data_json,
             {
-                'User-Agent': self.options['useragent'],
+                'User-Agent': self._session.options['useragent'],
                 'Content-Type': 'application/json'
             }
         )
         if cookie_header:
             req.add_header(
                 'Cookie',
-                'JSESSIONID=' + self.options['credentials']['jsessionid']
+                'JSESSIONID=' + self._session.options['jsessionid']
             )
 
         # this will eventually raise errors, e.g. if there's an unexpected http
@@ -245,7 +128,138 @@ class JSONRPCSession(object):
         elif 'result' in res_data:
             return res_data['result']
         else:
-            return handle_json_error(req_data, res_data)
+            handle_json_error(req_data, res_data)
+
+
+class JSONRPCSession(object):
+    '''Lower-level version of :py:class:`Session`. Do not use this.'''
+
+    options = None
+    '''Contains a options dict upon initialization. See
+    :py:class:`webuntis.utils.option_utils` for more information.
+    '''
+
+    _cache = None
+    '''Contains the caching dictionary for requests.'''
+
+    def __init__(self, **kwargs):
+        # The OptionStore is an extended dictionary, associating validators
+        # and other helper methods with each key
+        self.options = utils.FilterDict(utils.option_utils.options)
+        options = {
+            'server': None,
+            'school': None,
+            'useragent': None,
+            'username': None,
+            'password': None,
+            'jsessionid': None,
+            'cachelen': 20,  # Not implemented in LruDict
+            'login_repeat': 0
+        }
+        options.update(kwargs)
+
+        if options['cachelen'] > 0:
+            self._cache = utils.LruDict(maxlen=options['cachelen'])
+
+        del options['cachelen']
+
+        self.options.update(options)
+
+    def __enter__(self):
+        '''Context-manager'''
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        '''Context-manager -- the only thing we need to clean up is to log out
+        '''
+        self.logout(suppress_errors=True)
+
+    def logout(self, suppress_errors=False):
+        '''
+        Log out of session
+
+        :param suppress_errors: boolean, whether to suppress errors if we
+            already were logged out.
+
+        :raises: :py:class:`webuntis.errors.NotLoggedInError`
+        '''
+        # Send a JSON-RPC 'logout' method without parameters to log out
+        try:
+            # aborts if we don't have creds
+            self.options['jsessionid']
+
+            self._make_request('logout')
+            del self.options['jsessionid']
+        except KeyError:
+            if not suppress_errors:
+                raise errors.NotLoggedInError('We already were logged out.')
+
+    def login(self):
+        '''Initializes an authentication, provided we have the credentials for
+        it.
+
+        :returns: The session. This is useful for jQuery-like command
+            chaining::
+
+                s = webuntis.Session(...).login()
+
+        :raises: :py:class:`webuntis.errors.BadCredentialsError`
+        :raises: :py:class:`webuntis.errors.AuthError`
+        '''
+
+        if 'username' not in self.options \
+                or 'password' not in self.options:
+            raise errors.AuthError('No login data specified.')
+
+        logging.debug('Trying to authenticate with username/password...')
+        logging.debug('Username: ' +
+                      self.options['username'] +
+                      ' Password: ' +
+                      self.options['password'])
+        res = self._make_request('authenticate', {
+            'user': self.options['username'],
+            'password': self.options['password'],
+            'client': self.options['useragent']
+        })
+        logging.debug(res)
+        if 'sessionId' in res:
+            logging.debug('Did get a jsessionid from the server:')
+            self.options['jsessionid'] = res['sessionId']
+            logging.debug(self.options['jsessionid'])
+        else:
+            raise errors.AuthError(
+                'Something went wrong while authenticating',
+                res
+            )
+
+        return self
+
+    def _request(self, method, params=None):
+        '''A wrapper for :py:class:`JSONRPCRequest` using the LRU Cache'''
+
+        if self._cache is None:
+            return self._make_request(method, params)
+        else:
+            key = (method, hash(tuple(params or {})))
+            if key not in self._cache:
+                self._cache[key] = self._make_request(method, params)
+            return self._cache[key]
+
+    def _make_request(self, method, params=None):
+        return JSONRPCRequest(self, method, params).request()
+
+
+    _errorcodes = {
+        -32601: errors.MethodNotFoundError,
+        -8504: errors.BadCredentialsError,
+        -8520: errors.NotLoggedInError
+    }
+    '''This lists the API-errorcodes python-webuntis is able to interpret,
+    together with the exception that will be thrown.'''
+
+
+
+
 
 
 class Session(JSONRPCSession):

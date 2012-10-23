@@ -21,7 +21,7 @@ class TestCaseBase(unittest.TestCase):
 class OfflineTestCase(TestCaseBase):
     def setUp(self):
         self.request_patcher = patcher = mock.patch(
-            'webuntis.Session._make_request',
+            'webuntis.session.JSONRPCRequest._make_request',
             side_effect=Exception('This is an OFFLINE testsuite!')
         )
         patcher.start()

@@ -73,7 +73,7 @@ class FilterDict(dict):
 
     def __getitem__(self, name):
         # check if we got a real Option subclass
-        if name in self and dict.__getitem__(self, name):
+        if name in self and dict.__getitem__(self, name) is not None:
             # every Option subclass has this
             return dict.__getitem__(self, name)
         elif name in self.filters:
@@ -83,7 +83,7 @@ class FilterDict(dict):
 
     def __setitem__(self, key, value):
         new_value = self.filters[key](value)
-        if new_value:
+        if new_value is not None:
             dict.__setitem__(
                 self,
                 key,

@@ -13,24 +13,11 @@ except ImportError:
     import urlparse  # Python 2
 
 
-def careless_parser(value):
+def whatever(value):
     return value
 
-def credentials_parser(creds):
-    if 'username' in creds and 'password' in creds \
-       and creds['username'] and creds['password']:
-        return {
-            'username': creds['username'],
-            'password': creds['password']
-        }
-    elif 'jsessionid' in creds and creds['jsessionid']:
-        return {
-            'jsessionid': creds['jsessionid']
-        }
-    else:
-        return {}
 
-def server_parser(url):
+def server(url):
     if not url:
         return url  # either it's None or we have a dictionary
 
@@ -64,10 +51,18 @@ the end of your "server" parameter.''')
         urlobj.netloc + \
         (urlobj.path or '/WebUntis/jsonrpc.do')
 
-option_parsers = {
-    'credentials': credentials_parser,
-    'school': careless_parser,
-    'server': server_parser,
-    'useragent': careless_parser,
-    'keep_session_alive': bool
+def string(value):
+    if value is None:
+        return None
+
+    return value
+
+options = {
+    'username': string,
+    'password': string,
+    'jsessionid': string,
+    'school': whatever,
+    'server': server,
+    'useragent': whatever,
+    'login_repeat': int
 }

@@ -259,7 +259,7 @@ class InternalTests(OfflineTestCase):
         )
 
     def test_options_isempty(self):
-        self.assertEqual(self.session.options, {'useragent': 'foobar', 'keep_session_alive': True})
+        self.assertEqual(self.session.options, {'useragent': 'foobar', 'login_repeat': 0})
 
     def test_datetime_utils(self):
         obj = utils.datetime_utils.parse_datetime(20121005, 0)
@@ -290,12 +290,12 @@ class InternalTests(OfflineTestCase):
             {'boo': 'far'}
         ]
 
-        def make_request_mock(session, method, params=None):
-            self.assertEqual(method, 'example_method')
+        def make_request_mock(request):
+            self.assertEqual(request._method, 'example_method')
             return caching_data
 
         with mock.patch.object(
-            webuntis.session.Session,
+            webuntis.session.JSONRPCRequest,
             '_make_request',
             new=make_request_mock
         ):
@@ -327,30 +327,6 @@ class InternalTests(OfflineTestCase):
                 webuntis.objects.Result, None, {}
             )
 
-    def test_optionparsers_credentials(self):
-        jsessionid = {'jsessionid': '123ABC'}
-        void_jsessionid = {'jsessionid': None}
-        user_and_pwd = {'username': 'markus', 'password': 'hunter2'}
-        void_user_and_pwd = {'username': None, 'password': 'hunter2'}
-        user_and_void_pwd = {'username': 'markus', 'password': None}
-        void_user_and_void_pwd = {'username': None, 'password': None}
-
-        tests = [
-            (jsessionid, jsessionid),
-            (void_jsessionid, {}),
-            (user_and_pwd, user_and_pwd),
-            (void_user_and_pwd, {}),
-            (user_and_void_pwd, {}),
-            (void_user_and_void_pwd, {}),
-            (dict(user_and_pwd, **void_jsessionid), user_and_pwd)
-        ]
-
-        for parser_input, expected_output in tests:
-            self.assertEqual(
-                webuntis.utils.option_utils.credentials_parser(parser_input),
-                expected_output
-            )
-
     def test_optionparsers_server(self):
         tests = [
             ('webuntis.grupet.at',
@@ -365,12 +341,12 @@ class InternalTests(OfflineTestCase):
 
         for parser_input, expected_output in tests:
             self.assertEqual(
-                webuntis.utils.option_utils.server_parser(parser_input),
+                webuntis.utils.option_utils.server(parser_input),
                 expected_output
             )
 
         self.assertRaises(ValueError,
-                webuntis.utils.option_utils.server_parser, '!"$%')
+                webuntis.utils.option_utils.server, '!"$%')
 
     def test_resultobject_get_data(self):
         kwargs = {}

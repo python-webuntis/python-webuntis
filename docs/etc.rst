@@ -23,14 +23,12 @@ _:py:class:`webuntis.session.Session`. Unless noted otherwise, they get saved
 in a dictionary located in the instance's ``options`` attribute and can be
 modified afterwards.
 
-  - ``credentials``: A dictionary containing ``username`` and  ``password``. Before
-    the session is used, :py:meth:`webuntis.session.JSONRPCSession.login` must
-    be called, in order to add a ``jsessionid`` key, which will be deleted when
-    calling :py:meth:`webuntis.session.JSONRPCSession.logout`.
-    
-    In theory, you can obtain the jsessionid yourself and add it to the
-    ``credentials`` dictionary. In this case, the other two keys are obviously
-    not needed.
+  - ``username``: The username used for the API.
+
+  - ``password``: The password used for the API.
+
+  - ``jsessionid``: The current session key. Shouldn't be changed unless you
+    know what you're doing.
 
   - ``school``: A string containing a valid school name.
 
