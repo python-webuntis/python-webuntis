@@ -54,12 +54,12 @@ modified afterwards.
     Please include useful information, such as an email address, for the server
     maintainer. Just like you would do with the HTTP useragents of bots.
 
-  - ``cachelen``: Amount of API requests kept in cache. Default to 20. Isn't
-    saved in the ``options`` object and cannot be modified afterwards.
+  - ``cachelen``: Amount of API requests kept in cache. Default to ``20``.
+    Isn't saved in the ``options`` object and cannot be modified afterwards.
 
-  - ``keep_session_alive``: Boolean, whether or not to re-login when the
-    session has expired. Enabled by default.
-
+  - ``login_repeat``: The amount of times `python-webuntis` should try to login
+    when finding no or an expired session. Default to ``0``. That means it
+    won't do that.
 Errors and Exceptions
 =====================
 
