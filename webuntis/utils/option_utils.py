@@ -22,8 +22,8 @@ def server(url):
         return url  # either it's None or we have a dictionary
 
     if not re.match(r'^http(s?)\:\/\/', url):  # if we just have the hostname
-        logging.debug('The URL given doesn\'t seem to be a valid URL, \
-            just gonna prepend "http://"')
+        logging.debug('The URL given doesn\'t seem to be a valid URL, just'
+                      'gonna prepend "http://"')
 
         # append the http prefix and hope for the best
         url = 'http://' + url
@@ -39,17 +39,15 @@ def server(url):
         raise ValueError('Not a valid hostname')
 
     if urlobj.path == '/':
-        # A bit weird, but it formats kinda nicely in the log.
-        # I am not logging line each, because other threads might
-        # interfere this and fuck everything up.
-        logging.warning('''You specified that the API endpoint
-should be /. That is uncommon. If you didn't mean to do so, remove the slash at
-the end of your "server" parameter.''')
+        logging.warning('You specified that the API endpoint should be /. That'
+                        'is uncommon. If you didn\'t mean to do so, remove'
+                        'the slash at the end of your "server" parameter.')
 
     return urlobj.scheme + \
         '://' + \
         urlobj.netloc + \
         (urlobj.path or '/WebUntis/jsonrpc.do')
+
 
 def string(value):
     if value is None:

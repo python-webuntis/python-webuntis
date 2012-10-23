@@ -67,8 +67,8 @@ class JSONRPCRequest(object):
                 exc = self._errorcodes[error['code']](error['message'])
             except KeyError:
                 exc = errors.RemoteError(
-                    'Some JSON-RPC-ish error happened. Please report this to the \
-    developer so he can implement a proper handling.',
+                    ('Some JSON-RPC-ish error happened. Please report this to the '
+                    'developer so he can implement a proper handling.'),
                     str(res_data),
                     str(req_data)
                 )
@@ -81,7 +81,7 @@ class JSONRPCRequest(object):
         if self._method == 'authenticate':
             cookie_header = False
         elif 'jsessionid' not in self._session.options:
-            raise errors.AuthError('Don\'t have JSESSIONID. Did you already log out?')
+            raise errors.NotLoggedInError('Don\'t have JSESSIONID. Did you already log out?')
 
         req_data = {
             'id': str(datetime.datetime.today()),
