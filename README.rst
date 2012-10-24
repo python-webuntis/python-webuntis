@@ -40,7 +40,8 @@ From latest commit in master
     cd python-webuntis
     python setup.py install
 
-If you want to remove the -dev flag in the version for whatever reason, replace the last line with::
+If you want to remove the -dev flag in the version for whatever reason, replace
+the last line with::
 
     python setup.py release install
 
@@ -48,10 +49,28 @@ If you want to remove the -dev flag in the version for whatever reason, replace 
 Unittests
 =========
 
-The unittests need `mock <http://www.voidspace.org.uk/python/mock/>`_ and `nose <https://nose.readthedocs.org/en/latest/index.html>`_ installed.
+As always, a `virtualenv <http://www.virtualenv.org/>`_ is recommended::
 
-You can run the default testsuites using::
+    $ pip install mock nose
+
+Now you can run the default testsuites using::
 
     $ nosetests
 
-For the single testsuites and their descriptions, look at the docstrings of the modules in ``webuntis.tests``.
+For the single testsuites and their descriptions, look at the docstrings of the
+modules in ``webuntis.tests``.
+
+Documentation
+=============
+
+As always, a `virtualenv <http://www.virtualenv.org/>`_ is recommended::
+
+    $ pip install sphinx
+    $ python setup.py develop
+
+Now you can build, for example, the HTML documentation with::
+
+    $ cd docs
+    $ make html  # See make help for more.
+
+Now the HTML documentation is available in ``docs/_build``.
