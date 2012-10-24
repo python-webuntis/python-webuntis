@@ -59,7 +59,7 @@ class JSONRPCRequest(object):
         :type params: dict
         '''
 
-        def _handle_json_error():
+        def handle_json_error():
             '''A helper function for handling JSON error codes.'''
             logging.error(res_data)
             try:
