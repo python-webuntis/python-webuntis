@@ -26,6 +26,15 @@ except ImportError:
 
 
 class JSONRPCRequest(object):
+    _errorcodes = {
+        -32601: errors.MethodNotFoundError,
+        -8504: errors.BadCredentialsError,
+        -8520: errors.NotLoggedInError
+    }
+    '''This lists the API-errorcodes python-webuntis is able to interpret,
+    together with the exception that will be thrown.'''
+
+
     def __init__(self, session, method, params=None):
         self._session = session
         self._method = method
@@ -68,7 +77,7 @@ class JSONRPCRequest(object):
             'Content-Type': 'application/json'
         }
 
-        req_data = {
+        request_body = {
             'id': str(datetime.datetime.today()),
             'method': self._method,
             'params': self._params,
@@ -83,13 +92,13 @@ class JSONRPCRequest(object):
 
         logging.debug('Making new request:')
         logging.debug('URL: ' + url)
-        logging.debug('DATA: ' + str(req_data))
+        logging.debug('DATA: ' + str(request_body))
 
-        res_data = self._send_request(url, json.dumps(req_data).encode(), headers)
-        return self._handle_json(req_data, res_data)
+        result_body = self._send_request(url, json.dumps(request_body).encode(), headers)
+        return self._parse_result(request_body, result_body)
 
 
-    def _handle_json(self, request_body, result_body):
+    def _parse_result(self, request_body, result_body):
         '''A subfunction of _make_request that, given the decoded JSON result,
         handles the error codes or, if everything went well, returns the result
         attribute of it. The request data has to be given too for logging and
@@ -99,29 +108,29 @@ class JSONRPCRequest(object):
         :param result_body: The decoded body of the result recieved.
         '''
 
-        def handle_error_code():
-            '''A helper function for handling JSON error codes.'''
-            logging.error(res_data)
-            try:
-                error = res_data['error']
-                exc = self._errorcodes[error['code']](error['message'])
-            except KeyError:
-                exc = errors.RemoteError(
-                    ('Some JSON-RPC-ish error happened. Please report this to the '
-                    'developer so he can implement a proper handling.'),
-                    str(res_data),
-                    str(req_data)
-                )
-
-            raise exc
-
         if request_body['id'] != result_body['id']:
             raise errors.RemoteError('Request ID was not the same one as returned.')
 
         try:
             return result_body['result']
         except KeyError:
-            handle_error_code()
+            self._parse_error_code(request_body, result_body)
+
+    def _parse_error_code(self, request_body, result_body):
+        '''A helper function for handling JSON error codes.'''
+        logging.error(result_body)
+        try:
+            error = result_body['error']
+            exc = self._errorcodes[error['code']](error['message'])
+        except KeyError:
+            exc = errors.RemoteError(
+                ('Some JSON-RPC-ish error happened. Please report this to the '
+                'developer so he can implement a proper handling.'),
+                str(result_body),
+                str(request_body)
+            )
+
+        raise exc
 
     def _send_request(self, url, data, headers):
         '''A subfunction of _make_request, mostly because of mocking. Sends the
@@ -269,13 +278,7 @@ class JSONRPCSession(object):
         return JSONRPCRequest(self, method, params).request()
 
 
-    _errorcodes = {
-        -32601: errors.MethodNotFoundError,
-        -8504: errors.BadCredentialsError,
-        -8520: errors.NotLoggedInError
-    }
-    '''This lists the API-errorcodes python-webuntis is able to interpret,
-    together with the exception that will be thrown.'''
+
 
 
 

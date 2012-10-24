@@ -21,12 +21,23 @@ class TestCaseBase(unittest.TestCase):
 class OfflineTestCase(TestCaseBase):
     def setUp(self):
         self.request_patcher = patcher = mock.patch(
-            'webuntis.session.JSONRPCRequest._make_request',
-            side_effect=Exception('This is an OFFLINE testsuite!')
+            'webuntis.session.JSONRPCRequest._send_request',
+            return_value=None
         )
         patcher.start()
 
-        self.session = webuntis.Session(useragent='foobar')
+        init_params = {
+            'useragent': 'fooagent',
+            'school': 'fooschool',
+            'username': 'foouser',
+            'password': 'hunter2',
+            'server': 'fooboo_server',
+            'jsessionid': 'CHUCK_TESTA'
+        }
+
+        self._session_init_params = init_params
+
+        self.session = webuntis.Session(**init_params)
 
     def tearDown(self):
         self.request_patcher.stop()

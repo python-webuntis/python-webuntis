@@ -232,6 +232,51 @@ class BasicUsageTests(OfflineTestCase):
                 self.assertEqual(colors['foreColor'], lstype.forecolor)
                 self.assertEqual(colors['backColor'], lstype.backcolor)
 
+    def test_login_repeat(self):
+        retry_amount = self.session.options['login_repeat'] = 5
+        calls = []
+
+        # This produces a list of 5 * ['getCurrentSchoolyear'] with ['logout', 'authenticate'] between each.
+        expected_calls = (['getCurrentSchoolyear', 'logout', 'authenticate'] * (retry_amount + 1))[:-2]
+
+        def send_request(self, url, data, headers):
+            jsondata = json.loads(data.decode('utf-8'))
+            calls.append(jsondata['method'])
+            
+            if jsondata['method'] == 'authenticate':
+                return {
+                    'id': jsondata['id'],
+                    'result': {
+                        'sessionId': 'Foobar_session_' + jsondata['id']
+
+                    }
+                }
+                
+            elif jsondata['method'] == 'getCurrentSchoolyear':
+                return {
+                    'id': jsondata['id'],
+                    'error': {'code': -8520, 'message': 'ERMAHGERD, Not Logged In!'}
+                }
+
+            elif jsondata['method'] == 'logout':
+                return {
+                    'id': jsondata['id'],
+                    'result': {'bla': 'blub'}
+                }
+
+            else:
+                raise Exception('Unexpected RPC-method: ' + str(jsondata['method']))
+
+        with mock.patch(
+            'webuntis.session.JSONRPCRequest._send_request',
+            new=send_request
+        ):
+            self.assertRaises(webuntis.errors.NotLoggedInError, self.session._request, 'getCurrentSchoolyear')
+
+        self.assertEqual(calls, expected_calls)
+
+        
+
 
 class InternalTests(OfflineTestCase):
     '''Tests certain areas of the whole package, such as the utils'''
@@ -257,9 +302,6 @@ class InternalTests(OfflineTestCase):
             self.session.options.__getitem__,
             'nigglywiggly'
         )
-
-    def test_options_isempty(self):
-        self.assertEqual(self.session.options, {'useragent': 'foobar', 'login_repeat': 0})
 
     def test_datetime_utils(self):
         obj = utils.datetime_utils.parse_datetime(20121005, 0)
@@ -290,14 +332,14 @@ class InternalTests(OfflineTestCase):
             {'boo': 'far'}
         ]
 
-        def make_request_mock(request):
+        def result_mock(request, request_body, result_body):
             self.assertEqual(request._method, 'example_method')
             return caching_data
 
         with mock.patch.object(
             webuntis.session.JSONRPCRequest,
-            '_make_request',
-            new=make_request_mock
+            '_parse_result',
+            new=result_mock
         ):
             self.assertEqual(caching_data,
                     self.session._request('example_method'))
@@ -353,16 +395,16 @@ class InternalTests(OfflineTestCase):
         testclass = webuntis.objects.DepartmentList
         testobj = testclass(self.session, kwargs)
 
-        def request_mock(session, method, params):
-            self.assertEqual(method, testclass._jsonrpc_method)
-            self.assertEqual(method, testobj._jsonrpc_method)
-            self.assertEqual(params, testobj._jsonrpc_parameters(**kwargs))
+        def result_mock(request, request_body, result_body):
+            self.assertEqual(request._method, testclass._jsonrpc_method)
+            self.assertEqual(request._method, testobj._jsonrpc_method)
+            self.assertEqual(request._params, testobj._jsonrpc_parameters(**kwargs))
             return {}
 
         with mock.patch.object(
-            webuntis.session.Session,
-            '_request',
-            new=request_mock
+            webuntis.session.JSONRPCRequest,
+            '_parse_result',
+            new=result_mock
         ):
             testobj.store_data()
 
