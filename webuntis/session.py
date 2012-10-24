@@ -34,12 +34,12 @@ class JSONRPCRequest(object):
     def request(self):
         data = None
         i = 0
-        while data is None and i <= self._session.options['login_repeat']:
+        while data is None:
             i += 1
             try:
                 data = self._make_request()
             except errors.NotLoggedInError as e:
-                if self._session.options['login_repeat'] > 0:
+                if self._session.options['login_repeat'] >= i:
                     self._session.logout(suppress_errors=True)
                     self._session.login()
                 else:
@@ -59,7 +59,47 @@ class JSONRPCRequest(object):
         :type params: dict
         '''
 
-        def handle_json_error():
+
+
+        url = self._session.options['server'] + '?school=' + self._session.options['school']
+
+        headers = {
+            'User-Agent': self._session.options['useragent'],
+            'Content-Type': 'application/json'
+        }
+
+        req_data = {
+            'id': str(datetime.datetime.today()),
+            'method': self._method,
+            'params': self._params,
+            'jsonrpc': '2.0'
+        }
+
+        if self._method != 'authenticate':
+            if 'jsessionid' not in self._session.options:
+                raise errors.NotLoggedInError('Don\'t have JSESSIONID. Did you already log out?')
+            else:
+                headers['Cookie'] = 'JSESSIONID=' + self._session.options['jsessionid']
+
+        logging.debug('Making new request:')
+        logging.debug('URL: ' + url)
+        logging.debug('DATA: ' + str(req_data))
+
+        res_data = self._send_request(url, json.dumps(req_data).encode(), headers)
+        return self._handle_json(req_data, res_data)
+
+
+    def _handle_json(self, request_body, result_body):
+        '''A subfunction of _make_request that, given the decoded JSON result,
+        handles the error codes or, if everything went well, returns the result
+        attribute of it. The request data has to be given too for logging and
+        ID validation.
+
+        :param request_body: The not-yet-encoded body of the request sent.
+        :param result_body: The decoded body of the result recieved.
+        '''
+
+        def handle_error_code():
             '''A helper function for handling JSON error codes.'''
             logging.error(res_data)
             try:
@@ -75,60 +115,40 @@ class JSONRPCRequest(object):
 
             raise exc
 
-        url = self._session.options['server']
-        url += '?school=' + self._session.options['school']
-        cookie_header = True
-        if self._method == 'authenticate':
-            cookie_header = False
-        elif 'jsessionid' not in self._session.options:
-            raise errors.NotLoggedInError('Don\'t have JSESSIONID. Did you already log out?')
-
-        req_data = {
-            'id': str(datetime.datetime.today()),
-            'method': self._method,
-            'params': self._params,
-            'jsonrpc': '2.0'
-        }
-
-        req_data_json = json.dumps(req_data).encode()
-
-        logging.debug('Making new request:')
-        logging.debug('URL: ' + url)
-        logging.debug(req_data_json)
-
-        req = urlrequest.Request(
-            url,
-            req_data_json,
-            {
-                'User-Agent': self._session.options['useragent'],
-                'Content-Type': 'application/json'
-            }
-        )
-        if cookie_header:
-            req.add_header(
-                'Cookie',
-                'JSESSIONID=' + self._session.options['jsessionid']
-            )
-
-        # this will eventually raise errors, e.g. if there's an unexpected http
-        # status code
-        res = urlrequest.urlopen(req)
-
-        res_str = res.read().decode('utf-8')
+        if request_body['id'] != result_body['id']:
+            raise errors.RemoteError('Request ID was not the same one as returned.')
 
         try:
-            res_data = json.loads(res_str)
-            logging.debug('Valid JSON found')
-            logging.debug(res_data)
-        except ValueError:
-            raise errors.RemoteError('Invalid JSON', str(res_str))
+            return result_body['result']
+        except KeyError:
+            handle_error_code()
 
-        if res_data['id'] != req_data['id']:
-            raise errors.RemoteError('Request id was not the same as the one returned')
-        elif 'result' in res_data:
-            return res_data['result']
+    def _send_request(self, url, data, headers):
+        '''A subfunction of _make_request, mostly because of mocking. Sends the
+        given headers and data to the url and tries to return the result
+        JSON-decoded.
+        '''
+
+        request = urlrequest.Request(
+            url,
+            data,
+            headers
+        )
+        # this will eventually raise errors, e.g. if there's an unexpected http
+        # status code
+        result_obj = urlrequest.urlopen(request)
+        result = result_obj.read().decode('utf-8')
+
+        try:
+            result_data = json.loads(result)
+            logging.debug('Valid JSON found')
+            logging.debug(result_data)
+        except ValueError:
+            raise errors.RemoteError('Invalid JSON', str(result))
         else:
-            handle_json_error(req_data, res_data)
+            return result_data
+
+
 
 
 class JSONRPCSession(object):
