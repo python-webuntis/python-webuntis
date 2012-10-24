@@ -7,7 +7,8 @@
 
 from __future__ import unicode_literals
 
-from webuntis.utils import datetime_utils, lazyproperty, is_iterable, timetable_utils
+from webuntis.utils import datetime_utils, lazyproperty, is_iterable, \
+                           timetable_utils
 
 
 class Result(object):
@@ -108,6 +109,7 @@ class ListResult(Result):
         ::
         '''
         criterions = list(criterions.items())
+
         def meets_criterions(item):
             '''Returns true if the item meets the criterions'''
             for key, value in criterions:
@@ -128,7 +130,8 @@ class ListResult(Result):
         '''Makes the object iterable and behave like a list'''
         if self._items[i] is None:
             # if we don't have an object yet
-            self._items[i] = self._itemclass(self._session, self, self._data[i])
+            self._items[i] = self._itemclass(
+                self._session, self, self._data[i])
 
         return self._items[i]
 
@@ -356,7 +359,8 @@ class PeriodList(ListResult):
         }
 
         invalid_type_error = ValueError(
-            'You have to specify exactly one of the following parameters by keyword: ' +
+            'You have to specify exactly one of the following parameters by '
+            'keyword: '
             ', '.join(element_type_table.keys())
         )
 
@@ -373,7 +377,6 @@ class PeriodList(ListResult):
             start = end
         elif not end and start:
             end = start
-
 
         # if we have to deal with an object in element_id,
         # its id gets placed here anyway

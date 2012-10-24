@@ -236,13 +236,17 @@ class BasicUsageTests(OfflineTestCase):
         retry_amount = self.session.options['login_repeat'] = 5
         calls = []
 
-        # This produces a list of 5 * ['getCurrentSchoolyear'] with ['logout', 'authenticate'] between each.
-        expected_calls = (['getCurrentSchoolyear', 'logout', 'authenticate'] * (retry_amount + 1))[:-2]
+        # This produces a list of 5 * ['getCurrentSchoolyear'] with ['logout',
+        # 'authenticate'] between each.
+        expected_calls = (
+            ['getCurrentSchoolyear', 'logout', 'authenticate']
+            * (retry_amount + 1)
+        )[:-2]
 
         def send_request(self, url, data, headers):
             jsondata = json.loads(data.decode('utf-8'))
             calls.append(jsondata['method'])
-            
+
             if jsondata['method'] == 'authenticate':
                 return {
                     'id': jsondata['id'],
@@ -251,11 +255,11 @@ class BasicUsageTests(OfflineTestCase):
 
                     }
                 }
-                
+
             elif jsondata['method'] == 'getCurrentSchoolyear':
                 return {
                     'id': jsondata['id'],
-                    'error': {'code': -8520, 'message': 'ERMAHGERD, Not Logged In!'}
+                    'error': {'code': -8520, 'message': 'Not Logged In!'}
                 }
 
             elif jsondata['method'] == 'logout':
@@ -265,17 +269,17 @@ class BasicUsageTests(OfflineTestCase):
                 }
 
             else:
-                raise Exception('Unexpected RPC-method: ' + str(jsondata['method']))
+                raise Exception('Unexpected RPC-method: ' +
+                                str(jsondata['method']))
 
         with mock.patch(
             'webuntis.session.JSONRPCRequest._send_request',
             new=send_request
         ):
-            self.assertRaises(webuntis.errors.NotLoggedInError, self.session._request, 'getCurrentSchoolyear')
+            self.assertRaises(webuntis.errors.NotLoggedInError,
+                              self.session._request, 'getCurrentSchoolyear')
 
         self.assertEqual(calls, expected_calls)
-
-        
 
 
 class InternalTests(OfflineTestCase):
@@ -305,6 +309,12 @@ class InternalTests(OfflineTestCase):
 
     def test_datetime_utils(self):
         obj = utils.datetime_utils.parse_datetime(20121005, 0)
+        assert obj.year == 2012
+        assert obj.month == 10
+        assert obj.day == 5
+        assert obj.hour == 0
+        assert obj.minute == 0
+        assert obj.second == 0
 
     def test_filterdict(self):
         store = utils.FilterDict({
@@ -398,7 +408,8 @@ class InternalTests(OfflineTestCase):
         def result_mock(request, request_body, result_body):
             self.assertEqual(request._method, testclass._jsonrpc_method)
             self.assertEqual(request._method, testobj._jsonrpc_method)
-            self.assertEqual(request._params, testobj._jsonrpc_parameters(**kwargs))
+            self.assertEqual(request._params,
+                             testobj._jsonrpc_parameters(**kwargs))
             return {}
 
         with mock.patch.object(

@@ -34,7 +34,6 @@ class JSONRPCRequest(object):
     '''This lists the API-errorcodes python-webuntis is able to interpret,
     together with the exception that will be thrown.'''
 
-
     def __init__(self, session, method, params=None):
         self._session = session
         self._method = method
@@ -68,9 +67,9 @@ class JSONRPCRequest(object):
         :type params: dict
         '''
 
-
-
-        url = self._session.options['server'] + '?school=' + self._session.options['school']
+        url = self._session.options['server'] + \
+                '?school=' + \
+                self._session.options['school']
 
         headers = {
             'User-Agent': self._session.options['useragent'],
@@ -86,17 +85,22 @@ class JSONRPCRequest(object):
 
         if self._method != 'authenticate':
             if 'jsessionid' not in self._session.options:
-                raise errors.NotLoggedInError('Don\'t have JSESSIONID. Did you already log out?')
+                raise errors.NotLoggedInError(
+                    'Don\'t have JSESSIONID. Did you already log out?')
             else:
-                headers['Cookie'] = 'JSESSIONID=' + self._session.options['jsessionid']
+                headers['Cookie'] = 'JSESSIONID=' + \
+                        self._session.options['jsessionid']
 
         logging.debug('Making new request:')
         logging.debug('URL: ' + url)
         logging.debug('DATA: ' + str(request_body))
 
-        result_body = self._send_request(url, json.dumps(request_body).encode(), headers)
+        result_body = self._send_request(
+            url,
+            json.dumps(request_body).encode(),
+            headers
+        )
         return self._parse_result(request_body, result_body)
-
 
     def _parse_result(self, request_body, result_body):
         '''A subfunction of _make_request that, given the decoded JSON result,
@@ -109,7 +113,8 @@ class JSONRPCRequest(object):
         '''
 
         if request_body['id'] != result_body['id']:
-            raise errors.RemoteError('Request ID was not the same one as returned.')
+            raise errors.RemoteError(
+                'Request ID was not the same one as returned.')
 
         try:
             return result_body['result']
@@ -156,8 +161,6 @@ class JSONRPCRequest(object):
             raise errors.RemoteError('Invalid JSON', str(result))
         else:
             return result_data
-
-
 
 
 class JSONRPCSession(object):
@@ -276,13 +279,6 @@ class JSONRPCSession(object):
 
     def _make_request(self, method, params=None):
         return JSONRPCRequest(self, method, params).request()
-
-
-
-
-
-
-
 
 
 class Session(JSONRPCSession):

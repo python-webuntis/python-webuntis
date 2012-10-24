@@ -14,16 +14,16 @@ def table(periods, width=None):
     Creates a table-like nested list out of a list of periods.
 
     :param timetable: A :py:class:`webuntis.objects.PeriodList` instance or any
-        other iterable containing :py:class:`webuntis.objects.PeriodObject`
-        instances.
+    other iterable containing :py:class:`webuntis.objects.PeriodObject`
+    instances.
 
     :param width: Optionally, a fixed width for the table. The function will
-        fill every row with empty cells until that width is met. If the timetable
-        is too big, it will raise a ``ValueError``.
+    fill every row with empty cells until that width is met. If the timetable
+    is too big, it will raise a ``ValueError``.
 
     :returns: A list containing "rows", which in turn contain "hours", which
-        contain :py:class:`webuntis.objects.PeriodObject` instances which are
-        happening at the same time.
+    contain :py:class:`webuntis.objects.PeriodObject` instances which are
+    happening at the same time.
 
     Example::
 
@@ -31,7 +31,8 @@ def table(periods, width=None):
         monday = today - datetime.timedelta(days=today.weekday())
         friday = monday + datetime.timedelta(days=4)
 
-        table = s.timetable(klasse=878, start=monday, end=friday).to_table(width=5)
+        table = s.timetable(klasse=878, start=monday, end=friday) \
+                .to_table(width=5)
 
         print('<table><thead>')
         for weekday in range(5):
@@ -121,7 +122,8 @@ def table(periods, width=None):
     longest_row = len(max(grouped, key=len))
 
     if width and longest_row > width:
-        raise ValueError('Fixed width too small. Need at least ' + str(longest_row))
+        raise ValueError('Fixed width too small. Need at least ' +
+            str(longest_row))
 
     longest_row = width
 

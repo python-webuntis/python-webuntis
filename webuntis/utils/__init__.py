@@ -96,6 +96,7 @@ class FilterDict(dict):
         for key, value in dict(*args, **kwargs).items():
             self.__setitem__(key, value)
 
+
 def is_iterable(obj):
     try:
         iter(obj)

@@ -58,8 +58,8 @@ modified afterwards.
     Isn't saved in the ``options`` object and cannot be modified afterwards.
 
   - ``login_repeat``: The amount of times `python-webuntis` should try to login
-    when finding no or an expired session. Default to ``0``. That means it
-    won't do that.
+    when finding no or an expired session. Default to ``0``, meaning it won't
+    do that.
 Errors and Exceptions
 =====================
 

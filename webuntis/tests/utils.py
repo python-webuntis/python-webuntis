@@ -13,6 +13,7 @@ import mock
 import os
 import webuntis
 
+
 class TestCaseBase(unittest.TestCase):
     tests_path = os.path.abspath(os.path.dirname(__file__))
     data_path = tests_path + '/static'

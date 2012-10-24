@@ -10,7 +10,7 @@ from datetime import datetime as datetime
 
 
 forms = {
-    'date' : ('%Y%m%d', 6),
+    'date': ('%Y%m%d', 6),
     'time': ('%H%M', 4),
 }
 
@@ -46,7 +46,7 @@ def _parse(string, form):
     while len(string) < formlen:
         string = '0' + string
 
-    return datetime.strptime(string, forms[form][0]) 
+    return datetime.strptime(string, forms[form][0])
 
 
 def format_date(obj):

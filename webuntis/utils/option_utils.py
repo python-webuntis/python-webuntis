@@ -39,9 +39,10 @@ def server(url):
         raise ValueError('Not a valid hostname')
 
     if urlobj.path == '/':
-        logging.warning('You specified that the API endpoint should be /. That '
-                        'is uncommon. If you didn\'t mean to do so, remove '
-                        'the slash at the end of your "server" parameter.')
+        logging.warning('You specified that the API endpoint should be "/".'
+                        'That is uncommon. If you didn\'t mean to do so,'
+                        'remove the slash at the end of your "server"'
+                        'parameter.')
 
     return urlobj.scheme + \
         '://' + \
