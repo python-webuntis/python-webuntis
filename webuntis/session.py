@@ -40,22 +40,6 @@ class JSONRPCRequest(object):
         self._params = params or {}
 
     def request(self):
-        data = None
-        i = 0
-        while data is None:
-            i += 1
-            try:
-                data = self._make_request()
-            except errors.NotLoggedInError as e:
-                if self._session.options['login_repeat'] >= i:
-                    self._session.logout(suppress_errors=True)
-                    self._session.login()
-                else:
-                    raise e
-
-        return data
-
-    def _make_request(self):
         '''
         A method for sending a JSON-RPC request.
 
@@ -266,19 +250,48 @@ class JSONRPCSession(object):
 
         return self
 
+    def _make_cache_key(self, method, params):
+        '''A helper method for _request that generates a hashable object out of
+        a string and a dictionary.
+
+        It doesn't use ``hash()`` or similar methods because it's neat that the
+        keys are human-readable and enable us to trace back the origin of the
+        key. Python does that anyway under the hood when using it as a
+        dictionary key.
+        '''
+
+        return (method, frozenset((params or {}).items()))
+
     def _request(self, method, params=None):
         '''A wrapper for :py:class:`JSONRPCRequest` using the LRU Cache'''
 
         if self._cache is None:
             return self._make_request(method, params)
         else:
-            key = (method, hash(tuple(params or {})))
+            key = self._make_cache_key(method, params)
             if key not in self._cache:
-                self._cache[key] = self._make_request(method, params)
+                self._cache[key] = self._make_request(method, params, use_login_repeat=True)
             return self._cache[key]
 
-    def _make_request(self, method, params=None):
-        return JSONRPCRequest(self, method, params).request()
+    def _make_request(self, method, params=None, use_login_repeat=False):
+        attempts_left = self.options['login_repeat'] if use_login_repeat else 1
+
+        data = None
+
+        while data is None:
+            try:
+                data = JSONRPCRequest(self, method, params).request()
+            except errors.NotLoggedInError as e:
+                if attempts_left > 0:
+                    self.logout(suppress_errors=True)
+                    self.login()
+                else:
+                    raise errors.NotLoggedInError('Tried to login several times, failed. Original method was ' + method)
+            else:
+                return data
+
+            attempts_left -= 1  # new round!
+
 
 
 class Session(JSONRPCSession):
