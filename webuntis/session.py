@@ -204,7 +204,7 @@ class JSONRPCSession(object):
             # aborts if we don't have creds
             self.options['jsessionid']
 
-            self._make_request('logout')
+            self._make_request('logout', use_login_repeat=False)
             del self.options['jsessionid']
         except KeyError:
             if not suppress_errors:
@@ -236,7 +236,7 @@ class JSONRPCSession(object):
             'user': self.options['username'],
             'password': self.options['password'],
             'client': self.options['useragent']
-        })
+        }, use_login_repeat=False)
         logging.debug(res)
         if 'sessionId' in res:
             logging.debug('Did get a jsessionid from the server:')
