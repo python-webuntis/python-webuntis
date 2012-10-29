@@ -233,7 +233,8 @@ class BasicUsageTests(OfflineTestCase):
                 self.assertEqual(colors['backColor'], lstype.backcolor)
 
     def test_login_repeat(self):
-        retry_amount = self.session.options['login_repeat'] = 5
+        retry_amount = 5
+
         calls = []
 
         # This produces a list of 5 * ['getCurrentSchoolyear'] with ['logout',
@@ -250,12 +251,8 @@ class BasicUsageTests(OfflineTestCase):
             if jsondata['method'] == 'authenticate':
                 return {
                     'id': jsondata['id'],
-                    'result': {
-                        'sessionId': 'Foobar_session_' + jsondata['id']
-
-                    }
+                    'result': {'sessionId': 'Foobar_session_' + jsondata['id']}
                 }
-
             elif jsondata['method'] == 'getCurrentSchoolyear':
                 return {
                     'id': jsondata['id'],
@@ -275,11 +272,16 @@ class BasicUsageTests(OfflineTestCase):
         with mock.patch(
             'webuntis.session.JSONRPCRequest._send_request',
             new=send_request
+        ), mock.patch.dict(
+            self.session.options,
+            {'login_repeat': 5}
         ):
+            # never trust third-party code
+            assert self.session.options['login_repeat'] == 5
             self.assertRaises(webuntis.errors.NotLoggedInError,
                               self.session._request, 'getCurrentSchoolyear')
 
-        self.assertEqual(calls, expected_calls)
+        assert calls == expected_calls
 
 
 class InternalTests(OfflineTestCase):
@@ -352,7 +354,7 @@ class InternalTests(OfflineTestCase):
             new=result_mock
         ):
             self.assertEqual(caching_data,
-                    self.session._request('example_method'))
+                             self.session._request('example_method'))
 
         self.assertEqual(caching_data, self.session._request('example_method'))
 
@@ -398,7 +400,7 @@ class InternalTests(OfflineTestCase):
             )
 
         self.assertRaises(ValueError,
-                webuntis.utils.option_utils.server, '!"$%')
+                          webuntis.utils.option_utils.server, '!"$%')
 
     def test_resultobject_get_data(self):
         kwargs = {}
