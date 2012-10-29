@@ -345,24 +345,25 @@ class InternalTests(OfflineTestCase):
         self.assertRaises(AttributeError, getattr, self.session, 'foobar')
 
     def test_requestcaching(self):
-        caching_data = [
-            {'foo': 'bar'},
-            {'boo': 'far'}
-        ]
+        jsonstr = json.load(
+            open(self.data_path + '/getklassen_mock.json')
+        )
 
-        def result_mock(request, request_body, result_body):
-            self.assertEqual(request._method, 'example_method')
-            return caching_data
+        def result_mock(s, method, params, use_login_repeat):
+            self.assertEqual(method, 'getKlassen')
+            return jsonstr
 
-        with mock.patch.object(
-            webuntis.session.JSONRPCRequest,
-            '_parse_result',
+        with mock.patch(
+            'webuntis.session.Session._make_request',
             new=result_mock
         ):
-            self.assertEqual(caching_data,
-                             self.session._request('example_method'))
+            self.session.klassen()
 
-        self.assertEqual(caching_data, self.session._request('example_method'))
+        with mock.patch(
+            'webuntis.session.Session._make_request',
+            side_effect=Exception('CHUCK TESTA')
+        ):
+            self.session.klassen()
 
     def test_listitem(self):
         session = None

@@ -278,7 +278,9 @@ class JSONRPCSession(object):
                 self._cache[key] = self._make_request(method, params, use_login_repeat=True)
             return self._cache[key]
 
-    def _make_request(self, method, params=None, use_login_repeat=False):
+    def _make_request(self, method, params=None, use_login_repeat=None):
+        if use_login_repeat is None:
+            use_login_repeat = (method not in ('logout', 'authenticate'))
         attempts_left = self.options['login_repeat'] if use_login_repeat else 0
 
         data = None
