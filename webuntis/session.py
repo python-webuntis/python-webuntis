@@ -199,16 +199,21 @@ class JSONRPCSession(object):
 
         :raises: :py:class:`webuntis.errors.NotLoggedInError`
         '''
-        # Send a JSON-RPC 'logout' method without parameters to log out
-        try:
-            # aborts if we don't have creds
-            self.options['jsessionid']
-
-            self._make_request('logout', use_login_repeat=False)
-            del self.options['jsessionid']
-        except KeyError:
+        def throw_errors():
             if not suppress_errors:
                 raise errors.NotLoggedInError('We already were logged out.')
+
+        try:
+            # Send a JSON-RPC 'logout' method without parameters to log out
+            self._make_request('logout')
+        except errors.NotLoggedInError:
+            throw_errors()
+
+        try:
+            del self.options['jsessionid']
+        except KeyError:
+            throw_errors()
+
 
     def login(self):
         '''Initializes an authentication, provided we have the credentials for
@@ -274,7 +279,7 @@ class JSONRPCSession(object):
             return self._cache[key]
 
     def _make_request(self, method, params=None, use_login_repeat=False):
-        attempts_left = self.options['login_repeat'] if use_login_repeat else 1
+        attempts_left = self.options['login_repeat'] if use_login_repeat else 0
 
         data = None
 
