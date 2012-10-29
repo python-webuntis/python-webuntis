@@ -349,18 +349,18 @@ class InternalTests(OfflineTestCase):
             open(self.data_path + '/getklassen_mock.json')
         )
 
-        def result_mock(s, method, params, use_login_repeat):
+        def result_mock(s, method, params=None, use_login_repeat=None):
             self.assertEqual(method, 'getKlassen')
             return jsonstr
 
         with mock.patch(
-            'webuntis.session.Session._make_request',
+            'webuntis.session.Session._request',
             new=result_mock
         ):
             self.session.klassen()
 
         with mock.patch(
-            'webuntis.session.Session._make_request',
+            'webuntis.session.Session._request',
             side_effect=Exception('CHUCK TESTA')
         ):
             self.session.klassen()

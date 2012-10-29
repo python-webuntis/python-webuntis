@@ -155,9 +155,6 @@ class JSONRPCSession(object):
     :py:class:`webuntis.utils.option_utils` for more information.
     '''
 
-    _cache = None
-    '''Contains the caching dictionary for requests.'''
-
     def __init__(self, **kwargs):
         # The OptionStore is an extended dictionary, associating validators
         # and other helper methods with each key
@@ -169,16 +166,9 @@ class JSONRPCSession(object):
             'username': None,
             'password': None,
             'jsessionid': None,
-            'cachelen': 20,  # Not implemented in LruDict
             'login_repeat': 0
         }
         options.update(kwargs)
-
-        if options['cachelen'] > 0:
-            self._cache = utils.LruDict(maxlen=options['cachelen'])
-
-        del options['cachelen']
-
         self.options.update(options)
 
     def __enter__(self):
@@ -205,7 +195,7 @@ class JSONRPCSession(object):
 
         try:
             # Send a JSON-RPC 'logout' method without parameters to log out
-            self._make_request('logout')
+            self._request('logout')
         except errors.NotLoggedInError:
             throw_errors()
 
@@ -237,7 +227,7 @@ class JSONRPCSession(object):
                       self.options['username'] +
                       ' Password: ' +
                       self.options['password'])
-        res = self._make_request('authenticate', {
+        res = self._request('authenticate', {
             'user': self.options['username'],
             'password': self.options['password'],
             'client': self.options['useragent']
@@ -255,30 +245,7 @@ class JSONRPCSession(object):
 
         return self
 
-    def _make_cache_key(self, method, params):
-        '''A helper method for _request that generates a hashable object out of
-        a string and a dictionary.
-
-        It doesn't use ``hash()`` or similar methods because it's neat that the
-        keys are human-readable and enable us to trace back the origin of the
-        key. Python does that anyway under the hood when using it as a
-        dictionary key.
-        '''
-
-        return (method, frozenset((params or {}).items()))
-
-    def _request(self, method, params=None):
-        '''A wrapper for :py:class:`JSONRPCRequest` using the LRU Cache'''
-
-        if self._cache is None:
-            return self._make_request(method, params)
-        else:
-            key = self._make_cache_key(method, params)
-            if key not in self._cache:
-                self._cache[key] = self._make_request(method, params, use_login_repeat=True)
-            return self._cache[key]
-
-    def _make_request(self, method, params=None, use_login_repeat=None):
+    def _request(self, method, params=None, use_login_repeat=None):
         if use_login_repeat is None:
             use_login_repeat = (method not in ('logout', 'authenticate'))
         attempts_left = self.options['login_repeat'] if use_login_repeat else 0
@@ -305,16 +272,53 @@ class Session(JSONRPCSession):
     '''The origin of everything you want to do with the WebUntis API. Can be
     used as a context-handler.'''
 
+    _cache = None
+    '''Contains the caching dictionary for requests.'''
+
+    def __init__(self, **options):
+        try:
+            cachelen = options['cachelen']
+            del options['cachelen']
+        except KeyError:
+            cachelen = 20
+
+        if cachelen > 0:
+            self._cache = utils.LruDict(maxlen=cachelen)
+
+        JSONRPCSession.__init__(self, **options)
+
+
+    def _make_cache_key(self, method, kwargs):
+        '''A helper method that generates a hashable object out of a string and
+        a dictionary.
+
+        It doesn't use ``hash()`` or similar methods because it's neat that the
+        keys are human-readable and enable us to trace back the origin of the
+        key. Python does that anyway under the hood when using it as a
+        dictionary key.
+        '''
+
+        return (method, frozenset((kwargs or {}).items()))
+
     def __getattr__(self, name):
         '''Returns a callable which creates an instance (or reuses an old one)
         of the appropriate object-list class
         '''
-        def get_result_object(**kwargs):
-            obj = objects.result_objects[name](session=self, kwargs=kwargs)
-            obj.store_data()
-            return obj
+        def result_object_wrapper(**kwargs):
+            key = self._make_cache_key(name, kwargs)
+            def get_result_object():
+                obj = objects.result_objects[name](session=self, kwargs=kwargs)
+                obj.store_data()
+                return obj
+
+            if self._cache is None:
+                return get_result_object()
+
+            if key not in self._cache:
+                self._cache[key] = get_result_object()
+            return self._cache[key]
 
         if name in objects.result_objects:
-            return get_result_object
+            return result_object_wrapper
         else:
             raise AttributeError(name)
