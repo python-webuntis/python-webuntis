@@ -287,6 +287,12 @@ class BasicUsageTests(OfflineTestCase):
 class InternalTests(OfflineTestCase):
     '''Tests certain areas of the whole package, such as the utils'''
 
+    def test_make_cache_key(self):
+        # The hash builtin will take care of us if the results aren't hashable.
+        hash(self.session._make_cache_key('getStuff', {'foo': 'bar'}))
+        hash(self.session._make_cache_key('getStuff', {}))
+        hash(self.session._make_cache_key('getStuff', None))
+
     def test_is_iterable_util(self):
         tests = [
             ((), True),
