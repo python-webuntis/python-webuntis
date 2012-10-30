@@ -12,7 +12,7 @@ import webuntis.utils as utils
 import datetime
 import json
 
-from webuntis.tests.utils import OfflineTestCase
+from webuntis.tests.utils import OfflineTestCase, mock_results
 
 
 class BasicUsageTests(OfflineTestCase):
@@ -23,11 +23,12 @@ class BasicUsageTests(OfflineTestCase):
             open(self.data_path + '/getdepartments_mock.json')
         )
 
-        with mock.patch.object(
-            webuntis.objects.DepartmentList,
-            '_get_data',
-            return_value=jsonstr
-        ):
+        class methods(object):
+            @staticmethod
+            def getDepartments(self, url, jsondata, headers):
+                return {'result': jsonstr}
+
+        with mock_results(methods):
             for dep_raw, dep in zip(jsonstr, self.session.departments()):
                 self.assertEqual(dep_raw['id'], dep.id)
                 self.assertEqual(dep_raw['longName'], dep.long_name)
@@ -38,11 +39,12 @@ class BasicUsageTests(OfflineTestCase):
             open(self.data_path + '/getholidays_mock.json')
         )
 
-        with mock.patch.object(
-            webuntis.objects.HolidayList,
-            '_get_data',
-            return_value=jsonstr
-        ):
+        class methods(object):
+            @staticmethod
+            def getHolidays(self, url, jsondata, headers):
+                return {'result': jsonstr}
+
+        with mock_results(methods):
             for holiday_raw, holiday in zip(jsonstr, self.session.holidays()):
                 self.assertEqual(
                     holiday_raw['startDate'],
@@ -70,11 +72,12 @@ class BasicUsageTests(OfflineTestCase):
             open(self.data_path + '/getklassen_mock.json')
         )
 
-        with mock.patch.object(
-            webuntis.objects.KlassenList,
-            '_get_data',
-            return_value=jsonstr
-        ):
+        class methods(object):
+            @staticmethod
+            def getKlassen(self, url, jsondata, headers):
+                return {'result': jsonstr}
+
+        with mock_results(methods):
             klassen = self.session.klassen()
             for klasse_raw, klasse in zip(jsonstr, klassen):
                 self.assertEqual(klasse_raw['longName'], klasse.long_name)
@@ -94,11 +97,13 @@ class BasicUsageTests(OfflineTestCase):
         jsonstr = json.load(
             open(self.data_path + '/gettimetables_mock.json')
         )
-        with mock.patch.object(
-            webuntis.objects.PeriodList,
-            '_get_data',
-            return_value=jsonstr
-        ):
+
+        class methods(object):
+            @staticmethod
+            def getTimetable(self, url, jsondata, headers):
+                return {'result': jsonstr}
+
+        with mock_results(methods):
             tt = self.session.timetable(klasse=114)
 
         for period_raw, period in zip(jsonstr, tt):
@@ -124,11 +129,13 @@ class BasicUsageTests(OfflineTestCase):
         jsonstr = json.load(
             open(self.data_path + '/getrooms_mock.json')
         )
-        with mock.patch.object(
-            webuntis.objects.RoomList,
-            '_get_data',
-            return_value=jsonstr
-        ):
+        
+        class methods(object):
+            @staticmethod
+            def getRooms(self, url, jsondata, headers):
+                return {'result': jsonstr}
+
+        with mock_results(methods):
             for room_raw, room in zip(jsonstr, self.session.rooms()):
                 self.assertEqual(room_raw['longName'], room.long_name)
                 self.assertEqual(room_raw['name'], room.name)
@@ -140,18 +147,18 @@ class BasicUsageTests(OfflineTestCase):
         )
         current_json = jsonstr[3]
 
-        with mock.patch.object(
-            webuntis.objects.SchoolyearList,
-            '_get_data',
-            return_value=jsonstr
-        ):
+        class methods(object):
+            @staticmethod
+            def getSchoolyears(self, url, jsondata, headers):
+                return {'result': jsonstr}
+
+            @staticmethod
+            def getCurrentSchoolyear(self, url, jsondata, headers):
+                return {'result': current_json}
+
+        with mock_results(methods):
             schoolyears = self.session.schoolyears()
 
-        with mock.patch.object(
-            webuntis.session.Session,
-            '_request',
-            return_value=current_json
-        ):
             self.assertEqual(current_json['id'], schoolyears.current.id)
             self.assertTrue(schoolyears.current.is_current)
             for year_raw, year in zip(jsonstr, schoolyears):
@@ -172,11 +179,13 @@ class BasicUsageTests(OfflineTestCase):
         jsonstr = json.load(
             open(self.data_path + '/getsubjects_mock.json')
         )
-        with mock.patch.object(
-            webuntis.objects.SubjectList,
-            '_get_data',
-            return_value=jsonstr
-        ):
+        
+        class methods(object):
+            @staticmethod
+            def getSubjects(self, url, jsondata, headers):
+                return {'result': jsonstr}
+
+        with mock_results(methods):
             for subj_raw, subj in zip(jsonstr, self.session.subjects()):
                 self.assertEqual(subj_raw['id'], subj.id)
                 self.assertEqual(subj_raw['longName'], subj.long_name)
@@ -186,11 +195,13 @@ class BasicUsageTests(OfflineTestCase):
         jsonstr = json.load(
             open(self.data_path + '/getteachers_mock.json')
         )
-        with mock.patch.object(
-            webuntis.objects.TeacherList,
-            '_get_data',
-            return_value=jsonstr
-        ):
+
+        class methods(object):
+            @staticmethod
+            def getTeachers(self, url, jsondata, headers):
+                return {'result': jsonstr}
+
+        with mock_results(methods):
             for t_raw, t in zip(jsonstr, self.session.teachers()):
                 self.assertEqual(t_raw['longName'], t.long_name)
                 self.assertEqual(t_raw['longName'], t.surname)
@@ -201,11 +212,13 @@ class BasicUsageTests(OfflineTestCase):
         jsonstr = json.load(
             open(self.data_path + '/gettimegrid_mock.json')
         )
-        with mock.patch.object(
-            webuntis.objects.TimeunitList,
-            '_get_data',
-            return_value=jsonstr
-        ):
+
+        class methods(object):
+            @staticmethod
+            def getTimegridUnits(self, url, jsondata, headers):
+                return {'result': jsonstr}
+
+        with mock_results(methods):
             for t_raw, t in zip(jsonstr, self.session.timegrid()):
                 self.assertEqual(t_raw['day'], t.day)
                 for t2_raw, t2 in zip(t_raw['timeUnits'], t.times):
@@ -218,11 +231,13 @@ class BasicUsageTests(OfflineTestCase):
         jsonstr = json.load(
             open(self.data_path + '/getstatusdata_mock.json')
         )
-        with mock.patch.object(
-            webuntis.objects.StatusData,
-            '_get_data',
-            return_value=jsonstr
-        ):
+
+        class methods(object):
+            @staticmethod
+            def getStatusData(self, url, jsondata, headers):
+                return {'result': jsonstr}
+
+        with mock_results(methods):
             statusdata = self.session.statusdata()
             for lstype_raw, lstype in zip(jsonstr['lstypes'],
                                           statusdata.lesson_types):
@@ -232,9 +247,8 @@ class BasicUsageTests(OfflineTestCase):
                 self.assertEqual(colors['foreColor'], lstype.forecolor)
                 self.assertEqual(colors['backColor'], lstype.backcolor)
 
-    def test_login_repeat(self):
+    def test_login_repeat_invalid_session(self):
         retry_amount = 5
-
         calls = []
 
         # This produces a list of 5 * ['getCurrentSchoolyear'] with ['logout',
@@ -244,44 +258,73 @@ class BasicUsageTests(OfflineTestCase):
             * (retry_amount + 1)
         )[:-2]
 
-        def send_request(self, url, data, headers):
-            jsondata = json.loads(data.decode('utf-8'))
-            calls.append(jsondata['method'])
+        class methods(object):
+            @staticmethod
+            def authenticate(self, url, jsondata, headers):
+                calls.append(jsondata['method'])
+                return {
+                    'result': {'sessionId': 'Foobar_session_' + jsondata['id']}
+                }
 
-            if jsondata['method'] == 'authenticate':
+            @staticmethod
+            def getCurrentSchoolyear(self, url, jsondata, headers):
+                calls.append(jsondata['method'])
+                return {
+                    'error': {'code': -8520, 'message': 'Not Logged In!'}
+                }
+
+            @staticmethod
+            def logout(self, url, jsondata, headers):
+                calls.append(jsondata['method'])
+                return {
+                    'result': {'bla': 'blub'}
+                }
+
+        with mock_results(methods), mock.patch.dict(
+            self.session.options,
+            {'login_repeat': retry_amount}
+        ):
+            self.assertRaises(webuntis.errors.NotLoggedInError,
+                              self.session._request, 'getCurrentSchoolyear')
+
+        self.assertEqual(calls, expected_calls)
+
+    def test_login_repeat_not_logged_in(self):
+        retry_amount = 1
+        calls = []
+
+        # This produces a list of 5 * ['getCurrentSchoolyear'] with ['logout',
+        # 'authenticate'] between each.
+        expected_calls = ['authenticate', 'getCurrentSchoolyear']
+
+        class methods(object):
+            @staticmethod
+            def authenticate(self, url, jsondata, headers):
+                calls.append(jsondata['method'])
                 return {
                     'id': jsondata['id'],
                     'result': {'sessionId': 'Foobar_session_' + jsondata['id']}
                 }
-            elif jsondata['method'] == 'getCurrentSchoolyear':
+
+            @staticmethod
+            def _nope(self, url, jsondata, headers):
+                calls.append(jsondata['method'])
                 return {
                     'id': jsondata['id'],
                     'error': {'code': -8520, 'message': 'Not Logged In!'}
                 }
 
-            elif jsondata['method'] == 'logout':
-                return {
-                    'id': jsondata['id'],
-                    'result': {'bla': 'blub'}
-                }
+            getCurrentSchoolyear = logout = _nope
+            del _nope
 
-            else:
-                raise Exception('Unexpected RPC-method: ' +
-                                str(jsondata['method']))
-
-        with mock.patch(
-            'webuntis.session.JSONRPCRequest._send_request',
-            new=send_request
-        ), mock.patch.dict(
+        with mock_results(methods), mock.patch.dict(
             self.session.options,
-            {'login_repeat': 5}
+            {'login_repeat': retry_amount, 'jsessionid': None}
         ):
-            # never trust third-party code
-            assert self.session.options['login_repeat'] == 5
             self.assertRaises(webuntis.errors.NotLoggedInError,
                               self.session._request, 'getCurrentSchoolyear')
 
-        assert calls == expected_calls
+        self.assertEqual(calls, expected_calls)
 
 
 class InternalTests(OfflineTestCase):

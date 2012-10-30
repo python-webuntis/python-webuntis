@@ -11,6 +11,7 @@ from __future__ import unicode_literals
 import unittest
 import mock
 import os
+import json
 import webuntis
 
 
@@ -43,3 +44,24 @@ class OfflineTestCase(TestCaseBase):
     def tearDown(self):
         self.request_patcher.stop()
         self.session = None
+
+def mock_results(methods):
+    orig = webuntis.session.JSONRPCRequest._send_request
+
+    def callback(self, url, data, headers):
+        jsondata = json.loads(data.decode('utf-8'))
+        method = jsondata['method']
+
+        try:
+            data = getattr(methods, method)(self, url, jsondata, headers)
+            d = {'id': jsondata['id']}
+            d.update(data)
+            return d
+        except AttributeError:
+            orig(self, url, data, headers)
+
+    return mock.patch(
+        'webuntis.session.JSONRPCRequest._send_request',
+        new=callback
+    )
+
