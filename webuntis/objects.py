@@ -78,6 +78,15 @@ class ListItem(object):
 class ListResult(Result):
     '''A list-like version of :py:class:`Result` that takes a list and returns
     a list of objects, containing a list value each.
+
+    :py:class:`ListResult` instances now have support for ``__contains__``,
+    which means you can do::
+
+        do_we_have_it = {'name': '6A'} in s.klassen()
+
+    instead of::
+
+        do_we_have_it = bool(s.klassen().filter(name='6A'))
     '''
 
     # When the Result returns an array, this is very useful. Every item of that
@@ -125,6 +134,9 @@ class ListResult(Result):
             return True
 
         return [item for item in self if meets_criterions(item)]
+
+    def __contains__(self, criterion):
+        return bool(self.filter(**criterion))
 
     def __getitem__(self, i):
         '''Makes the object iterable and behave like a list'''
