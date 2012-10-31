@@ -282,8 +282,7 @@ class Session(JSONRPCSession):
         except KeyError:
             cachelen = 20
 
-        if cachelen > 0:
-            self._cache = utils.LruDict(maxlen=cachelen)
+        self._cache = utils.LruDict(maxlen=cachelen)
 
         JSONRPCSession.__init__(self, **options)
 
@@ -311,12 +310,11 @@ class Session(JSONRPCSession):
                 obj.store_data()
                 return obj
 
-            if self._cache is None:
-                return get_result_object()
-
             if key not in self._cache:
-                self._cache[key] = get_result_object()
-            return self._cache[key]
+                obj = self._cache[key] = get_result_object()
+            else:
+                obj = self._cache[key]
+            return obj
 
         if name in objects.result_objects:
             return result_object_wrapper
