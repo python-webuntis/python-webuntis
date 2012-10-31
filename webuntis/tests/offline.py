@@ -280,12 +280,13 @@ class BasicUsageTests(OfflineTestCase):
                     'result': {'bla': 'blub'}
                 }
 
-        with mock_results(methods), mock.patch.dict(
-            self.session.options,
-            {'login_repeat': retry_amount}
-        ):
-            self.assertRaises(webuntis.errors.NotLoggedInError,
-                              self.session._request, 'getCurrentSchoolyear')
+        with mock_results(methods):
+            with mock.patch.dict(
+                self.session.options,
+                {'login_repeat': retry_amount}
+            ):
+                self.assertRaises(webuntis.errors.NotLoggedInError,
+                                  self.session._request, 'getCurrentSchoolyear')
 
         self.assertEqual(calls, expected_calls)
 
@@ -317,12 +318,13 @@ class BasicUsageTests(OfflineTestCase):
             getCurrentSchoolyear = logout = _nope
             del _nope
 
-        with mock_results(methods), mock.patch.dict(
-            self.session.options,
-            {'login_repeat': retry_amount, 'jsessionid': None}
-        ):
-            self.assertRaises(webuntis.errors.NotLoggedInError,
-                              self.session._request, 'getCurrentSchoolyear')
+        with mock_results(methods):
+            with mock.patch.dict(
+                self.session.options,
+                {'login_repeat': retry_amount, 'jsessionid': None}
+            ):
+                self.assertRaises(webuntis.errors.NotLoggedInError,
+                                  self.session._request, 'getCurrentSchoolyear')
 
         self.assertEqual(calls, expected_calls)
 
