@@ -74,6 +74,15 @@ class ListItem(object):
         what type it is.'''
         return self.id
 
+    def __repr__(self):
+        '''This is completely different from what you'd type into the console,
+        but it's useful and informative for debugging.
+        '''
+        cls = self.__class__.__name__
+        kwargs = [d for d in dir(self) if not d.startswith('_')]
+        kwargs_string = ', '.join(arg + '=' + repr(getattr(self, arg)) for arg in kwargs)
+        return '<webuntis.objects.' + cls + '(' + kwargs_string + ')>'
+
 
 class ListResult(Result):
     '''A list-like version of :py:class:`Result` that takes a list and returns
