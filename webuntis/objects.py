@@ -352,7 +352,7 @@ class PeriodList(ListResult):
     or student parameter containing the id or the object of the thing you want
     to get a timetable about::
 
-        schoolclass = s.klassen().filter(id=1)  # schoolclass #1
+        schoolclass = s.klassen().filter(id=1)[0]  # schoolclass #1
 
         s.timetable(klasse=schoolclass)  # which is the same as...
         s.periods(klasse=schoolclass)
