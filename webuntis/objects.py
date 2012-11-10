@@ -296,7 +296,7 @@ class PeriodObject(ListItem):
         which are attending this period.'''
 
         return self._session.klassen().filter(
-            id=[kl['id'] for kl in self._data['kl']]
+            id=set([kl['id'] for kl in self._data['kl']])
         )
 
     @lazyproperty
@@ -305,7 +305,7 @@ class PeriodObject(ListItem):
         which are attending this period.'''
 
         return self._session.teachers().filter(
-            id=[te['id'] for te in self._data['te']]
+            id=set([te['id'] for te in self._data['te']])
         )
 
     @lazyproperty
@@ -316,7 +316,7 @@ class PeriodObject(ListItem):
         those will get placed in their own period.'''
 
         return self._session.subjects().filter(
-            id=[su['id'] for su in self._data['su']]
+            id=set([su['id'] for su in self._data['su']])
         )
 
     @lazyproperty
@@ -326,7 +326,7 @@ class PeriodObject(ListItem):
         actually occuring at multiple locations.'''
 
         return self._session.rooms().filter(
-            id=[ro['id'] for ro in self._data['ro']]
+            id=set([ro['id'] for ro in self._data['ro']])
         )
 
     @lazyproperty

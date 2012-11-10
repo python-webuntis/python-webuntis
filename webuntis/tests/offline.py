@@ -89,7 +89,7 @@ class BasicUsageTests(OfflineTestCase):
                 [129, 130, 137],
                 sorted(
                     kl.id for kl in
-                    klassen.filter(id=(129, 130, 137))
+                    klassen.filter(id=set([129, 130, 137]))
                 )
             )
 
