@@ -112,13 +112,14 @@ class ListResult(Result):
 
     def filter(self, **criterions):
         '''
-        Returns a list of all objects, filtered by attributes::
+        Returns a list of all objects, filtered by attributes.
 
-            foo = s.klassen().filter(id=1)  # is the same as...
+            foo = s.klassen().filter(id=1)  # is the same as
             foo = [kl for kl in s.klassen() if kl.id == 1]
 
-            bar = s.klassen().filter(id=(1,2,3,4))  # is the same as...
-            bar = [kl for kl in s.klassen() if kl.id in (1,2,3,4)]
+            # We can also use sets to match multiple values.
+            bar = s.klassen().filter(name={'1A', '2A', '3A', '4A'})  # is the same as
+            bar = [kl for kl in s.klassen() if kl.id in {'1A', '2A', '3A', '4A'}]
 
         .. note::
             This is only available because it looks nicer than list
@@ -135,7 +136,7 @@ class ListResult(Result):
                 attribute = getattr(item, key)
                 if attribute == value:
                     continue
-                elif is_iterable(value) and attribute in value:
+                elif isinstance(value, set) and attribute in value:
                     continue
                 else:
                     return False
