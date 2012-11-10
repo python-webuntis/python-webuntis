@@ -95,12 +95,20 @@ class BasicUsageTests(OfflineTestCase):
 
     def test_gettimetables_mock(self):
         jsonstr = json.load(
-            open(self.data_path + '/gettimetables_mock.json')
-        )
+            open(self.data_path + '/gettimetables_mock.json'))
 
         jsonstr_kl = json.load(
-            open(self.data_path + '/getklassen_mock.json')
-        )
+            open(self.data_path + '/getklassen_mock.json'))
+
+        jsonstr_te = json.load(
+            open(self.data_path + '/getteachers_mock.json'))
+
+        jsonstr_su = json.load(
+            open(self.data_path + '/getsubjects_mock.json'))
+
+        jsonstr_ro = json.load(
+            open(self.data_path + '/getrooms_mock.json'))
+
 
         class methods(object):
             @staticmethod
@@ -110,6 +118,18 @@ class BasicUsageTests(OfflineTestCase):
             @staticmethod
             def getKlassen(self, url, jsondata, headers):
                 return {'result': jsonstr_kl}
+
+            @staticmethod
+            def getTeachers(self, url, jsondata, headers):
+                return {'result': jsonstr_te}
+
+            @staticmethod
+            def getSubjects(self, url, jsondata, headers):
+                return {'result': jsonstr_su}
+
+            @staticmethod
+            def getRooms(self, url, jsondata, headers):
+                return {'result': jsonstr_ro}
 
         with mock_results(methods):
             tt = self.session.timetable(klasse=114)
@@ -132,11 +152,22 @@ class BasicUsageTests(OfflineTestCase):
                     int(period.end.strftime('%H%M')),
                     period_raw['endTime']
                 )
+
+                self.assertEqual(len(period_raw['kl']), len(period.klassen))
                 for klasse_raw, klasse in zip(period_raw['kl'], period.klassen):
-                    self.assertEqual(
-                        klasse.id,
-                        klasse_raw['id']
-                    )
+                    self.assertEqual(klasse.id, klasse_raw['id'])
+
+                self.assertEqual(len(period_raw['te']), len(period.teachers))
+                for teacher_raw, teacher in zip(period_raw['te'], period.teachers):
+                    self.assertEqual(teacher.id, teacher_raw['id'])
+
+                self.assertEqual(len(period_raw['su']), len(period.subjects))
+                for subject_raw, subject in zip(period_raw['su'], period.subjects):
+                    self.assertEqual(subject.id, subject_raw['id'])
+                    
+                self.assertEqual(len(period_raw['ro']), len(period.rooms))
+                for room_raw, room in zip(period_raw['ro'], period.rooms):
+                    self.assertEqual(room.id, room_raw['id'])
 
     def test_getrooms_mock(self):
         jsonstr = json.load(
