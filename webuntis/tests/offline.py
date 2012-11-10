@@ -98,32 +98,45 @@ class BasicUsageTests(OfflineTestCase):
             open(self.data_path + '/gettimetables_mock.json')
         )
 
+        jsonstr_kl = json.load(
+            open(self.data_path + '/getklassen_mock.json')
+        )
+
         class methods(object):
             @staticmethod
             def getTimetable(self, url, jsondata, headers):
                 return {'result': jsonstr}
 
+            @staticmethod
+            def getKlassen(self, url, jsondata, headers):
+                return {'result': jsonstr_kl}
+
         with mock_results(methods):
             tt = self.session.timetable(klasse=114)
 
-        for period_raw, period in zip(jsonstr, tt):
-            self.assertEqual(
-                int(period.start.strftime('%H%M')),
-                period_raw['startTime']
-            )
-            self.assertEqual(
-                int(period.start.strftime('%Y%m%d')),
-                period_raw['date']
-            )
+            for period_raw, period in zip(jsonstr, tt):
+                self.assertEqual(
+                    int(period.start.strftime('%H%M')),
+                    period_raw['startTime']
+                )
+                self.assertEqual(
+                    int(period.start.strftime('%Y%m%d')),
+                    period_raw['date']
+                )
 
-            self.assertEqual(
-                int(period.end.strftime('%H%M')),
-                period_raw['endTime']
-            )
-            self.assertEqual(
-                int(period.end.strftime('%H%M')),
-                period_raw['endTime']
-            )
+                self.assertEqual(
+                    int(period.end.strftime('%H%M')),
+                    period_raw['endTime']
+                )
+                self.assertEqual(
+                    int(period.end.strftime('%H%M')),
+                    period_raw['endTime']
+                )
+                for klasse_raw, klasse in zip(period_raw['kl'], period.klassen):
+                    self.assertEqual(
+                        klasse.id,
+                        klasse_raw['id']
+                    )
 
     def test_getrooms_mock(self):
         jsonstr = json.load(
@@ -459,18 +472,14 @@ class InternalTests(OfflineTestCase):
         testclass = webuntis.objects.DepartmentList
         testobj = testclass(self.session, kwargs)
 
-        def result_mock(request, request_body, result_body):
-            self.assertEqual(request._method, testclass._jsonrpc_method)
-            self.assertEqual(request._method, testobj._jsonrpc_method)
-            self.assertEqual(request._params,
-                             testobj._jsonrpc_parameters(**kwargs))
-            return {}
+        class methods(object):
+            @staticmethod
+            def getDepartments(req, url, jsondata, headers):
+                self.assertEqual(jsondata['params'],
+                                 testobj._jsonrpc_parameters(**kwargs))
+                return {'result': {}}
 
-        with mock.patch.object(
-            webuntis.session.JSONRPCRequest,
-            '_parse_result',
-            new=result_mock
-        ):
+        with mock_results(methods):
             testobj.store_data()
 
     def helper_jsonrpc_parameters(self, resultclass):

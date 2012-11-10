@@ -22,10 +22,11 @@ class TestCaseBase(unittest.TestCase):
 
 class OfflineTestCase(TestCaseBase):
     def setUp(self):
-        self.request_patcher = patcher = mock.patch(
-            'webuntis.session.JSONRPCRequest._send_request',
-            return_value=None
-        )
+        class methods(object):
+            '''This eliminates any remote access.'''
+            pass
+
+        self.request_patcher = patcher = mock_results(methods)
         patcher.start()
 
         init_params = {
@@ -45,20 +46,17 @@ class OfflineTestCase(TestCaseBase):
         self.request_patcher.stop()
         self.session = None
 
-def mock_results(methods):
+def mock_results(methods, use_original=False):
     orig = webuntis.session.JSONRPCRequest._send_request
 
     def callback(self, url, data, headers):
         jsondata = json.loads(data.decode('utf-8'))
         method = jsondata['method']
 
-        try:
-            data = getattr(methods, method)(self, url, jsondata, headers)
-            d = {'id': jsondata['id']}
-            d.update(data)
-            return d
-        except AttributeError:
-            orig(self, url, data, headers)
+        data = getattr(methods, method)(self, url, jsondata, headers)
+        d = {'id': jsondata['id']}
+        d.update(data)
+        return d
 
     return mock.patch(
         'webuntis.session.JSONRPCRequest._send_request',
