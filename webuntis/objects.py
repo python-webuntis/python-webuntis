@@ -6,23 +6,41 @@
 '''
 
 from __future__ import unicode_literals
-
 from webuntis.utils import datetime_utils, lazyproperty, is_iterable, \
                            timetable_utils
 
 
 class Result(object):
-    '''Class used to represent most API method results.
+    '''Base class used to represent most API objects.
     '''
-    _jsonrpc_method = False
-    _data = False
 
-    def __init__(self, session, kwargs):
-        if not self._jsonrpc_method:
-            raise NotImplementedError
+    #: The method used internally to fetch the data
+    _jsonrpc_method = None
 
-        self._session = session
+    #: The JSON data recieved from the server
+    _data = None
+
+    #: The arguments gotten from the user
+    _kwargs = None
+
+    #: Optionally, a parent Result where this Result belongs to.
+    _parent = None
+
+    def __init__(self, parent=None, session=None, kwargs=None, data=None):
+        if bool(kwargs is None) == bool(data is None):
+            raise TypeError('Exactly one argument must be supplied: kwargs, data')
+
+        if not isinstance(parent, Result) and parent is not None:
+            raise TypeError('If provided, parent must be an instance of '
+                            'webuntis.objects.Result.')
+
+        if bool(parent is None) == bool(session is None):
+            raise TypeError('Either parent or session has to be provided.')
+
+        self._session = session or parent._session
+        self._parent = parent
         self._kwargs = kwargs
+        self._data = data
 
     def _jsonrpc_parameters(self, **kwargs):
         '''This method returns all methods that should be passed to the
@@ -31,42 +49,23 @@ class Result(object):
         # really need to overwrite this if they actually have no parameters
         return {}
 
-    def _get_data(self):
+    def get_data(self):
         '''A simple wrapper for the jsonrpc_parameters builder.
         Can be overwritten by subclasses, which may require more complex
         options'''
-        return self._session._request(
+        if not self._jsonrpc_method:
+            raise NotImplementedError
+
+        self._data = self._session._request(
             self._jsonrpc_method,
             self._jsonrpc_parameters(**self._kwargs)
         )
 
-    def store_data(self):
-        self._data = self._get_data()
-
-
-class ListItem(object):
-    '''ListItems represent an item in a
-    :py:class:`ListResult`. They don\'t contain methods to
-    retrieve data.'''
-
-    #: the raw JSON data returned from the server
-    _data = None
-
-    id = None
-    '''the ID of this element. When dealing with arrays as result, it is very
-    common for an item to have its own ID.'''
-
-    def __init__(self, session, parent, data):
-        '''
-        Keyword arguments:
-        session -- a webuntis.session.Session object
-        data -- the relevant part of a json result for this object
-        '''
-        self._session = session
-        self._parent = parent
-        self._data = data
-
-        self.id = self._data['id'] if 'id' in self._data else None
+    @lazyproperty
+    def id(self):
+        '''the ID of this element. When dealing with arrays as result, it is very
+        common for an item to have its own ID.'''
+        return self._data['id'] if 'id' in self._data else None
 
     def __int__(self):
         '''This is useful if the users pass a ListItem when a numerical ID
@@ -84,11 +83,17 @@ class ListItem(object):
         return '<webuntis.objects.' + cls + '(' + kwargs_string + ')>'
 
 
+class ListItem(Result):
+    '''ListItems represent an item in a
+    :py:class:`Result`. They don\'t contain methods to
+    retrieve data.'''
+
+
 class ListResult(Result):
     '''A list-like version of :py:class:`Result` that takes a list and returns
     a list of objects, containing a list value each.
 
-    :py:class:`ListResult` instances now have support for ``__contains__``,
+    :py:class:`ResultList` instances now have support for ``__contains__``,
     which means you can do::
 
         do_we_have_it = {'name': '6A'} in s.klassen()
@@ -104,11 +109,15 @@ class ListResult(Result):
 
     #: the class which should be used to instantiate an array item.
     _itemclass = ListItem
-    _items = None
 
-    def store_data(self, *args, **kwargs):
-        Result.store_data(self, *args, **kwargs)
-        self._items = [None] * len(self._data)
+    #: Contains the object representation of each item found in _data. Is a
+    #: dictionary instead of a list to allow random r/w access without
+    #: IndexErrors.
+    _itemcache = None
+
+    def __init__(self, *args, **kwargs):
+        Result.__init__(self, *args, **kwargs)
+        self._itemcache = {}
 
     def filter(self, **criterions):
         '''
@@ -143,19 +152,26 @@ class ListResult(Result):
 
             return True
 
-        return [item for item in self if meets_criterions(item)]
+        return type(self)(parent=self, data=[item for item in self if meets_criterions(item)])
 
     def __contains__(self, criterion):
         return bool(self.filter(**criterion))
 
     def __getitem__(self, i):
         '''Makes the object iterable and behave like a list'''
-        if self._items[i] is None:
+        try:
+            value = self._itemcache[i]
+        except KeyError:
             # if we don't have an object yet
-            self._items[i] = self._itemclass(
-                self._session, self, self._data[i])
+            if type(self._data[i]) is not self._itemclass:
+                self._itemcache[i] = value = self._itemclass(
+                    parent=self,
+                    data=self._data[i]
+                )
+            else:
+                self._itemcache[i] = value = self._data[i]
 
-        return self._items[i]
+        return value
 
     def __len__(self):
         '''Return the length of the items'''
@@ -380,10 +396,10 @@ class PeriodList(ListResult):
             'student': 5
         }
 
-        invalid_type_error = ValueError(
+        invalid_type_error = TypeError(
             'You have to specify exactly one of the following parameters by '
-            'keyword: '
-            ', '.join(element_type_table.keys())
+            'keyword: ' +
+            (', '.join(element_type_table.keys()))
         )
 
         if len(type_and_id) != 1:

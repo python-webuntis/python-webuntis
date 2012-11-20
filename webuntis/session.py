@@ -307,7 +307,7 @@ class Session(JSONRPCSession):
             key = self._make_cache_key(name, kwargs)
             def get_result_object():
                 obj = objects.result_objects[name](session=self, kwargs=kwargs)
-                obj.store_data()
+                obj.get_data()
                 return obj
 
             if key not in self._cache:

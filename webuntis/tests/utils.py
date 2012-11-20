@@ -15,9 +15,17 @@ import json
 import webuntis
 
 
+tests_path = os.path.abspath(os.path.dirname(__file__))
+data_path = tests_path + '/static'
+
+
+def get_json_resource(name):
+        with open(os.path.join(data_path, name)) as f:
+            return json.load(f)
+
+
 class TestCaseBase(unittest.TestCase):
-    tests_path = os.path.abspath(os.path.dirname(__file__))
-    data_path = tests_path + '/static'
+    pass
 
 
 class OfflineTestCase(TestCaseBase):
@@ -46,9 +54,8 @@ class OfflineTestCase(TestCaseBase):
         self.request_patcher.stop()
         self.session = None
 
-def mock_results(methods, use_original=False):
-    orig = webuntis.session.JSONRPCRequest._send_request
 
+def mock_results(methods, use_original=False):
     def callback(self, url, data, headers):
         jsondata = json.loads(data.decode('utf-8'))
         method = jsondata['method']
@@ -62,4 +69,3 @@ def mock_results(methods, use_original=False):
         'webuntis.session.JSONRPCRequest._send_request',
         new=callback
     )
-
