@@ -52,8 +52,8 @@ class JSONRPCRequest(object):
         '''
 
         url = self._session.options['server'] + \
-                '?school=' + \
-                self._session.options['school']
+            '?school=' + \
+            self._session.options['school']
 
         headers = {
             'User-Agent': self._session.options['useragent'],
@@ -73,7 +73,7 @@ class JSONRPCRequest(object):
                     'Don\'t have JSESSIONID. Did you already log out?')
             else:
                 headers['Cookie'] = 'JSESSIONID=' + \
-                        self._session.options['jsessionid']
+                    self._session.options['jsessionid']
 
         logging.debug('Making new request:')
         logging.debug('URL: ' + url)
@@ -114,7 +114,7 @@ class JSONRPCRequest(object):
         except KeyError:
             exc = errors.RemoteError(
                 ('Some JSON-RPC-ish error happened. Please report this to the '
-                'developer so he can implement a proper handling.'),
+                    'developer so he can implement a proper handling.'),
                 str(result_body),
                 str(request_body)
             )
@@ -204,7 +204,6 @@ class JSONRPCSession(object):
         except KeyError:
             throw_errors()
 
-
     def login(self):
         '''Initializes an authentication, provided we have the credentials for
         it.
@@ -255,17 +254,18 @@ class JSONRPCSession(object):
         while data is None:
             try:
                 data = JSONRPCRequest(self, method, params).request()
-            except errors.NotLoggedInError as e:
+            except errors.NotLoggedInError:
                 if attempts_left > 0:
                     self.logout(suppress_errors=True)
                     self.login()
                 else:
-                    raise errors.NotLoggedInError('Tried to login several times, failed. Original method was ' + method)
+                    raise errors.NotLoggedInError(
+                        'Tried to login several times, failed. Original method '
+                        'was ' + method)
             else:
                 return data
 
             attempts_left -= 1  # new round!
-
 
 
 class Session(JSONRPCSession):
@@ -286,7 +286,6 @@ class Session(JSONRPCSession):
 
         JSONRPCSession.__init__(self, **options)
 
-
     def _make_cache_key(self, method, kwargs):
         '''A helper method that generates a hashable object out of a string and
         a dictionary.
@@ -305,6 +304,7 @@ class Session(JSONRPCSession):
         '''
         def result_object_wrapper(**kwargs):
             key = self._make_cache_key(name, kwargs)
+
             def get_result_object():
                 obj = objects.result_objects[name](session=self, kwargs=kwargs)
                 obj.get_data()

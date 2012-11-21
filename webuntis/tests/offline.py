@@ -10,7 +10,6 @@ import mock
 import webuntis
 import webuntis.utils as utils
 import datetime
-import json
 
 from webuntis.tests.utils import OfflineTestCase, mock_results, \
     get_json_resource
@@ -22,7 +21,6 @@ class BasicUsageTests(OfflineTestCase):
 
     def test_getdepartments_mock(self):
         jsonstr = get_json_resource('getdepartments_mock.json')
-
 
         class methods(object):
             @staticmethod
@@ -148,14 +146,14 @@ class BasicUsageTests(OfflineTestCase):
                 self.assertEqual(len(period_raw['su']), len(period.subjects))
                 for subject_raw, subject in zip(period_raw['su'], period.subjects):
                     self.assertEqual(subject.id, subject_raw['id'])
-                    
+
                 self.assertEqual(len(period_raw['ro']), len(period.rooms))
                 for room_raw, room in zip(period_raw['ro'], period.rooms):
                     self.assertEqual(room.id, room_raw['id'])
 
     def test_getrooms_mock(self):
         jsonstr = get_json_resource('getrooms_mock.json')
-        
+
         class methods(object):
             @staticmethod
             def getRooms(self, url, jsondata, headers):
@@ -205,7 +203,7 @@ class BasicUsageTests(OfflineTestCase):
 
     def test_getsubjects_mock(self):
         jsonstr = get_json_resource('getsubjects_mock.json')
-        
+
         class methods(object):
             @staticmethod
             def getSubjects(self, url, jsondata, headers):

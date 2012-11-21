@@ -6,8 +6,8 @@
 '''
 
 from __future__ import unicode_literals
-from webuntis.utils import datetime_utils, lazyproperty, is_iterable, \
-                           timetable_utils
+from webuntis.utils import datetime_utils, lazyproperty, \
+    timetable_utils
 
 
 class Result(object):
@@ -28,7 +28,8 @@ class Result(object):
 
     def __init__(self, parent=None, session=None, kwargs=None, data=None):
         if bool(kwargs is None) == bool(data is None):
-            raise TypeError('Exactly one argument must be supplied: kwargs, data')
+            raise TypeError('Exactly one argument must be supplied: '
+                            'kwargs, data')
 
         if not isinstance(parent, Result) and parent is not None:
             raise TypeError('If provided, parent must be an instance of '
@@ -63,8 +64,8 @@ class Result(object):
 
     @lazyproperty
     def id(self):
-        '''the ID of this element. When dealing with arrays as result, it is very
-        common for an item to have its own ID.'''
+        '''the ID of this element. When dealing with arrays as result, it is
+        very common for an item to have its own ID.'''
         return self._data['id'] if 'id' in self._data else None
 
     def __int__(self):
@@ -72,15 +73,6 @@ class Result(object):
         is expected, so we just can put the thing through int(), regardless of
         what type it is.'''
         return self.id
-
-    def __repr__(self):
-        '''This is completely different from what you'd type into the console,
-        but it's useful and informative for debugging.
-        '''
-        cls = self.__class__.__name__
-        kwargs = [d for d in dir(self) if not d.startswith('_')]
-        kwargs_string = ', '.join(arg + '=' + repr(getattr(self, arg)) for arg in kwargs)
-        return '<webuntis.objects.' + cls + '(' + kwargs_string + ')>'
 
 
 class ListItem(Result):
@@ -127,8 +119,10 @@ class ListResult(Result):
             foo = [kl for kl in s.klassen() if kl.id == 1]
 
             # We can also use sets to match multiple values.
-            bar = s.klassen().filter(name={'1A', '2A', '3A', '4A'})  # is the same as
-            bar = [kl for kl in s.klassen() if kl.id in {'1A', '2A', '3A', '4A'}]
+            bar = s.klassen().filter(name={'1A', '2A', '3A', '4A'})
+            # is the same as
+            bar = [kl for kl in s.klassen()
+                   if kl.id in {'1A', '2A', '3A', '4A'}]
 
         .. note::
             This is only available because it looks nicer than list
@@ -152,7 +146,10 @@ class ListResult(Result):
 
             return True
 
-        return type(self)(parent=self, data=[item for item in self if meets_criterions(item)])
+        return type(self)(
+            parent=self,
+            data=[item for item in self if meets_criterions(item)]
+        )
 
     def __contains__(self, criterion):
         return bool(self.filter(**criterion))

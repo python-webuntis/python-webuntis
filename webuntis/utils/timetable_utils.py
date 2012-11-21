@@ -122,8 +122,8 @@ def table(periods, width=None):
     longest_row = len(max(grouped, key=len))
 
     if width and longest_row > width:
-        raise ValueError('Fixed width too small. Need at least ' +
-            str(longest_row))
+        raise ValueError(
+            'Fixed width too small. Need at least %i' % longest_row)
 
     longest_row = width
 
