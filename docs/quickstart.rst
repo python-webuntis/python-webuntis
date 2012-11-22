@@ -15,6 +15,9 @@ and its API:
 
     - **The API is read-only.** And there's nothing you can do about it.
 
+    - **The API documentation does not explain the purpose of some methods.**
+      So i can't do a much better job at it.
+
     - **Different schools, different rules.** It is not neccessary that schools
       enter information about, for example, a teacher, in the correct format.
       It might happen that a school abuses the name field of a teacher to just
