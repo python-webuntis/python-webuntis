@@ -133,7 +133,14 @@ class BasicUsageTests(OfflineTestCase):
                     period_raw['endTime']
                 )
                 if 'code' in period_raw:
-                    self.assertEqual(period_raw['code'], period.type)
+                    self.assertEqual(period_raw['code'], period.code)
+                else:
+                    self.assertEqual(period.code, None)
+
+                if 'type' in period_raw:
+                    self.assertEqual(period_raw['lstype'], period.type)
+                else:
+                    self.assertEqual(period.type, 'ls')
 
                 self.assertEqual(len(period_raw['kl']), len(period.klassen))
                 for klasse_raw, klasse in zip(period_raw['kl'], period.klassen):

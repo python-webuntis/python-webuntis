@@ -367,7 +367,7 @@ class PeriodObject(ListItem):
         )
 
     @lazyproperty
-    def type(self):
+    def code(self):
         '''May be:
 
           - ``None`` -- There's nothing special about this period.
@@ -375,7 +375,24 @@ class PeriodObject(ListItem):
           - ``"irregular"`` -- Substitution/"Supplierung"/Not planned event
         '''
 
-        return (self._data['code'] if 'code' in self._data else None)
+        if 'code' not in self._data:
+            return None
+        else:
+            return self._data['code'] or None
+
+    @lazyproperty
+    def type(self):
+        '''
+        May be:
+
+          - ``"ls"`` -- Normal lesson
+          - ``"oh"`` -- Office hour
+          - ``"sb"`` -- Standby
+          - ``"bs"`` -- Break Supervision
+          - ``"ex"`` -- Examination
+        '''
+
+        return (self._data['lstype'] if 'lstype' in self._data else 'ls')
 
 
 class PeriodList(ListResult):
