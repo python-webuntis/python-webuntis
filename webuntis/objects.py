@@ -12,20 +12,33 @@ from webuntis.utils import datetime_utils, lazyproperty, \
 
 class Result(object):
     '''Base class used to represent most API objects.
+
+    :param parent: (optional) A result object this result should be the child
+                    of. If given, the session will be inherited.
+
+    :param session: Mandatory if ``parent`` is not supplied. Overrides the
+                    parent's inherited session.
+
+    :param kwargs: Keyword arguments in form of a dictionary from the
+                   higer-level wrapper-methods of
+                   :py:class:`webuntis.session.Session`, for example
+                   ``s.klassen``.
+
+    :param data: Usually JSON data that should be represented.
+
+                 In the case of :py:class:`ListResult`, however, it might also
+                 be a list of JSON mixed with :py:class:`ListItem` objects.
+
+                 If this is given, ``kwargs`` must not be supplied.
     '''
+
+    _parent = None
+    _session = None
+    _kwargs = None
+    _data = None
 
     #: The JSON-RPC method used to fetch the data
     _jsonrpc_method = None
-
-    #: Usually the original JSON data is stored here, but there's no guarantee.
-    _data = None
-
-    #: The arguments gotten from the API methods from a
-    #: :py:class:`webuntis.session.Session`
-    _kwargs = None
-
-    #: Optionally, a parent Result where this Result belongs to.
-    _parent = None
 
     def __init__(self, parent=None, session=None, kwargs=None, data=None):
         if bool(kwargs is None) == bool(data is None):
@@ -58,6 +71,9 @@ class Result(object):
         if not self._jsonrpc_method:
             raise NotImplementedError
 
+        if self._data is not None:
+            raise Exception('We already have data!')
+
         self._data = self._session._request(
             self._jsonrpc_method,
             self._jsonrpc_parameters(**self._kwargs)
@@ -86,14 +102,14 @@ class ListResult(Result):
     '''A list-like version of :py:class:`Result` that takes a list and returns
     a list of objects, containing a list value each.
 
-    :py:class:`ResultList` instances now have support for ``__contains__``,
+    :py:class:`ListResult` instances now have support for ``__contains__``,
     which means you can do::
 
-        do_we_have_it = {'name': '6A'} in s.klassen()
+        we_have_it = {'name': '6A'} in s.klassen()
 
     instead of::
 
-        do_we_have_it = bool(s.klassen().filter(name='6A'))
+        we_have_it = bool(s.klassen().filter(name='6A'))
     '''
 
     # When the Result returns an array, this is very useful. Every item of that
@@ -114,7 +130,7 @@ class ListResult(Result):
 
     def filter(self, **criterions):
         '''
-        Returns a list of all objects, filtered by attributes.
+        Return a list of all objects, filtered by attributes::
 
             foo = s.klassen().filter(id=1)  # is the same as
             foo = [kl for kl in s.klassen() if kl.id == 1]
@@ -124,6 +140,11 @@ class ListResult(Result):
             # is the same as
             bar = [kl for kl in s.klassen()
                    if kl.id in {'1A', '2A', '3A', '4A'}]
+
+            # Since ``filter`` returns a ListResult itself too, we can chain
+            # multiple calls together:
+            bar = s.klassen().filter(id=4, name='7A')  # is the same as
+            bar = s.klassen().filter(id=4).filter(name='7A')
 
         .. note::
             This is only available because it looks nicer than list
@@ -180,8 +201,7 @@ class ListResult(Result):
 
 
 class DepartmentObject(ListItem):
-    '''Represents a department
-    '''
+    '''Represents a department'''
 
     @lazyproperty
     def name(self):
@@ -614,8 +634,8 @@ class TimeunitList(ListResult):
         ]
 
     .. note::
-        The date properties of the datetime objects are invalid! Since these
-        are not provided by the official API, there's not much you can do about
+        The date-specific properties of the datetime objects are invalid, since
+        these are not provided by the official API.
         it.
     '''
 
