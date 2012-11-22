@@ -14,13 +14,14 @@ class Result(object):
     '''Base class used to represent most API objects.
     '''
 
-    #: The method used internally to fetch the data
+    #: The JSON-RPC method used to fetch the data
     _jsonrpc_method = None
 
-    #: The JSON data recieved from the server
+    #: Usually the original JSON data is stored here, but there's no guarantee.
     _data = None
 
-    #: The arguments gotten from the user
+    #: The arguments gotten from the API methods from a
+    #: :py:class:`webuntis.session.Session`
     _kwargs = None
 
     #: Optionally, a parent Result where this Result belongs to.
