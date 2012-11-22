@@ -157,17 +157,20 @@ class ListResult(Result):
 
     def __getitem__(self, i):
         '''Makes the object iterable and behave like a list'''
+        data = self._data[i]  # fails if there is no such item
+
         try:
             value = self._itemcache[i]
         except KeyError:
             # if we don't have an object yet
-            if type(self._data[i]) is not self._itemclass:
+            if type(data) is not self._itemclass:
                 self._itemcache[i] = value = self._itemclass(
                     parent=self,
-                    data=self._data[i]
+                    data=data
                 )
             else:
-                self._itemcache[i] = value = self._data[i]
+                self._itemcache[i] = value = data
+
 
         return value
 
