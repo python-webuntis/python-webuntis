@@ -14,7 +14,7 @@ Timetable Utils
 .. autofunction:: table
 
 Options
-============
+=======
 
 .. module:: webuntis.utils.option_utils
 
