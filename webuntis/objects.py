@@ -178,18 +178,12 @@ class DepartmentObject(ListItem):
 
 
 class DepartmentList(ListResult):
-    '''A list of all departments::
-
-        s.departments()
-
-    ::
-    '''
+    '''A list of departments.'''
     _itemclass = DepartmentObject
 
 
 class HolidayObject(ListItem):
-    '''Represents a single holiday.
-    '''
+    '''Represents a single holiday.'''
 
     @lazyproperty
     def start(self):
@@ -213,12 +207,7 @@ class HolidayObject(ListItem):
 
 
 class HolidayList(ListResult):
-    '''A list of all holidays::
-
-        s.holidays()
-
-    ::
-    '''
+    '''A list of all holidays.'''
     _itemclass = HolidayObject
 
 
@@ -237,28 +226,12 @@ class KlassenObject(ListItem):
 
 
 class KlassenList(ListResult):
-    '''A list of all school classes.
-
-    :param schoolyear:
-        The schoolyear where we should get all our school \
-        classes from. Either a \
-        :py:class:`SchoolyearObject` or an \
-        id of it.
-
-    ::
-
-        s.klassen()
-
-        year = s.schoolyears().filter(id=2)
-        s.klassen(schoolyear=year)
-
-    '''
+    '''A list of all school classes.'''
     _itemclass = KlassenObject
 
 
 class PeriodObject(ListItem):
-    '''Represents a time range, where lessons/subjects may be held.
-    '''
+    '''Represents a time range, where lessons/subjects may be held.'''
 
     @lazyproperty
     def start(self):
@@ -347,25 +320,7 @@ class PeriodObject(ListItem):
 
 
 class PeriodList(ListResult):
-    '''
-    Aka timetable
-
-    :param start: a starting date either in the form YYMMDD or as date/time
-        object.
-    :param end: a ending date in the same form as the starting date.
-
-    Furthermore you have to explicitly define a klasse, teacher, subject, room
-    or student parameter containing the id or the object of the thing you want
-    to get a timetable about::
-
-        schoolclass = s.klassen().filter(id=1)[0]  # schoolclass #1
-
-        s.timetable(klasse=schoolclass)  # which is the same as...
-        s.periods(klasse=schoolclass)
-
-    :raises: :py:class:`ValueError` -- if something was wrong with the
-        arguments supplied.
-    '''
+    '''Aka timetable, a list of periods.'''
     _itemclass = PeriodObject
 
     def to_table(self, *args, **kwargs):
@@ -392,18 +347,12 @@ class RoomObject(ListItem):
 
 
 class RoomList(ListResult):
-    '''
-    Represents a list of rooms::
-
-        s.rooms()
-
-    '''
+    '''A list of rooms.'''
     _itemclass = RoomObject
 
 
 class SchoolyearObject(ListItem):
-    '''Represents a schoolyear.
-    '''
+    '''Represents a schoolyear.'''
 
     @lazyproperty
     def name(self):
@@ -439,12 +388,7 @@ class SchoolyearObject(ListItem):
 
 
 class SchoolyearList(ListResult):
-    '''
-    Represents a list of school years::
-
-        s.schoolyears()
-
-    '''
+    '''A list of schoolyears.'''
     _itemclass = SchoolyearObject
 
     @lazyproperty
@@ -457,8 +401,7 @@ class SchoolyearList(ListResult):
 
 
 class SubjectObject(ListItem):
-    '''Represents a subject.
-    '''
+    '''Represents a subject.'''
 
     @lazyproperty
     def name(self):
@@ -472,18 +415,12 @@ class SubjectObject(ListItem):
 
 
 class SubjectList(ListResult):
-    '''Represents a list of subjects::
-
-        s.subjects()
-
-    ::
-    '''
+    '''A list of subjects.'''
     _itemclass = SubjectObject
 
 
 class TeacherObject(ListItem):
-    '''Represents a teacher.
-    '''
+    '''Represents a teacher.'''
     @lazyproperty
     def fore_name(self):
         '''fore name of the teacher'''
@@ -503,19 +440,12 @@ class TeacherObject(ListItem):
 
 
 class TeacherList(ListResult):
-    '''
-    Represents a list of teachers::
-
-        s.teachers()  # get all teachers of school
-
-    ::
-    '''
+    '''A list of teachers.'''
     _itemclass = TeacherObject
 
 
 class TimeunitObject(ListItem):
-    '''A bunch of timeunits for a specific day.
-    '''
+    '''A bunch of timeunits for a specific day.'''
 
     @lazyproperty
     def times(self):
@@ -556,7 +486,6 @@ class TimeunitList(ListResult):
     .. note::
         The date-specific properties of the datetime objects are invalid, since
         these are not provided by the official API.
-        it.
     '''
 
     _itemclass = TimeunitObject
@@ -566,13 +495,23 @@ class ColorInfo(Result):
     '''
     An object containing information about a lesson type or a period code::
 
-        >>> lstype = s.statusdata().lesson_types[ls]
+        >>> lstype = s.statusdata().lesson_types[0]
         >>> lstype.name
         'ls'
         >>> lstype.forecolor
         '000000'
         >>> lstype.backcolor
         'ee7f00'
+
+    ::
+
+        >>> pcode = s.statusdata().period_codes[0]
+        >>> pcode.name
+        'cancelled'
+        >>> pcode.forecolor
+        'FFFFFF'
+        >>> pcode.backcolor
+        'FF0000'
 
     '''
 
@@ -593,12 +532,7 @@ class ColorInfo(Result):
 
 
 class StatusData(Result):
-    '''
-    Information about lesson types and period codes and their colors::
-
-        s.statusdata()
-
-    '''
+    '''Information about lesson types and period codes and their colors.'''
 
     @lazyproperty
     def lesson_types(self):

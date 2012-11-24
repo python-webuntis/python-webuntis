@@ -5,16 +5,12 @@ Objects and Models
 .. note::
     
     The classes listed here never should be instantiated directly. Instead, use
-    the wrapper methods on :py:class:`webuntis.session.Session` they provide,
-    as shown in the classes' documentation.
+    the wrapper methods on :py:class:`webuntis.session.Session`.
 
 .. module:: webuntis.objects
 
 Base Classes
 ============
-
-.. autoclass:: Result
-  :members:
 
 .. autoclass:: ListResult
   :members:
