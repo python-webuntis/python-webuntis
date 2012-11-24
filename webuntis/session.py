@@ -358,7 +358,7 @@ class Session(JSONRPCSession):
     def holidays(self):
         '''Get all holidays.
 
-        :rtype :py:class:`webuntis.objects.HolidayList`
+        :rtype: :py:class:`webuntis.objects.HolidayList`
         '''
         return objects.HolidayList, 'getHolidays', {}
 
@@ -371,7 +371,7 @@ class Session(JSONRPCSession):
         :type schoolyear: :py:class:`webuntis.objects.SchoolyearObject` or an
             integer ID of it.
 
-        :rtype :py:class:`webuntis.objects.KlassenList`
+        :rtype: :py:class:`webuntis.objects.KlassenList`
         '''
         params = {}
         if schoolyear:
@@ -384,13 +384,11 @@ class Session(JSONRPCSession):
         '''Get the timetable for a specific school class and time period. An
         alias for this method is ``timetable``.
 
-        :type start: :py:class:`datetime.datetime`, or anything else that has a
-            ``strftime`` method.
-        :param start: The beginning of the time period
+        :param start: The beginning of the time period. Can be a
+            :py:class:`datetime.datetime` object or a string of the format
+            ``YYMMDD``.
 
-        :type end: :py:class:`datetime.datetime`, or anything else that has a
-            ``strftime`` method.
-        :param end: The end of the time period
+        :param end: The end of the time period, same type as ``start``.
 
         :rtype: :py:class:`webuntis.objects.PeriodList`
 
