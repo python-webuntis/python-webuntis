@@ -13,38 +13,25 @@ from webuntis.utils import datetime_utils, lazyproperty, \
 class Result(object):
     '''Base class used to represent most API objects.
 
+    :param data: Usually JSON data that should be represented.
+
+                 In the case of :py:class:`ListResult`, however, it might also
+                 be a list of JSON mixed with :py:class:`ListItem` objects.
+
     :param parent: (optional) A result object this result should be the child
                     of. If given, the session will be inherited.
 
     :param session: Mandatory if ``parent`` is not supplied. Overrides the
                     parent's inherited session.
 
-    :param kwargs: Keyword arguments in form of a dictionary from the
-                   higer-level wrapper-methods of
-                   :py:class:`webuntis.session.Session`, for example
-                   ``s.klassen``.
-
-    :param data: Usually JSON data that should be represented.
-
-                 In the case of :py:class:`ListResult`, however, it might also
-                 be a list of JSON mixed with :py:class:`ListItem` objects.
-
-                 If this is given, ``kwargs`` must not be supplied.
     '''
 
     _parent = None
     _session = None
-    _kwargs = None
     _data = None
 
-    #: The JSON-RPC method used to fetch the data
-    _jsonrpc_method = None
 
-    def __init__(self, parent=None, session=None, kwargs=None, data=None):
-        if bool(kwargs is None) == bool(data is None):
-            raise TypeError('Exactly one argument must be supplied: '
-                            'kwargs, data')
-
+    def __init__(self, data, parent=None, session=None):
         if not isinstance(parent, Result) and parent is not None:
             raise TypeError('If provided, parent must be an instance of '
                             'webuntis.objects.Result.')
@@ -54,30 +41,7 @@ class Result(object):
 
         self._session = session or parent._session
         self._parent = parent
-        self._kwargs = kwargs
         self._data = data
-
-    def _jsonrpc_parameters(self, **kwargs):
-        '''This method returns all methods that should be passed to the
-        JSON-RPC request'''
-        # we return an empty dictionary here so subclasses don't
-        # really need to overwrite this if they actually have no parameters
-        return {}
-
-    def get_data(self):
-        '''A simple wrapper for the jsonrpc_parameters builder.
-        Can be overwritten by subclasses, which may require more complex
-        options'''
-        if not self._jsonrpc_method:
-            raise NotImplementedError
-
-        if self._data is not None:
-            raise Exception('We already have data!')
-
-        self._data = self._session._request(
-            self._jsonrpc_method,
-            self._jsonrpc_parameters(**self._kwargs)
-        )
 
     @lazyproperty
     def id(self):
@@ -221,7 +185,6 @@ class DepartmentList(ListResult):
     ::
     '''
     _itemclass = DepartmentObject
-    _jsonrpc_method = 'getDepartments'
 
 
 class HolidayObject(ListItem):
@@ -257,7 +220,6 @@ class HolidayList(ListResult):
     ::
     '''
     _itemclass = HolidayObject
-    _jsonrpc_method = 'getHolidays'
 
 
 class KlassenObject(ListItem):
@@ -292,16 +254,6 @@ class KlassenList(ListResult):
 
     '''
     _itemclass = KlassenObject
-    _jsonrpc_method = 'getKlassen'
-
-    def _jsonrpc_parameters(self, schoolyear=None):
-        jsonrpc_parameters = {}
-        if schoolyear:
-            jsonrpc_parameters.update({
-                'schoolyearId': int(schoolyear)
-            })
-
-        return jsonrpc_parameters
 
 
 class PeriodObject(ListItem):
@@ -415,7 +367,6 @@ class PeriodList(ListResult):
         arguments supplied.
     '''
     _itemclass = PeriodObject
-    _jsonrpc_method = 'getTimetable'
 
     def to_table(self, *args, **kwargs):
         '''A shortcut for :py:func:`webuntis.utils.timetable_utils.table`.
@@ -423,49 +374,6 @@ class PeriodList(ListResult):
         '''
 
         return timetable_utils.table(self, *args, **kwargs)
-
-    def _jsonrpc_parameters(self, start=None, end=None, **type_and_id):
-        element_type_table = {
-            'klasse':  1,
-            'teacher': 2,
-            'subject': 3,
-            'room':    4,
-            'student': 5
-        }
-
-        invalid_type_error = TypeError(
-            'You have to specify exactly one of the following parameters by '
-            'keyword: ' +
-            (', '.join(element_type_table.keys()))
-        )
-
-        if len(type_and_id) != 1:
-            raise invalid_type_error
-
-        element_type, element_id = list(type_and_id.items())[0]
-
-        if element_type not in element_type_table:
-            raise invalid_type_error
-
-        # apply end to start and vice-versa if one of them is missing
-        if not start and end:
-            start = end
-        elif not end and start:
-            end = start
-
-        # if we have to deal with an object in element_id,
-        # its id gets placed here anyway
-        parameters = {
-            'id': int(element_id),
-            'type': element_type_table[element_type],
-        }
-
-        if start:
-            parameters['startDate'] = datetime_utils.format_date(start)
-        if end:
-            parameters['endDate'] = datetime_utils.format_date(end)
-
-        return parameters
 
 
 class RoomObject(ListItem):
@@ -491,7 +399,6 @@ class RoomList(ListResult):
 
     '''
     _itemclass = RoomObject
-    _jsonrpc_method = 'getRooms'
 
 
 class SchoolyearObject(ListItem):
@@ -539,7 +446,6 @@ class SchoolyearList(ListResult):
 
     '''
     _itemclass = SchoolyearObject
-    _jsonrpc_method = 'getSchoolyears'
 
     @lazyproperty
     def current(self):
@@ -573,7 +479,6 @@ class SubjectList(ListResult):
     ::
     '''
     _itemclass = SubjectObject
-    _jsonrpc_method = 'getSubjects'
 
 
 class TeacherObject(ListItem):
@@ -606,7 +511,6 @@ class TeacherList(ListResult):
     ::
     '''
     _itemclass = TeacherObject
-    _jsonrpc_method = 'getTeachers'
 
 
 class TimeunitObject(ListItem):
@@ -656,10 +560,9 @@ class TimeunitList(ListResult):
     '''
 
     _itemclass = TimeunitObject
-    _jsonrpc_method = 'getTimegridUnits'
 
 
-class ColorInfo(object):
+class ColorInfo(Result):
     '''
     An object containing information about a lesson type or a period code::
 
@@ -672,11 +575,6 @@ class ColorInfo(object):
         'ee7f00'
 
     '''
-
-    def __init__(self, session, parent, data):
-        self._session = session
-        self._parent = parent
-        self._data = data
 
     @lazyproperty
     def name(self):
@@ -701,14 +599,13 @@ class StatusData(Result):
         s.statusdata()
 
     '''
-    _jsonrpc_method = 'getStatusData'
 
     @lazyproperty
     def lesson_types(self):
         '''A list of :py:class:`ColorInfo` objects, containing
         information about all lesson types defined'''
         return [
-            ColorInfo(self._session, self, data)
+            ColorInfo(parent=self, data=data)
             for data in self._data['lstypes']
         ]
 
@@ -717,24 +614,6 @@ class StatusData(Result):
         '''A list of :py:class:`ColorInfo` objects, containing
         information about all period codes defined'''
         return [
-            ColorInfo(self._session, self, data)
+            ColorInfo(parent=self, data=data)
             for data in self._data['codes']
         ]
-
-# Defines result classes that are accessible from outside
-result_objects = {
-    'departments': DepartmentList,
-    'holidays': HolidayList,
-    'klassen': KlassenList,
-    'rooms': RoomList,
-    'schoolyears': SchoolyearList,
-    'subjects': SubjectList,
-    'teachers': TeacherList,
-
-    'timegrid': TimeunitList,
-    'timeunits': TimeunitList,
-    'statusdata': StatusData,
-
-    'timetable': PeriodList,
-    'periods': PeriodList
-}

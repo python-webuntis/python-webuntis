@@ -346,31 +346,6 @@ class Session(JSONRPCSession):
 
         return (method, frozenset((kwargs or {}).items()))
 
-
-#    def __getattr__(self, name):
-        #'''Returns a callable which creates an instance (or reuses an old one)
-        #of the appropriate object-list class
-        #'''
-        #def result_object_wrapper(**kwargs):
-            #key = self._make_cache_key(name, kwargs)
-
-            #def get_result_object():
-                #obj = objects.result_objects[name](session=self, kwargs=kwargs)
-                #obj.get_data()
-                #return obj
-
-            #if key not in self._cache:
-                #obj = self._cache[key] = get_result_object()
-            #else:
-                #obj = self._cache[key]
-            #return obj
-
-        #if name in objects.result_objects:
-            #return result_object_wrapper
-        #else:
-            #raise AttributeError(name)
-
-
     @result_wrapper
     def departments(self):
         return objects.DepartmentList, 'getDepartments', {}

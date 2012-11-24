@@ -454,15 +454,6 @@ class InternalTests(OfflineTestCase):
         self.assertEqual(item.id, data['id'])
         self.assertEqual(int(item), item.id)
 
-    def test_result_object_without_parameters_method(self):
-        with mock.patch.object(
-            webuntis.objects.Result,
-            '_jsonrpc_parameters',
-            new=False
-        ):
-            obj = webuntis.objects.Result(session=self.session, kwargs={})
-            self.assertRaises(NotImplementedError, obj.get_data)
-
     def test_optionparsers_server(self):
         tests = [
             ('webuntis.grupet.at',
@@ -483,81 +474,6 @@ class InternalTests(OfflineTestCase):
 
         self.assertRaises(ValueError,
                           webuntis.utils.option_utils.server, '!"$%')
-
-    def test_resultobject_get_data(self):
-        kwargs = {}
-        testclass = webuntis.objects.DepartmentList
-        testobj = testclass(session=self.session, kwargs=kwargs)
-
-        class methods(object):
-            @staticmethod
-            def getDepartments(req, url, jsondata, headers):
-                self.assertEqual(jsondata['params'],
-                                 testobj._jsonrpc_parameters(**kwargs))
-                return {'result': {}}
-
-        with mock_results(methods):
-            testobj.get_data()
-
-    def helper_jsonrpc_parameters(self, resultclass):
-        '''A wrapper for the _jsonrpc_parameters method of any result-type
-        class.'''
-        def jsonrpc_parameters(kwargs):
-            return resultclass(
-                session=self.session,
-                kwargs={}
-            )._jsonrpc_parameters(
-                **kwargs
-            )
-
-        return jsonrpc_parameters
-
-    def test_objects_klassenlist_jsonrpc_parameters(self):
-        tests = [
-            ({'schoolyear': 13}, {'schoolyearId': 13}),
-            ({'schoolyear': "123"}, {'schoolyearId': 123})
-        ]
-
-        for given_input, expected_output in tests:
-            self.assertEqual(
-                self.helper_jsonrpc_parameters(webuntis.objects.KlassenList)(given_input),
-                expected_output
-            )
-
-    def test_objects_periodlist_jsonrpc_parameters(self):
-        parambuilder = self.helper_jsonrpc_parameters(webuntis.objects.PeriodList)
-        dtobj = datetime.datetime.now()
-        dtobj_formatted = int(dtobj.strftime('%Y%m%d'))
-        tests = [
-            ({'start': None, 'end': None, 'klasse': 123},
-                {'id': 123, 'type': 1}),
-            ({'start': None, 'end': None, 'teacher': 124},
-                {'id': 124, 'type': 2}),
-            ({'start': None, 'end': None, 'subject': 154},
-                {'id': 154, 'type': 3}),
-            ({'start': None, 'end': dtobj, 'subject': 1337},
-                {
-                    'id': 1337,
-                    'type': 3,
-                    'startDate': dtobj_formatted,
-                    'endDate': dtobj_formatted
-                }),
-            ({'end': None, 'start': dtobj, 'subject': 1337},
-                {
-                    'id': 1337,
-                    'type': 3,
-                    'startDate': dtobj_formatted,
-                    'endDate': dtobj_formatted
-                })
-        ]
-        for given_input, expected_output in tests:
-            self.assertEqual(
-                parambuilder(given_input),
-                expected_output
-            )
-
-        self.assertRaises(TypeError, parambuilder, {})
-        self.assertRaises(TypeError, parambuilder, {'foobar': 123})
 
     def test_resultclass_invalid_arguments(self):
         self.assertRaises(TypeError, webuntis.objects.Result, session=self.session, kwargs={}, data="LELELE")
