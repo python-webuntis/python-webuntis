@@ -411,7 +411,7 @@ class PeriodList(ListResult):
         s.timetable(klasse=schoolclass)  # which is the same as...
         s.periods(klasse=schoolclass)
 
-    :raises: :py:class:`builtins.ValueError` -- if something was wrong with the
+    :raises: :py:class:`ValueError` -- if something was wrong with the
         arguments supplied.
     '''
     _itemclass = PeriodObject
