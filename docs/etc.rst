@@ -13,53 +13,6 @@ Timetable Utils
 
 .. autofunction:: table
 
-Options
-=======
-
-.. module:: webuntis.utils.option_utils
-
-Configuration options can be set with keyword arguments when initializing
-_:py:class:`webuntis.session.Session`. Unless noted otherwise, they get saved
-in a dictionary located in the instance's ``options`` attribute and can be
-modified afterwards.
-
-  - ``username``: The username used for the API.
-
-  - ``password``: The password used for the API.
-
-  - ``jsessionid``: The current session key. Shouldn't be changed unless you
-    know what you're doing.
-
-  - ``school``: A string containing a valid school name.
-
-  - ``server``: A string containing a host name, a URL, or a URL without path::
-
-        >>> s.options['server'] = 'thalia.webuntis.com'
-        >>> s.options['server']
-        'http://thalia.webuntis.com/WebUntis/jsonrpc.do'
-        >>> # notice that there's NO SLASH at the end!
-        >>> s.options['server'] = 'https://thalia.webuntis.com'
-        >>> s.options['server']
-        'https://thalia.webuntis.com/WebUntis/jsonrpc.do'
-        >>> s.options['server'] = 'https://thalia.webuntis.com/'
-        >>> # because a slash gets interpreted as the full path to the API
-        >>> # endpoint, which would crash during login
-        >>> s.options['server']
-        'http://thalia.webuntis.com/'
-        >>> s.options['server'] = '!"$%/WebUntis/jsonrpc.do'
-        Traceback blah blah something ValueError
-
-  - ``useragent``: A string containing a useragent.
-    
-    Please include useful information, such as an email address, for the server
-    maintainer. Just like you would do with the HTTP useragents of bots.
-
-  - ``cachelen``: Amount of API requests kept in cache. Default to ``20``.
-    Isn't saved in the ``options`` object and cannot be modified afterwards.
-
-  - ``login_repeat``: The amount of times `python-webuntis` should try to login
-    when finding no or an expired session. Default to ``0``, meaning it won't
-    do that.
 Errors and Exceptions
 =====================
 

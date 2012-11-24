@@ -7,6 +7,7 @@ Session
 .. autoclass:: Session
     :members:
     :inherited-members:
+    :undoc-members:
 
 .. note::
 

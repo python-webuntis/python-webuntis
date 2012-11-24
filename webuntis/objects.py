@@ -102,15 +102,7 @@ class ListResult(Result):
     '''A list-like version of :py:class:`Result` that takes a list and returns
     a list of objects, containing a list value each.
 
-    :py:class:`ListResult` instances now have support for ``__contains__``,
-    which means you can do::
-
-        we_have_it = {'name': '6A'} in s.klassen()
-
-    instead of::
-
-        we_have_it = bool(s.klassen().filter(name='6A'))
-    '''
+        '''
 
     # When the Result returns an array, this is very useful. Every item of that
     # array will be fed to an instance of self._itemclass, with the session and
@@ -146,11 +138,18 @@ class ListResult(Result):
             bar = s.klassen().filter(id=4, name='7A')  # is the same as
             bar = s.klassen().filter(id=4).filter(name='7A')
 
+        :py:meth:`filter` is also used when using the ``in`` operator on a
+        :py:class:`ListResult`::
+
+            we_have_it = {'name': '6A'} in s.klassen()  # same as
+            we_have_it = bool(s.klassen().filter(name='6A'))
+
+
         .. note::
             This is only available because it looks nicer than list
             comprehensions or generator expressions. Depending on your usecase
             alternatives to this method may be faster.
-        ::
+
         '''
         criterions = list(criterions.items())
 

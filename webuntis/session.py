@@ -151,13 +151,9 @@ class JSONRPCSession(object):
     '''Lower-level version of :py:class:`Session`. Do not use this.'''
 
     options = None
-    '''Contains a options dict upon initialization. See
-    :py:class:`webuntis.utils.option_utils` for more information.
-    '''
+    '''Dictionary with configuration.'''
 
     def __init__(self, **kwargs):
-        # The OptionStore is an extended dictionary, associating validators
-        # and other helper methods with each key
         self.options = utils.FilterDict(utils.option_utils.options)
         options = {
             'server': None,
@@ -270,10 +266,61 @@ class JSONRPCSession(object):
 
 class Session(JSONRPCSession):
     '''The origin of everything you want to do with the WebUntis API. Can be
-    used as a context-handler.'''
+    used as a context-handler.
+    
+    Configuration options can be set with keyword arguments when initializing
+    _:py:class:`Session`. Unless noted otherwise, they get saved in a
+    dictionary located in the instance's ``options`` attribute and can be
+    modified afterwards.
 
+    :type username: str
+    :param username: The username used for the API.
+
+    :type password: str
+    :param password: The password used for the API.
+
+    :type jsessionid: str
+    :param jsessionid: The current session key. Shouldn't be changed unless you
+        know what you're doing.
+
+    :type school: str
+    :param school: A valid school name.
+
+    :type server: str
+    :param server: A host name, a URL, or a URL without path.
+
+            >>> s = webuntis.Session(..., server='thalia.webuntis.com')
+            >>> s.options['server']
+            'http://thalia.webuntis.com/WebUntis/jsonrpc.do'
+            >>> # notice that there's NO SLASH at the end!
+            >>> s.options['server'] = 'https://thalia.webuntis.com'
+            >>> s.options['server']
+            'https://thalia.webuntis.com/WebUntis/jsonrpc.do'
+            >>> s.options['server'] = 'https://thalia.webuntis.com/'
+            >>> # because a slash gets interpreted as the full path to the API
+            >>> # endpoint, which would crash during login
+            >>> s.options['server']
+            'http://thalia.webuntis.com/'
+            >>> s.options['server'] = '!"$%/WebUntis/jsonrpc.do'
+            Traceback blah blah something ValueError
+
+    :type useragent: str
+    :param useragent: A string containing a useragent. Please include useful
+        information, such as an email address, for the server maintainer. Just
+        like you would do with the HTTP useragents of bots.
+
+    :param cachelen: Amount of API requests kept in cache. Default to ``20``.
+        Isn't saved in the :py:attr:`options` dictionary and cannot be modified
+        afterwards.  
+
+    :param login_repeat: The amount of times `python-webuntis` should try to
+        login when finding no or an expired session. Default to ``0``, meaning it
+        won't do that.
+
+    '''
+
+    #: Contains the caching dictionary for requests.
     _cache = None
-    '''Contains the caching dictionary for requests.'''
 
     def __init__(self, **options):
         try:

@@ -53,10 +53,9 @@ import pkg_resources
 try:
     release = pkg_resources.require('webuntis')[0].version  # The full version, including alpha/beta/rc tags.
 except pkg_resources.DistributionNotFound:
-    print('''
-To build the documentation, the distribution information of python-webuntis has
-to be available. Run "setup.py develop" to do this.
-''')
+    print('To build the documentation, the distribution information of'
+          'python-webuntis has to be available. Run "setup.py develop" to do'
+          'this.')
     sys.exit(1)
 
 del pkg_resources
@@ -239,7 +238,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'python-webuntis', 'python-webuntis Documentation',
-   'Markus Unterwaditzer', 'python-webuntis', 'One line description of project.',
+   'Markus Unterwaditzer', 'python-webuntis', 'Bindings for WebUntis.',
    'Miscellaneous'),
 ]
 
