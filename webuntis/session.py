@@ -6,6 +6,7 @@
 '''
 from __future__ import unicode_literals
 from webuntis import utils, objects, errors
+result_wrapper = utils.result_wrapper
 
 try:
     # Python 3
@@ -345,25 +346,115 @@ class Session(JSONRPCSession):
 
         return (method, frozenset((kwargs or {}).items()))
 
-    def __getattr__(self, name):
-        '''Returns a callable which creates an instance (or reuses an old one)
-        of the appropriate object-list class
-        '''
-        def result_object_wrapper(**kwargs):
-            key = self._make_cache_key(name, kwargs)
 
-            def get_result_object():
-                obj = objects.result_objects[name](session=self, kwargs=kwargs)
-                obj.get_data()
-                return obj
+#    def __getattr__(self, name):
+        #'''Returns a callable which creates an instance (or reuses an old one)
+        #of the appropriate object-list class
+        #'''
+        #def result_object_wrapper(**kwargs):
+            #key = self._make_cache_key(name, kwargs)
 
-            if key not in self._cache:
-                obj = self._cache[key] = get_result_object()
-            else:
-                obj = self._cache[key]
-            return obj
+            #def get_result_object():
+                #obj = objects.result_objects[name](session=self, kwargs=kwargs)
+                #obj.get_data()
+                #return obj
 
-        if name in objects.result_objects:
-            return result_object_wrapper
-        else:
-            raise AttributeError(name)
+            #if key not in self._cache:
+                #obj = self._cache[key] = get_result_object()
+            #else:
+                #obj = self._cache[key]
+            #return obj
+
+        #if name in objects.result_objects:
+            #return result_object_wrapper
+        #else:
+            #raise AttributeError(name)
+
+
+    @result_wrapper
+    def departments(self):
+        return objects.DepartmentList, 'getDepartments', {}
+
+    @result_wrapper
+    def holidays(self):
+        return objects.HolidayList, 'getHolidays', {}
+
+    @result_wrapper
+    def klassen(self, schoolyear=None):
+        params = {}
+        if schoolyear:
+            params['schoolyearId'] = int(schoolyear)
+
+        return objects.KlassenList, 'getKlassen', params
+
+    @result_wrapper
+    def periods(self, start=None, end=None, **type_and_id):
+        element_type_table = {
+            'klasse':  1,
+            'teacher': 2,
+            'subject': 3,
+            'room':    4,
+            'student': 5
+        }
+
+        invalid_type_error = TypeError(
+            'You have to specify exactly one of the following parameters by '
+            'keyword: ' +
+            (', '.join(element_type_table.keys()))
+        )
+
+        if len(type_and_id) != 1:
+            raise invalid_type_error
+
+        element_type, element_id = list(type_and_id.items())[0]
+
+        if element_type not in element_type_table:
+            raise invalid_type_error
+
+        # apply end to start and vice-versa if one of them is missing
+        if not start and end:
+            start = end
+        elif not end and start:
+            end = start
+
+        # if we have to deal with an object in element_id,
+        # its id gets placed here anyway
+        parameters = {
+            'id': int(element_id),
+            'type': element_type_table[element_type],
+        }
+
+        if start:
+            parameters['startDate'] = datetime_utils.format_date(start)
+        if end:
+            parameters['endDate'] = datetime_utils.format_date(end)
+
+        return objects.PeriodList, 'getTimetable', parameters
+
+    timetable = periods
+
+    @result_wrapper
+    def rooms(self):
+        return objects.RoomList, 'getRooms', {}
+
+    @result_wrapper
+    def schoolyears(self): 
+        return objects.SchoolyearList, 'getSchoolyears', {}
+
+    @result_wrapper
+    def subjects(self): 
+        return objects.SubjectList, 'getSubjects', {}
+
+    @result_wrapper
+    def teachers(self):
+        return objects.TeacherList, 'getTeachers', {}
+
+    @result_wrapper
+    def timegrid(self):
+        return objects.TimeunitList, 'getTimegridUnits', {}
+
+    timeunits = timegrid
+
+    @result_wrapper
+    def statusdata(self):
+        return objects.StatusData, 'getStatusData', {}

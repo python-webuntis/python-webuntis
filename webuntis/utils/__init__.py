@@ -6,6 +6,7 @@
 '''
 
 from __future__ import unicode_literals
+from functools import wraps
 
 try:
     unicode
@@ -104,3 +105,45 @@ def is_iterable(obj):
         return False
     else:
         return not isinstance(obj, basestring)
+
+#class result_wrapper(object):
+    #def __init__(self, func):
+        #self._func = func
+        #self.__doc__ = func.__doc__
+        #self.__name__ = func.__name__
+
+    #def __call__(self, session, **kwargs):
+        #result_class, jsonrpc_method, jsonrpc_args = self._func(session, **kwargs)
+        #key = session._make_cache_key(self.__name__, kwargs)
+
+        #if key not in session._cache:
+            #data = session._request(
+                #jsonrpc_method,
+                #jsonrpc_args
+            #)
+            #obj = result_class(session=session, data=data)
+
+            #session._cache[key] = result = obj
+        #else:
+            #result = session._cache[key]
+#        return result
+
+def result_wrapper(func):
+    @wraps(func)
+    def inner(self, **kwargs):
+        result_class, jsonrpc_method, jsonrpc_args = func(self, **kwargs)
+        key = self._make_cache_key(func.__name__, kwargs)
+
+        if key not in self._cache:
+            data = self._request(
+                jsonrpc_method,
+                jsonrpc_args
+            )
+            obj = result_class(session=self, data=data)
+            self._cache[key] = result = obj
+        else:
+            result = self._cache[key]
+
+        return result
+
+    return inner
