@@ -348,14 +348,31 @@ class Session(JSONRPCSession):
 
     @result_wrapper
     def departments(self):
+        '''Get all departments.
+
+        :rtype: :py:class:`webuntis.objects.DepartmentList`
+        '''
         return objects.DepartmentList, 'getDepartments', {}
 
     @result_wrapper
     def holidays(self):
+        '''Get all holidays.
+
+        :rtype :py:class:`webuntis.objects.HolidayList`
+        '''
         return objects.HolidayList, 'getHolidays', {}
 
     @result_wrapper
     def klassen(self, schoolyear=None):
+        '''Get all school classes.
+
+        :param schoolyear: The schoolyear where the classes should be fetched
+            from.
+        :type schoolyear: :py:class:`webuntis.objects.SchoolyearObject` or an
+            integer ID of it.
+
+        :rtype :py:class:`webuntis.objects.KlassenList`
+        '''
         params = {}
         if schoolyear:
             params['schoolyearId'] = int(schoolyear)
@@ -364,6 +381,30 @@ class Session(JSONRPCSession):
 
     @result_wrapper
     def periods(self, start=None, end=None, **type_and_id):
+        '''Get the timetable for a specific school class and time period. An
+        alias for this method is ``timetable``.
+
+        :type start: :py:class:`datetime.datetime`, or anything else that has a
+            ``strftime`` method.
+        :param start: The beginning of the time period
+
+        :type end: :py:class:`datetime.datetime`, or anything else that has a
+            ``strftime`` method.
+        :param end: The end of the time period
+
+        :rtype: :py:class:`webuntis.objects.PeriodList`
+
+        Furthermore you have to explicitly define a klasse, teacher, subject, room
+        or student parameter containing the id or the object of the thing you want
+        to get a timetable about::
+
+            schoolclass = s.klassen().filter(id=1)[0]  # schoolclass #1
+
+        :raises: :py:class:`ValueError` -- if something was wrong with the
+            arguments supplied.
+
+
+        '''
         element_type_table = {
             'klasse':  1,
             'teacher': 2,
@@ -410,26 +451,56 @@ class Session(JSONRPCSession):
 
     @result_wrapper
     def rooms(self):
+        '''Get all rooms of a school.
+        
+        :rtype: :py:class:`webuntis.objects.RoomList`
+        '''
         return objects.RoomList, 'getRooms', {}
 
     @result_wrapper
     def schoolyears(self): 
+        '''Get all schoolyears.
+
+        :rtype: :py:class:`webuntis.objects.SchoolyearList`
+        '''
         return objects.SchoolyearList, 'getSchoolyears', {}
 
     @result_wrapper
-    def subjects(self): 
+    def subjects(self):
+        '''Get all subjects.
+
+        :rtype: :py:class:`webuntis.objects.SubjectList`
+        '''
         return objects.SubjectList, 'getSubjects', {}
 
     @result_wrapper
     def teachers(self):
+        '''Get all teachers.
+
+        :rtype: :py:class:`webuntis.objects.TeacherList`
+        '''
         return objects.TeacherList, 'getTeachers', {}
 
     @result_wrapper
     def timegrid(self):
+        '''Get a "timegrid", whatever the hell that is. According to the
+        official API docs, it is supposed to be useful when generating your own
+        timetable. Maybe :py:meth:`webuntis.objects.PeriodList.to_table` could
+        make use of this one day.
+
+        ``timeunits`` is an alias for this function.
+
+        :rtype: :py:class:`webuntis.objects.TimeunitList`
+        '''
         return objects.TimeunitList, 'getTimegridUnits', {}
 
     timeunits = timegrid
 
     @result_wrapper
     def statusdata(self):
+        '''Information about lesson types and period codes, specifically about
+        the colors used to highlight them in the web-interface of WebUntis.
+
+        :rtype: :py:class:`webuntis.objects.StatusData`
+        '''
         return objects.StatusData, 'getStatusData', {}
