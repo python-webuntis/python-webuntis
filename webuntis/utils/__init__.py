@@ -106,27 +106,6 @@ def is_iterable(obj):
     else:
         return not isinstance(obj, basestring)
 
-#class result_wrapper(object):
-    #def __init__(self, func):
-        #self._func = func
-        #self.__doc__ = func.__doc__
-        #self.__name__ = func.__name__
-
-    #def __call__(self, session, **kwargs):
-        #result_class, jsonrpc_method, jsonrpc_args = self._func(session, **kwargs)
-        #key = session._make_cache_key(self.__name__, kwargs)
-
-        #if key not in session._cache:
-            #data = session._request(
-                #jsonrpc_method,
-                #jsonrpc_args
-            #)
-            #obj = result_class(session=session, data=data)
-
-            #session._cache[key] = result = obj
-        #else:
-            #result = session._cache[key]
-#        return result
 
 def result_wrapper(func):
     '''A decorator for the session methods that return result objects. The
@@ -155,6 +134,7 @@ def result_wrapper(func):
 
     return inner
 
+
 def make_cache_key(method, kwargs):
     '''A helper method that generates a hashable object out of a string and
     a dictionary.
@@ -166,4 +146,3 @@ def make_cache_key(method, kwargs):
     '''
 
     return (method, frozenset((kwargs or {}).items()))
-

@@ -30,7 +30,6 @@ class Result(object):
     _session = None
     _data = None
 
-
     def __init__(self, data, parent=None, session=None):
         if not isinstance(parent, Result) and parent is not None:
             raise TypeError('If provided, parent must be an instance of '
@@ -154,7 +153,6 @@ class ListResult(Result):
                 )
             else:
                 self._itemcache[i] = value = data
-
 
         return value
 
