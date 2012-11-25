@@ -88,12 +88,12 @@ class ListResult(Result):
         '''
         Return a list of all objects, filtered by attributes::
 
-            foo = s.klassen().filter(id=1)  # is the same as
+            foo = s.klassen().filter(id=1)  # is kind-of the same as
             foo = [kl for kl in s.klassen() if kl.id == 1]
 
             # We can also use sets to match multiple values.
             bar = s.klassen().filter(name={'1A', '2A', '3A', '4A'})
-            # is the same as
+            # is kind-of the same as
             bar = [kl for kl in s.klassen()
                    if kl.id in {'1A', '2A', '3A', '4A'}]
 
@@ -178,7 +178,8 @@ class DepartmentObject(ListItem):
 
 
 class DepartmentList(ListResult):
-    '''A list of departments.'''
+    '''A list of departments, in form of :py:class:`DepartmentObject`
+    instances.'''
     _itemclass = DepartmentObject
 
 
@@ -207,7 +208,8 @@ class HolidayObject(ListItem):
 
 
 class HolidayList(ListResult):
-    '''A list of all holidays.'''
+    '''A list of holidays, in form of :py:class:`HolidayObject`
+    instances.'''
     _itemclass = HolidayObject
 
 
@@ -226,7 +228,8 @@ class KlassenObject(ListItem):
 
 
 class KlassenList(ListResult):
-    '''A list of all school classes.'''
+    '''A list of school classes, in form of :py:class:`KlassenObject`
+    instances.'''
     _itemclass = KlassenObject
 
 
@@ -253,8 +256,8 @@ class PeriodObject(ListItem):
 
     @lazyproperty
     def klassen(self):
-        '''A list of :py:class:`KlassenObject` instances,
-        which are attending this period.'''
+        '''A :py:class:`KlassenList` containing the classes which are attending
+        this period.'''
 
         return self._session.klassen().filter(
             id=set([kl['id'] for kl in self._data['kl']])
@@ -271,10 +274,10 @@ class PeriodObject(ListItem):
 
     @lazyproperty
     def subjects(self):
-        '''A list of :py:class:`SubjectObject` instances,
-        which are topic of this period. This is not used for things like
-        multiple language lessons (*e.g.* Latin, Spanish, French) -- each of
-        those will get placed in their own period.'''
+        '''A :py:class:`SubjectList` containing the subjects which are topic of
+        this period. This is not used for things like multiple language lessons
+        (*e.g.* Latin, Spanish, French) -- each of those will get placed in
+        their own period.'''
 
         return self._session.subjects().filter(
             id=set([su['id'] for su in self._data['su']])
@@ -282,9 +285,9 @@ class PeriodObject(ListItem):
 
     @lazyproperty
     def rooms(self):
-        '''The rooms where this period is taking place at. This also is not
-        used for multiple lessons, but rather for a single lesson that is
-        actually occuring at multiple locations.'''
+        '''The rooms (:py:class:`RoomList`) where this period is taking place
+        at. This also is not used for multiple lessons, but rather for a single
+        lesson that is actually occuring at multiple locations (?).'''
 
         return self._session.rooms().filter(
             id=set([ro['id'] for ro in self._data['ro']])
@@ -306,8 +309,7 @@ class PeriodObject(ListItem):
 
     @lazyproperty
     def type(self):
-        '''
-        May be:
+        '''May be:
 
           - ``"ls"`` -- Normal lesson
           - ``"oh"`` -- Office hour
@@ -320,7 +322,8 @@ class PeriodObject(ListItem):
 
 
 class PeriodList(ListResult):
-    '''Aka timetable, a list of periods.'''
+    '''Aka timetable, a list of periods, in form of :py:class:`PeriodObject`
+    instances.'''
     _itemclass = PeriodObject
 
     def to_table(self, *args, **kwargs):
@@ -333,7 +336,7 @@ class PeriodList(ListResult):
 
 class RoomObject(ListItem):
     '''Represents a physical room. Such as a classroom, but also the physics
-    laboratory or whatever.
+    lab or whatever.
     '''
     @lazyproperty
     def name(self):
@@ -347,7 +350,7 @@ class RoomObject(ListItem):
 
 
 class RoomList(ListResult):
-    '''A list of rooms.'''
+    '''A list of rooms, in form of :py:class:`RoomObject` instances.'''
     _itemclass = RoomObject
 
 
@@ -388,7 +391,8 @@ class SchoolyearObject(ListItem):
 
 
 class SchoolyearList(ListResult):
-    '''A list of schoolyears.'''
+    '''A list of schoolyears, in form of :py:class:`SchoolyearObject`
+    instances.'''
     _itemclass = SchoolyearObject
 
     @lazyproperty
@@ -415,7 +419,7 @@ class SubjectObject(ListItem):
 
 
 class SubjectList(ListResult):
-    '''A list of subjects.'''
+    '''A list of subjects, in form of :py:class:`SubjectObject` instances.'''
     _itemclass = SubjectObject
 
 
@@ -440,7 +444,7 @@ class TeacherObject(ListItem):
 
 
 class TeacherList(ListResult):
-    '''A list of teachers.'''
+    '''A list of teachers, in form of :py:class:`TeacherObject` instances.'''
     _itemclass = TeacherObject
 
 
@@ -466,8 +470,9 @@ class TimeunitObject(ListItem):
 
 
 class TimeunitList(ListResult):
-    '''A list of times and dates for the current week. Doesn't contain actual
-    data, but is useful when you want to generate a timetable::
+    '''A list of times and dates for the current week, in form of
+    :py:class:`TimeunitObject` instances. Doesn't contain actual data, but is
+    useful when you want to generate a timetable::
 
         >>> grid = s.timegrid()
         >>>
@@ -522,7 +527,7 @@ class ColorInfo(Result):
 
     @lazyproperty
     def forecolor(self):
-        '''The foreground color used in the web interfacei and elsewhere'''
+        '''The foreground color used in the web interface and elsewhere'''
         return self._data[self.name]['foreColor']
 
     @lazyproperty

@@ -2,13 +2,29 @@
 Session
 =======
 
-.. module:: webuntis.session
+.. module:: webuntis
 
 .. autoclass:: Session
-    :members:
-    :inherited-members:
-    :undoc-members:
 
-.. note::
+    .. automethod:: login
+    .. automethod:: logout
+    .. autoattribute:: options
 
-    For a list of API methods of :py:class:`Session` see :doc:`objects`.
+
+Things you can do with the API
+==============================
+
+.. class:: Session
+
+    .. automethod:: departments(foo, bar)
+    .. automethod:: holidays
+    .. automethod:: klassen
+    .. automethod:: periods
+    .. automethod:: rooms
+    .. automethod:: schoolyears
+    .. automethod:: statusdata
+    .. automethod:: subjects
+    .. automethod:: teachers
+    .. automethod:: timegrid
+    .. automethod:: timetable
+    .. automethod:: timeunits

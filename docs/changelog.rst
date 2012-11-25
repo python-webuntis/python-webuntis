@@ -13,7 +13,7 @@ Changelog
       * Added true hierarchial inheritance for Result objects.
 
     * New ``login_repeat`` option that automatically refreshes your session if
-      neccessary. See :py:mod:`webuntis.session.Session`.
+      neccessary. See :py:mod:`webuntis.Session`.
 
     * ``in`` operator is now supported by :py:class:`webuntis.objects.ListResult`
 

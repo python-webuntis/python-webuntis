@@ -264,88 +264,7 @@ class JSONRPCSession(object):
 
             attempts_left -= 1  # new round!
 
-
-class Session(JSONRPCSession):
-    '''The origin of everything you want to do with the WebUntis API. Can be
-    used as a context-handler.
-    
-    Configuration options can be set with keyword arguments when initializing
-    _:py:class:`Session`. Unless noted otherwise, they get saved in a
-    dictionary located in the instance's ``options`` attribute and can be
-    modified afterwards.
-
-    :type username: str
-    :param username: The username used for the API.
-
-    :type password: str
-    :param password: The password used for the API.
-
-    :type jsessionid: str
-    :param jsessionid: The current session key. Shouldn't be changed unless you
-        know what you're doing.
-
-    :type school: str
-    :param school: A valid school name.
-
-    :type server: str
-    :param server: A host name, a URL, or a URL without path.
-
-            >>> s = webuntis.Session(..., server='thalia.webuntis.com')
-            >>> s.options['server']
-            'http://thalia.webuntis.com/WebUntis/jsonrpc.do'
-            >>> # notice that there's NO SLASH at the end!
-            >>> s.options['server'] = 'https://thalia.webuntis.com'
-            >>> s.options['server']
-            'https://thalia.webuntis.com/WebUntis/jsonrpc.do'
-            >>> s.options['server'] = 'https://thalia.webuntis.com/'
-            >>> # because a slash gets interpreted as the full path to the API
-            >>> # endpoint, which would crash during login
-            >>> s.options['server']
-            'http://thalia.webuntis.com/'
-            >>> s.options['server'] = '!"$%/WebUntis/jsonrpc.do'
-            Traceback blah blah something ValueError
-
-    :type useragent: str
-    :param useragent: A string containing a useragent. Please include useful
-        information, such as an email address, for the server maintainer. Just
-        like you would do with the HTTP useragents of bots.
-
-    :param cachelen: Amount of API requests kept in cache. Default to ``20``.
-        Isn't saved in the :py:attr:`options` dictionary and cannot be modified
-        afterwards.  
-
-    :param login_repeat: The amount of times `python-webuntis` should try to
-        login when finding no or an expired session. Default to ``0``, meaning it
-        won't do that.
-
-    '''
-
-    #: Contains the caching dictionary for requests.
-    _cache = None
-
-    def __init__(self, **options):
-        try:
-            cachelen = options['cachelen']
-            del options['cachelen']
-        except KeyError:
-            cachelen = 20
-
-        self._cache = utils.LruDict(maxlen=cachelen)
-
-        JSONRPCSession.__init__(self, **options)
-
-    def _make_cache_key(self, method, kwargs):
-        '''A helper method that generates a hashable object out of a string and
-        a dictionary.
-
-        It doesn't use ``hash()`` or similar methods because it's neat that the
-        keys are human-readable and enable us to trace back the origin of the
-        key. Python does that anyway under the hood when using it as a
-        dictionary key.
-        '''
-
-        return (method, frozenset((kwargs or {}).items()))
-
+class ResultWrapperMixin(object):
     @result_wrapper
     def departments(self):
         '''Get all departments.
@@ -502,3 +421,87 @@ class Session(JSONRPCSession):
         :rtype: :py:class:`webuntis.objects.StatusData`
         '''
         return objects.StatusData, 'getStatusData', {}
+
+
+class Session(JSONRPCSession, ResultWrapperMixin):
+    '''The origin of everything you want to do with the WebUntis API. Can be
+    used as a context-handler.
+    
+    Configuration options can be set with keyword arguments when initializing
+    :py:class:`Session`. Unless noted otherwise, they get saved in a dictionary
+    located in the instance's ``options`` attribute and can be modified
+    afterwards.
+
+    :type username: str
+    :param username: The username used for the API.
+
+    :type password: str
+    :param password: The password used for the API.
+
+    :type jsessionid: str
+    :param jsessionid: The current session key. Shouldn't be changed unless you
+        know what you're doing.
+
+    :type school: str
+    :param school: A valid school name.
+
+    :type server: str
+    :param server: A host name, a URL, or a URL without path.
+
+            >>> s = webuntis.Session(..., server='thalia.webuntis.com')
+            >>> s.options['server']
+            'http://thalia.webuntis.com/WebUntis/jsonrpc.do'
+            >>> # notice that there's NO SLASH at the end!
+            >>> s.options['server'] = 'https://thalia.webuntis.com'
+            >>> s.options['server']
+            'https://thalia.webuntis.com/WebUntis/jsonrpc.do'
+            >>> s.options['server'] = 'https://thalia.webuntis.com/'
+            >>> # because a slash gets interpreted as the full path to the API
+            >>> # endpoint, which would crash during login
+            >>> s.options['server']
+            'http://thalia.webuntis.com/'
+            >>> s.options['server'] = '!"$%/WebUntis/jsonrpc.do'
+            Traceback blah blah something ValueError
+
+    :type useragent: str
+    :param useragent: A string containing a useragent. Please include useful
+        information, such as an email address, for the server maintainer. Just
+        like you would do with the HTTP useragents of bots.
+
+    :param cachelen: Amount of API requests kept in cache. Default to ``20``.
+        Isn't saved in the :py:attr:`options` dictionary and cannot be modified
+        afterwards.  
+
+    :param login_repeat: The amount of times `python-webuntis` should try to
+        login when finding no or an expired session. Default to ``0``, meaning it
+        won't do that.
+
+    '''
+
+    #: Contains the caching dictionary for requests.
+    _cache = None
+
+    def __init__(self, **options):
+        try:
+            cachelen = options['cachelen']
+            del options['cachelen']
+        except KeyError:
+            cachelen = 20
+
+        self._cache = utils.LruDict(maxlen=cachelen)
+
+        JSONRPCSession.__init__(self, **options)
+
+    def _make_cache_key(self, method, kwargs):
+        '''A helper method that generates a hashable object out of a string and
+        a dictionary.
+
+        It doesn't use ``hash()`` or similar methods because it's neat that the
+        keys are human-readable and enable us to trace back the origin of the
+        key. Python does that anyway under the hood when using it as a
+        dictionary key.
+        '''
+
+        return (method, frozenset((kwargs or {}).items()))
+
+

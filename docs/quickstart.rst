@@ -65,10 +65,10 @@ So what does this do?
         useragent='WebUntis Test'
     )
 
-*webuntis.Session* is a shortcut for :py:class:`webuntis.session.Session`. This
-class represents a new session on a WebUntis server, which is bound to a
-school. This means that you will have to create a new session if you want to
-read data from a different school, even if it's on the same server.
+:py:class:`webuntis.Session` represents a new session on a WebUntis server,
+which is bound to a school. This means that you will have to create a new
+session if you want to read data from a different school, even if it's on the
+same server.
 
 But passing the credentials in doesn't mean a session is started immediately.
 You have to do it manually::
@@ -91,10 +91,10 @@ Anyway, *python-webuntis* won't break that tradition::
         print(klasse.name)
 
 We get a list-like, iterable object when calling
-:py:meth:`webuntis.session.Session.klassen`, a
-:py:class:`webuntis.objects.KlassenList` to be precise. This *KlassenList*
-contains multiple instances of :py:class:`webuntis.objects.KlassenObject`. An
-instance of this object has multiple attributes, one of them being *name*.
+:py:meth:`webuntis.Session.klassen`, a :py:class:`webuntis.objects.KlassenList`
+to be precise. This *KlassenList* contains multiple instances of
+:py:class:`webuntis.objects.KlassenObject`. An instance of this object has
+multiple attributes, one of them being *name*.
 
 At last, you get logged out with this::
 
