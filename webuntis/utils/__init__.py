@@ -129,10 +129,17 @@ def is_iterable(obj):
 #        return result
 
 def result_wrapper(func):
+    '''A decorator for the session methods that return result objects. The
+    decorated function has to return a tuple with the result class to
+    instantiate, a JSON-RPC method and its parameters.  This decorator fetches
+    the data with the JSON-RPC method and parameters and returns an instance of
+    the result class the inner function returned (and saves it in the session
+    cache).
+    '''
     @wraps(func)
     def inner(self, **kwargs):
         result_class, jsonrpc_method, jsonrpc_args = func(self, **kwargs)
-        key = self._make_cache_key(func.__name__, kwargs)
+        key = make_cache_key(func.__name__, kwargs)
 
         if key not in self._cache:
             data = self._request(
@@ -147,3 +154,16 @@ def result_wrapper(func):
         return result
 
     return inner
+
+def make_cache_key(method, kwargs):
+    '''A helper method that generates a hashable object out of a string and
+    a dictionary.
+
+    It doesn't use ``hash()`` or similar methods because it's neat that the
+    keys are human-readable and enable us to trace back the origin of the
+    key. Python does that anyway under the hood when using it as a
+    dictionary key.
+    '''
+
+    return (method, frozenset((kwargs or {}).items()))
+

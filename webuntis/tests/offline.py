@@ -366,10 +366,11 @@ class InternalTests(OfflineTestCase):
     '''Test certain internal interfaces, such as utils'''
 
     def test_make_cache_key(self):
+        key = webuntis.utils.make_cache_key
         # The hash builtin will take care of us if the results aren't hashable.
-        hash(self.session._make_cache_key('getStuff', {'foo': 'bar'}))
-        hash(self.session._make_cache_key('getStuff', {}))
-        hash(self.session._make_cache_key('getStuff', None))
+        hash(key('getStuff', {'foo': 'bar'}))
+        hash(key('getStuff', {}))
+        hash(key('getStuff', None))
 
     def test_is_iterable_util(self):
         tests = [

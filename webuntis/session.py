@@ -491,17 +491,3 @@ class Session(JSONRPCSession, ResultWrapperMixin):
         self._cache = utils.LruDict(maxlen=cachelen)
 
         JSONRPCSession.__init__(self, **options)
-
-    def _make_cache_key(self, method, kwargs):
-        '''A helper method that generates a hashable object out of a string and
-        a dictionary.
-
-        It doesn't use ``hash()`` or similar methods because it's neat that the
-        keys are human-readable and enable us to trace back the origin of the
-        key. Python does that anyway under the hood when using it as a
-        dictionary key.
-        '''
-
-        return (method, frozenset((kwargs or {}).items()))
-
-
