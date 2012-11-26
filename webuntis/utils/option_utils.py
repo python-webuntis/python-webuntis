@@ -18,9 +18,6 @@ def whatever(value):
 
 
 def server(url):
-    if not url:
-        return url  # either it's None or we have a dictionary
-
     if not re.match(r'^http(s?)\:\/\/', url):  # if we just have the hostname
         logging.debug('The URL given doesn\'t seem to be a valid URL, just '
                       'gonna prepend "http://"')

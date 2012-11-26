@@ -23,7 +23,7 @@ from . import datetime_utils, option_utils, timetable_utils
 
 
 class lazyproperty(object):
-    '''A read-only @property that is only evaluated once.
+    '''A read-only @property that is only evaluated once. Only usable on class instances' methods.
 
     Stolen from http://www.reddit.com/r/Python/comments/ejp25/cached_property_decorator_that_is_memory_friendly/
     '''

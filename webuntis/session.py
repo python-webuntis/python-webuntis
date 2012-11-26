@@ -87,8 +87,9 @@ class JSONRPCRequest(object):
         )
         return self._parse_result(request_body, result_body)
 
-    def _parse_result(self, request_body, result_body):
-        '''A subfunction of _make_request that, given the decoded JSON result,
+    @classmethod
+    def _parse_result(cls, request_body, result_body):
+        '''A subfunction of request, that, given the decoded JSON result,
         handles the error codes or, if everything went well, returns the result
         attribute of it. The request data has to be given too for logging and
         ID validation.
@@ -104,14 +105,15 @@ class JSONRPCRequest(object):
         try:
             return result_body['result']
         except KeyError:
-            self._parse_error_code(request_body, result_body)
+            cls._parse_error_code(request_body, result_body)
 
-    def _parse_error_code(self, request_body, result_body):
+    @classmethod
+    def _parse_error_code(cls, request_body, result_body):
         '''A helper function for handling JSON error codes.'''
         logging.error(result_body)
         try:
             error = result_body['error']
-            exc = self._errorcodes[error['code']](error['message'])
+            exc = cls._errorcodes[error['code']](error['message'])
         except KeyError:
             exc = errors.RemoteError(
                 ('Some JSON-RPC-ish error happened. Please report this to the '
@@ -122,8 +124,9 @@ class JSONRPCRequest(object):
 
         raise exc
 
-    def _send_request(self, url, data, headers):
-        '''A subfunction of _make_request, mostly because of mocking. Sends the
+    @staticmethod
+    def _send_request(url, data, headers):
+        '''A subfunction of request, mostly because of mocking. Sends the
         given headers and data to the url and tries to return the result
         JSON-decoded.
         '''
@@ -358,9 +361,9 @@ class ResultWrapperMixin(object):
         }
 
         if start:
-            parameters['startDate'] = datetime_utils.format_date(start)
+            parameters['startDate'] = utils.datetime_utils.format_date(start)
         if end:
-            parameters['endDate'] = datetime_utils.format_date(end)
+            parameters['endDate'] = utils.datetime_utils.format_date(end)
 
         return objects.PeriodList, 'getTimetable', parameters
 

@@ -10,16 +10,18 @@ import mock
 import webuntis
 import webuntis.utils as utils
 import datetime
+try:
+    from StringIO import StringIO  # Python 2
+except ImportError:
+    from io import BytesIO as StringIO  # Python 3
 
 from webuntis.tests.utils import OfflineTestCase, mock_results, \
-    get_json_resource
+    get_json_resource, stub_session_parameters
 
+class DataFetchingTests(OfflineTestCase):
+    '''Test all Result objects from a high level.'''
 
-class BasicUsageTests(OfflineTestCase):
-    '''Mock the _get_data method of all result objects and test the package
-    against basic usage.'''
-
-    def test_getdepartments_mock(self):
+    def test_getdepartments(self):
         jsonstr = get_json_resource('getdepartments_mock.json')
 
         class methods(object):
@@ -33,7 +35,7 @@ class BasicUsageTests(OfflineTestCase):
                 self.assertEqual(dep_raw['longName'], dep.long_name)
                 self.assertEqual(dep_raw['name'], dep.name)
 
-    def test_getholidays_mock(self):
+    def test_getholidays(self):
         jsonstr = get_json_resource('getholidays_mock.json')
 
         class methods(object):
@@ -56,12 +58,17 @@ class BasicUsageTests(OfflineTestCase):
                     int(holiday.end.strftime('%Y%m%d'))
                 )
 
-    def test_getklassen_mock(self):
+    def test_getklassen(self):
         jsonstr = get_json_resource('getklassen_mock.json')
+        schoolyear_id = 123
 
         class methods(object):
             @staticmethod
-            def getKlassen(self, url, jsondata, headers):
+            def getKlassen(session, url, jsondata, headers):
+                if len(methods.getKlassen.calls) == 2:
+                    self.assertEqual(jsondata['params']['schoolyearId'], schoolyear_id)
+
+                self.assertFalse(len(methods.getKlassen.calls) > 2)
                 return {'result': jsonstr}
 
         with mock_results(methods):
@@ -83,7 +90,10 @@ class BasicUsageTests(OfflineTestCase):
             self.assertTrue({'id': 129} in klassen)
             self.assertTrue({'name': '6A'} in klassen)
 
-    def test_gettimetables_mock(self):
+            # calling a second time for validating the schoolyear
+            self.session.klassen(schoolyear=schoolyear_id)
+
+    def test_gettimetables(self):
         jsonstr = get_json_resource('gettimetables_mock.json')
         jsonstr_kl = get_json_resource('getklassen_mock.json')
         jsonstr_te = get_json_resource('getteachers_mock.json')
@@ -158,7 +168,38 @@ class BasicUsageTests(OfflineTestCase):
                 for room_raw, room in zip(period_raw['ro'], period.rooms):
                     self.assertEqual(room.id, room_raw['id'])
 
-    def test_getrooms_mock(self):
+
+            def validate_table(periods, width=None):
+                counter = 0
+                table = periods.to_table(width=width)
+                for time, row in table:
+                    if width is not None:
+                        row = list(row)
+                        self.assertEqual(len(row), width)
+                    for weekday_number, cell in row:
+                        for hour in cell:
+                            counter += 1
+
+                self.assertEqual(counter, len(periods))
+
+            validate_table(tt)
+            validate_table(tt, width=999)
+            self.assertRaises(ValueError, validate_table, tt, width=0)
+
+            self.assertEqual(len(webuntis.utils.timetable_utils.table([])), 0)
+
+    def test_gettimetables_invalid_type_and_id(self):
+        self.assertRaises(TypeError, self.session.periods, start=None, end=None, klasse=123, teacher=123)
+        self.assertRaises(TypeError, self.session.periods, start=None, end=None)
+        self.assertRaises(TypeError, self.session.periods, start=None, end=None, foo=123)
+
+    def test_gettimetables_start_xor_end(self):
+        some_date = datetime.datetime.now()
+        with mock_results(None, swallow_not_found=True):
+            self.session.periods(start=some_date, end=None, klasse=123)
+            self.session.periods(start=None, end=some_date, klasse=123)
+
+    def test_getrooms(self):
         jsonstr = get_json_resource('getrooms_mock.json')
 
         class methods(object):
@@ -172,7 +213,7 @@ class BasicUsageTests(OfflineTestCase):
                 self.assertEqual(room_raw['name'], room.name)
                 self.assertEqual(room_raw['id'], room.id)
 
-    def test_getschoolyears_mock(self):
+    def test_getschoolyears(self):
         jsonstr = get_json_resource('getschoolyears_mock.json')
         current_json = jsonstr[3]
 
@@ -208,7 +249,7 @@ class BasicUsageTests(OfflineTestCase):
                     current_count += 1
                     self.assertEqual(current_count, 1)
 
-    def test_getsubjects_mock(self):
+    def test_getsubjects(self):
         jsonstr = get_json_resource('getsubjects_mock.json')
 
         class methods(object):
@@ -222,7 +263,7 @@ class BasicUsageTests(OfflineTestCase):
                 self.assertEqual(subj_raw['name'], subj.name)
                 self.assertEqual(subj_raw['longName'], subj.long_name)
 
-    def test_getteachers_mock(self):
+    def test_getteachers(self):
         jsonstr = get_json_resource('getteachers_mock.json')
 
         class methods(object):
@@ -237,7 +278,7 @@ class BasicUsageTests(OfflineTestCase):
                 self.assertEqual(t_raw['foreName'], t.fore_name)
                 self.assertEqual(t_raw['name'], t.name)
 
-    def test_gettimegrid_mock(self):
+    def test_gettimegrid(self):
         jsonstr = get_json_resource('gettimegrid_mock.json')
 
         class methods(object):
@@ -254,7 +295,7 @@ class BasicUsageTests(OfflineTestCase):
                     self.assertEqual(t2_raw['endTime'],
                                      int(t2[1].strftime('%H%M')))
 
-    def test_getstatusdata_mock(self):
+    def test_getstatusdata(self):
         jsonstr = get_json_resource('getstatusdata_mock.json')
 
         class methods(object):
@@ -275,11 +316,12 @@ class BasicUsageTests(OfflineTestCase):
                                           statusdata.lesson_types):
                 validate_statusdata(lstype_raw, lstype)
 
-
             for code_raw, code in zip(jsonstr['codes'], statusdata.period_codes):
                 validate_statusdata(code_raw, code)
-                
 
+
+class SessionUsageTests(OfflineTestCase):
+    '''Test features of webuntis.Session.'''
     def test_login_repeat_invalid_session(self):
         retry_amount = 5
         calls = []
@@ -360,6 +402,90 @@ class BasicUsageTests(OfflineTestCase):
                                   self.session._request, 'getCurrentSchoolyear')
 
         self.assertEqual(calls, expected_calls)
+
+    def test_session_contextmanager(self):
+        s = webuntis.Session(**stub_session_parameters)
+
+        with mock.patch('webuntis.Session.logout') as logout:
+            with mock.patch('webuntis.Session.login', return_value=s) as login:
+                assert webuntis.Session.login is login
+                assert webuntis.Session.logout is logout
+
+                with s.login():
+                    pass
+
+                login.assert_called_once_with()
+                logout.assert_called_once_with(suppress_errors=True)
+
+    def test_logout_not_logged_in(self):
+        session_parameters = stub_session_parameters.copy()
+        del session_parameters['jsessionid']
+
+        s = webuntis.Session(**session_parameters)
+
+        self.assertRaises(webuntis.errors.NotLoggedInError, s.logout)
+        s.logout(suppress_errors=True)  # should not raise
+
+        with mock.patch(
+            'webuntis.Session._request'
+        ):
+            self.assertRaises(webuntis.errors.NotLoggedInError, s.logout)
+            s.logout(suppress_errors=True)  # should not raise
+
+    def test_login_no_creds(self):
+        session_parameters = stub_session_parameters.copy()
+        del session_parameters['jsessionid']
+        del session_parameters['username']
+        del session_parameters['password']
+
+        s = webuntis.Session(**session_parameters)
+
+        with mock.patch(
+            'webuntis.Session._request',
+            side_effect=Exception('Testing if login method raises AuthError due to invalid creds...')
+        ):
+            self.assertRaises(webuntis.errors.AuthError, s.login)
+
+    def test_login_response_with_sessionid_and_without(self):
+        session_parameters = stub_session_parameters.copy()
+        del session_parameters['jsessionid']
+
+        s = webuntis.Session(**session_parameters)
+
+        def assert_call(request_mock):
+            request_mock.assert_called_with(
+                'authenticate',
+                {
+                    'user': session_parameters['username'],
+                    'password': session_parameters['password'],
+                    'client': session_parameters['useragent']
+                },
+                use_login_repeat=False
+            )
+
+        with mock.patch(
+            'webuntis.Session._request',
+            side_effect=[{'sessionId': '123456'}, {}]
+        ) as request_mock:
+            s.login()
+            self.assertEqual(s.options['jsessionid'], '123456')
+            self.assertEqual(request_mock.call_count, 1)
+            assert_call(request_mock)
+
+            del s.options['jsessionid']
+
+            self.assertRaises(webuntis.errors.AuthError, s.login)
+            self.assertTrue('jsessionid' not in s.options)
+            self.assertEqual(request_mock.call_count, 2)
+            assert_call(request_mock)
+
+    def test_custom_cachelen(self):
+        cachelen = 13
+        params = stub_session_parameters.copy()
+        params['cachelen'] = cachelen
+        s = webuntis.Session(**params)
+        self.assertEqual(s._cache._maxlen, cachelen)
+        self.assertTrue('cachelen' not in s.options)
 
 
 class InternalTests(OfflineTestCase):
@@ -473,10 +599,172 @@ class InternalTests(OfflineTestCase):
                 expected_output
             )
 
-        self.assertRaises(ValueError,
-                          webuntis.utils.option_utils.server, '!"$%')
+        self.assertRaises(ValueError, webuntis.utils.option_utils.server, '!"$%')
 
     def test_resultclass_invalid_arguments(self):
         self.assertRaises(TypeError, webuntis.objects.Result, session=self.session, kwargs={}, data="LELELE")
         self.assertRaises(TypeError, webuntis.objects.Result)
         self.assertRaises(TypeError, webuntis.objects.Result, session=self.session)
+
+    def test_jsonrpcrequest_parse_result_invalid_request_id_returned(self):
+        method = 'getThingsNotExisting'
+        params = {'are': 'you', 'seri': 'ous'}
+
+        self.assertRaises(
+            webuntis.errors.RemoteError,
+            webuntis.session.JSONRPCRequest._parse_result,
+            {
+                'jsonrpc': '2.0',
+                'method': method,
+                'params': params,
+                'id': '2012-03-14 13:37:12.345678'
+            }, {
+                'jsonrpc': '2.0',
+                'id': 'COMPLETELYUNRELATED',
+                'result': [1, 2, 3]
+            }
+        )
+
+    def test_jsonrpcrequest_parse_error_code(self):
+        method = 'getThingsNotExisting'
+        params = {'are': 'you', 'seri': 'ous'}
+        reqid = '2012-03-14 13:37:12.345678'
+
+        def check():
+            self.assertRaises(
+                webuntis.errors.RemoteError,
+                webuntis.session.JSONRPCRequest._parse_error_code,
+                request_data, result_data
+            )
+
+        request_data = {
+            'jsonrpc': '2.0',
+            'id': reqid,
+            'method': method,
+            'params': params
+        }
+
+        result_data = {
+            'jsonrpc': '2.0',
+            'id': reqid,
+            'error': {
+                'code': 234567854323456789876543,
+                'message': 'I am a teapot.'
+            }
+        }
+        check()
+
+        del result_data['error']
+        check()
+
+    def test_jsonrpcrequest_send_request(self):
+        self.request_patcher.stop()
+
+        def mock_urlopen(data, expected_url, expected_data, expected_headers):
+            def mocking_func(requestobj):
+                self.assertEqual(requestobj.get_full_url(), expected_url)
+                self.assertEqual(requestobj.data, expected_data)
+                self.assertEqual(dict(requestobj.header_items()), expected_headers)
+
+                io = StringIO(data)
+                return io
+            return mocking_func
+
+        url = 'http://example.com'
+        decoded_data = {'le': 'LE'}
+        data = b'{"le": "LE"}'
+        headers = {'User-agent': 'Netscape'}
+
+        with mock.patch(
+            'webuntis.session.urlrequest.urlopen',
+            new=mock_urlopen(data, expected_url=url, expected_data=data, expected_headers=headers)
+        ):
+            self.assertEqual(
+                webuntis.session.JSONRPCRequest._send_request(
+                    url,
+                    data,
+                    headers
+                ),
+                decoded_data
+            )
+
+        invalid_data = b'LELELE'
+
+        with mock.patch(
+            'webuntis.session.urlrequest.urlopen',
+            new=mock_urlopen(invalid_data,
+                             # actually not expected, since the method will crash
+                             expected_url=url,
+                             expected_data=invalid_data,
+                             expected_headers=headers)
+        ):
+            self.assertRaises(
+                webuntis.errors.RemoteError,
+                webuntis.session.JSONRPCRequest._send_request,
+                url,
+                invalid_data,
+                headers
+            )
+
+    def test_resultobject_invalid_params(self):
+        valid_result = webuntis.objects.Result(data={}, parent=None, session=self.session)
+        self.assertRaises(TypeError, webuntis.objects.Result, data={}, parent='WAT')
+        self.assertRaises(TypeError, webuntis.objects.Result, data={}, parent=valid_result, session=self.session)
+
+    def test_datetime_utils_date(self):
+        dateint = 20121212
+        datestr = str(dateint)
+        dateobj = datetime.datetime.strptime(datestr, '%Y%m%d')
+        self.assertEqual(webuntis.utils.datetime_utils.parse_date(dateint), dateobj)
+        self.assertEqual(webuntis.utils.datetime_utils.parse_date(datestr), dateobj)
+        self.assertEqual(webuntis.utils.datetime_utils.format_date(dateobj), dateint)
+
+    def test_datetime_utils_time(self):
+        timeint = 1337
+        timestr = str(timeint)
+        timeobj = datetime.datetime.strptime(timestr, '%H%M')
+
+        self.assertEqual(webuntis.utils.datetime_utils.parse_time(timeint), timeobj)
+        self.assertEqual(webuntis.utils.datetime_utils.parse_time(timestr), timeobj)
+        self.assertEqual(webuntis.utils.datetime_utils.format_time(timeobj), timeint)
+
+    def test_lrudict(self):
+        d = webuntis.utils.LruDict(maxlen=3)
+        d['foo'] = 2
+        d['bar'] = 3
+        d['baz'] = 4
+        d['blah'] = 5
+        self.assertEqual(len(d), 3)
+        self.assertTrue('foo' not in d)
+        self.assertTrue('bar' in d)
+        self.assertTrue('baz' in d)
+        self.assertTrue('blah' in d)
+
+    def test_lazyproperty_from_instance(self):
+        meth_calls = []
+        class FooBoo(object):
+            @webuntis.utils.lazyproperty
+            def some_method(self):
+                meth_calls.append(True)
+                return 42
+
+
+        boo = FooBoo()
+        self.assertEqual(boo.some_method, 42)
+        self.assertTrue(boo.some_method is 42)
+        self.assertEqual(len(meth_calls), 1)
+
+    def test_lazyproperty_from_instance(self):
+        '''Test that the decorator only works on instances' methods.'''
+        meth_calls = []
+        class FooBoo(object):
+            @webuntis.utils.lazyproperty
+            def some_method(self):
+                meth_calls.append(True)
+                return 42
+
+
+        self.assertNotEqual(FooBoo.some_method, 42)
+        self.assertTrue(FooBoo.some_method is not 42)
+        self.assertEqual(len(meth_calls), 0)
+

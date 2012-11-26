@@ -121,11 +121,12 @@ def table(periods, width=None):
     # expand each row to the maximal length
     longest_row = len(max(grouped, key=len))
 
-    if width and longest_row > width:
-        raise ValueError(
-            'Fixed width too small. Need at least %i' % longest_row)
-
-    longest_row = width
+    if width is not None:
+        if longest_row > width:
+            raise ValueError(
+                'Fixed width too small. Need at least %i' % longest_row)
+        else:
+            longest_row = width
 
     for row in grouped:
         while len(row) < longest_row:
