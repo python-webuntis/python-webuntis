@@ -187,7 +187,8 @@ class JSONRPCSession(object):
         :param suppress_errors: boolean, whether to suppress errors if we
             already were logged out.
 
-        :raises: :py:class:`webuntis.errors.NotLoggedInError`
+        :raises: :py:class:`webuntis.errors.NotLoggedInError`, unless
+            ``suppress_errors`` is ``True``.
         '''
         def throw_errors():
             if not suppress_errors:
