@@ -754,7 +754,7 @@ class InternalTests(OfflineTestCase):
         self.assertTrue(boo.some_method is 42)
         self.assertEqual(len(meth_calls), 1)
 
-    def test_lazyproperty_from_instance(self):
+    def test_lazyproperty_from_class(self):
         '''Test that the decorator only works on instances' methods.'''
         meth_calls = []
         class FooBoo(object):
@@ -768,3 +768,25 @@ class InternalTests(OfflineTestCase):
         self.assertTrue(FooBoo.some_method is not 42)
         self.assertEqual(len(meth_calls), 0)
 
+    def test_sessioncachekey_is_unique(self):
+        Key = webuntis.utils.SessionCacheKey
+
+        a = Key('klassen', {})
+        a1 = Key('klassen', {})
+        b = Key('klassen', {'g': 'G'})
+        c = Key('teachers', {})
+
+        self.assertEqual(a, a1)
+        self.assertEqual(hash(a), hash(a1))
+
+        self.assertNotEqual(a, b)
+        self.assertNotEqual(hash(a), hash(b))
+        
+        self.assertNotEqual(a, c)
+        self.assertNotEqual(hash(a), hash(c))
+
+    def test_sessioncachekey_repr(self):
+        self.assertEqual(
+            repr(webuntis.utils.SessionCacheKey('foomethod', {'a': 'B'})).replace("u'", "'"),
+            "webuntis.utils.SessionCacheKey('foomethod', {'a': 'B'})"
+        )
