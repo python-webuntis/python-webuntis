@@ -118,31 +118,41 @@ def result_wrapper(func):
     @wraps(func)
     def inner(self, **kwargs):
         result_class, jsonrpc_method, jsonrpc_args = func(self, **kwargs)
-        key = make_cache_key(func.__name__, kwargs)
+        key = SessionCacheKey(func.__name__, kwargs)
 
-        if key not in self._cache:
+        if key not in self.cache:
             data = self._request(
                 jsonrpc_method,
                 jsonrpc_args
             )
             obj = result_class(session=self, data=data)
-            self._cache[key] = result = obj
+            self.cache[key] = result = obj
         else:
-            result = self._cache[key]
+            result = self.cache[key]
 
         return result
 
     return inner
 
 
-def make_cache_key(method, kwargs):
-    '''A helper method that generates a hashable object out of a string and
-    a dictionary.
+class SessionCacheKey(object):
+    '''A hashable object whose primary purpose is to get used as a dictionary
+    key.'''
+    def __init__(self, method, kwargs):
+        self.method = method
+        self.kwargs = kwargs
 
-    It doesn't use ``hash()`` or similar methods because it's neat that the
-    keys are human-readable and enable us to trace back the origin of the
-    key. Python does that anyway under the hood when using it as a
-    dictionary key.
-    '''
+    def _cache_key(self):
+        return (self.method, frozenset((self.kwargs or {}).items()))
 
-    return (method, frozenset((kwargs or {}).items()))
+    def __hash__(self):
+        return hash(self._cache_key())
+
+    def __eq__(self, other):
+        return type(other) == type(self) and hash(other) == hash(self)
+
+    def __repr__(self):
+        return 'webuntis.utils.%s(%s)' % (
+            self.__class__.__name__,
+            ', '.join((repr(self.method), repr(self.kwargs)))
+        )

@@ -303,9 +303,8 @@ class ResultWrapperMixin(object):
         return objects.KlassenList, 'getKlassen', params
 
     @result_wrapper
-    def periods(self, start=None, end=None, **type_and_id):
-        '''Get the timetable for a specific school class and time period. An
-        alias for this method is ``timetable``.
+    def timetable(self, start=None, end=None, **type_and_id):
+        '''Get the timetable for a specific school class and time period.
 
         :param start: The beginning of the time period. Can be a
             :py:class:`datetime.datetime` object or a string of the format
@@ -368,8 +367,6 @@ class ResultWrapperMixin(object):
 
         return objects.PeriodList, 'getTimetable', parameters
 
-    timetable = periods
-
     @result_wrapper
     def rooms(self):
         '''Get all rooms of a school.
@@ -409,13 +406,9 @@ class ResultWrapperMixin(object):
         timetable. Maybe :py:meth:`webuntis.objects.PeriodList.to_table` could
         make use of this one day.
 
-        ``timeunits`` is an alias for this function.
-
         :rtype: :py:class:`webuntis.objects.TimeunitList`
         '''
         return objects.TimeunitList, 'getTimegridUnits', {}
-
-    timeunits = timegrid
 
     @result_wrapper
     def statusdata(self):
@@ -433,7 +426,7 @@ class Session(JSONRPCSession, ResultWrapperMixin):
     
     Configuration options can be set with keyword arguments when initializing
     :py:class:`Session`. Unless noted otherwise, they get saved in a dictionary
-    located in the instance's ``options`` attribute and can be modified
+    located in the instance's :py:attr:`options` attribute and can be modified
     afterwards.
 
     :type username: str
@@ -482,8 +475,12 @@ class Session(JSONRPCSession, ResultWrapperMixin):
 
     '''
 
-    #: Contains the caching dictionary for requests.
-    _cache = None
+    cache = None
+    '''Contains the caching dictionary for requests.'''
+
+    # Repeated here because sphinx doesn't recognize it when defined in JSONRPCSession:
+    options = None
+    '''The options dictionary, filled with most keyword arguments from initialization.'''
 
     def __init__(self, **options):
         try:
@@ -492,6 +489,6 @@ class Session(JSONRPCSession, ResultWrapperMixin):
         except KeyError:
             cachelen = 20
 
-        self._cache = utils.LruDict(maxlen=cachelen)
+        self.cache = utils.LruDict(maxlen=cachelen)
 
         JSONRPCSession.__init__(self, **options)

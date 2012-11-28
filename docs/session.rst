@@ -2,6 +2,9 @@
 Session
 =======
 
+The Session Class
+=================
+
 .. module:: webuntis
 
 .. autoclass:: Session
@@ -9,6 +12,7 @@ Session
     .. automethod:: login
     .. automethod:: logout
     .. autoattribute:: options
+    .. autoattribute:: cache
 
 
 Things you can do with the API
@@ -19,12 +23,10 @@ Things you can do with the API
     .. automethod:: departments(foo, bar)
     .. automethod:: holidays
     .. automethod:: klassen
-    .. automethod:: periods
+    .. automethod:: timetable
     .. automethod:: rooms
     .. automethod:: schoolyears
     .. automethod:: statusdata
     .. automethod:: subjects
     .. automethod:: teachers
     .. automethod:: timegrid
-    .. automethod:: timetable
-    .. automethod:: timeunits

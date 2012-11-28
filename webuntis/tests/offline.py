@@ -189,15 +189,15 @@ class DataFetchingTests(OfflineTestCase):
             self.assertEqual(len(webuntis.utils.timetable_utils.table([])), 0)
 
     def test_gettimetables_invalid_type_and_id(self):
-        self.assertRaises(TypeError, self.session.periods, start=None, end=None, klasse=123, teacher=123)
-        self.assertRaises(TypeError, self.session.periods, start=None, end=None)
-        self.assertRaises(TypeError, self.session.periods, start=None, end=None, foo=123)
+        self.assertRaises(TypeError, self.session.timetable, start=None, end=None, klasse=123, teacher=123)
+        self.assertRaises(TypeError, self.session.timetable, start=None, end=None)
+        self.assertRaises(TypeError, self.session.timetable, start=None, end=None, foo=123)
 
     def test_gettimetables_start_xor_end(self):
         some_date = datetime.datetime.now()
         with mock_results(None, swallow_not_found=True):
-            self.session.periods(start=some_date, end=None, klasse=123)
-            self.session.periods(start=None, end=some_date, klasse=123)
+            self.session.timetable(start=some_date, end=None, klasse=123)
+            self.session.timetable(start=None, end=some_date, klasse=123)
 
     def test_getrooms(self):
         jsonstr = get_json_resource('getrooms_mock.json')
@@ -484,7 +484,7 @@ class SessionUsageTests(OfflineTestCase):
         params = stub_session_parameters.copy()
         params['cachelen'] = cachelen
         s = webuntis.Session(**params)
-        self.assertEqual(s._cache._maxlen, cachelen)
+        self.assertEqual(s.cache._maxlen, cachelen)
         self.assertTrue('cachelen' not in s.options)
 
 
@@ -492,7 +492,7 @@ class InternalTests(OfflineTestCase):
     '''Test certain internal interfaces, such as utils'''
 
     def test_make_cache_key(self):
-        key = webuntis.utils.make_cache_key
+        key = webuntis.utils.SessionCacheKey
         # The hash builtin will take care of us if the results aren't hashable.
         hash(key('getStuff', {'foo': 'bar'}))
         hash(key('getStuff', {}))
