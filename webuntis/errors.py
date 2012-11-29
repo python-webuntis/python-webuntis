@@ -23,13 +23,12 @@ class MethodNotFoundError(RemoteError):
 
 
 class AuthError(RemoteError):
-    '''Usually missing credentials, but also other problems while logging in
-    are covered with this.'''
+    '''Errors while authenticating/logging in.'''
     pass
 
 
 class BadCredentialsError(AuthError):
-    '''Invalid username or password'''
+    '''Invalid or missing username or password.'''
     pass
 
 

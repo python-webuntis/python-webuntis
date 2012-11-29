@@ -357,7 +357,7 @@ class SessionUsageTests(OfflineTestCase):
 
         with mock_results(methods):
             with mock.patch.dict(
-                self.session.options,
+                self.session.config,
                 {'login_repeat': retry_amount}
             ):
                 self.assertRaises(webuntis.errors.NotLoggedInError,
@@ -395,7 +395,7 @@ class SessionUsageTests(OfflineTestCase):
 
         with mock_results(methods):
             with mock.patch.dict(
-                self.session.options,
+                self.session.config,
                 {'login_repeat': retry_amount, 'jsessionid': None}
             ):
                 self.assertRaises(webuntis.errors.NotLoggedInError,
@@ -468,14 +468,14 @@ class SessionUsageTests(OfflineTestCase):
             side_effect=[{'sessionId': '123456'}, {}]
         ) as request_mock:
             s.login()
-            self.assertEqual(s.options['jsessionid'], '123456')
+            self.assertEqual(s.config['jsessionid'], '123456')
             self.assertEqual(request_mock.call_count, 1)
             assert_call(request_mock)
 
-            del s.options['jsessionid']
+            del s.config['jsessionid']
 
             self.assertRaises(webuntis.errors.AuthError, s.login)
-            self.assertTrue('jsessionid' not in s.options)
+            self.assertTrue('jsessionid' not in s.config)
             self.assertEqual(request_mock.call_count, 2)
             assert_call(request_mock)
 
@@ -485,7 +485,7 @@ class SessionUsageTests(OfflineTestCase):
         params['cachelen'] = cachelen
         s = webuntis.Session(**params)
         self.assertEqual(s.cache._maxlen, cachelen)
-        self.assertTrue('cachelen' not in s.options)
+        self.assertTrue('cachelen' not in s.config)
 
 
 class InternalTests(OfflineTestCase):
@@ -512,11 +512,11 @@ class InternalTests(OfflineTestCase):
         for given_input, expected_output in tests:
             self.assertEqual(utils.is_iterable(given_input), expected_output)
 
-    def test_options_invalidattribute(self):
-        self.assertFalse('nigglywiggly' in self.session.options)
+    def test_config_invalidattribute(self):
+        self.assertFalse('nigglywiggly' in self.session.config)
         self.assertRaises(
             KeyError,
-            self.session.options.__getitem__,
+            self.session.config.__getitem__,
             'nigglywiggly'
         )
 
@@ -581,7 +581,7 @@ class InternalTests(OfflineTestCase):
         self.assertEqual(item.id, data['id'])
         self.assertEqual(int(item), item.id)
 
-    def test_optionparsers_server(self):
+    def test_configkeys_server(self):
         tests = [
             ('webuntis.grupet.at',
                 'http://webuntis.grupet.at/WebUntis/jsonrpc.do'),
@@ -595,11 +595,11 @@ class InternalTests(OfflineTestCase):
 
         for parser_input, expected_output in tests:
             self.assertEqual(
-                webuntis.utils.option_utils.server(parser_input),
+                webuntis.utils.config_utils.server(parser_input),
                 expected_output
             )
 
-        self.assertRaises(ValueError, webuntis.utils.option_utils.server, '!"$%')
+        self.assertRaises(ValueError, webuntis.utils.config_utils.server, '!"$%')
 
     def test_resultclass_invalid_arguments(self):
         self.assertRaises(TypeError, webuntis.objects.Result, session=self.session, kwargs={}, data="LELELE")

@@ -48,6 +48,6 @@ Index
   quickstart
   session
   objects
-  etc
+  exceptions
   changelog
   license

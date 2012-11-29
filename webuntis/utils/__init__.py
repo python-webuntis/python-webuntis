@@ -19,7 +19,8 @@ try:
 except ImportError:
     from ordereddict import OrderedDict  # from dependency "ordereddict"
 
-from . import datetime_utils, option_utils, timetable_utils
+from . import datetime_utils, timetable_utils
+from .config_utils import config_keys
 
 
 class lazyproperty(object):
@@ -58,12 +59,12 @@ class FilterDict(dict):
     an instance of FilterDict, the filter dictionary will be consulted to
     filter the value with a function.
 
-    >>> options = FilterDict({
+    >>> config = FilterDict({
     ...    'foo': lambda x: 'whoopdeedoo'
     ... })
     >>>
-    >>> options['foo'] = 'somethingelse'
-    >>> options['foo']
+    >>> config['foo'] = 'somethingelse'
+    >>> config['foo']
     'whoopdeedoo'
 
     '''
@@ -83,15 +84,19 @@ class FilterDict(dict):
             raise KeyError('No value or filter for key: ' + name)
 
     def __setitem__(self, key, value):
+        if value is None:
+            if key in self:
+                del self[key]
+            return
+
         new_value = self.filters[key](value)
-        if new_value is not None:
-            dict.__setitem__(
-                self,
-                key,
-                new_value
-            )
-        elif key in self:
-            dict.__delitem__(self, key)
+
+        if new_value is None:
+            if key in self:
+                del self[key]
+            return
+
+        dict.__setitem__(self, key, new_value)
 
     def update(self, *args, **kwargs):
         for key, value in dict(*args, **kwargs).items():

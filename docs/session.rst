@@ -11,7 +11,7 @@ The Session Class
 
     .. automethod:: login
     .. automethod:: logout
-    .. autoattribute:: options
+    .. autoattribute:: config
     .. autoattribute:: cache
 
 

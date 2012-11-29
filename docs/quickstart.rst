@@ -57,6 +57,7 @@ So what does this do?
 
 ::
 
+    # a minimal example, these keywords are absolutely neccessary
     s = webuntis.Session(
         server='webuntis.grupet.at:8080',
         username='api',
@@ -75,8 +76,8 @@ You have to do it manually::
 
     s.login()
 
-This will raise an exception if you haven't provided the neccessary options
-(*i.e.* username, password, server).
+This will raise an exception if you haven't provided the neccessary
+configuration (*i.e.* username, password, server, useragent, school).
 
 So now that we're logged in, we can fetch some data. How about a list of all
 the classes of the school *demo_inf*? As the WebUntis software comes from
@@ -112,10 +113,5 @@ which you also can use to log yourself out automatically::
 Where to go from here?
 ======================
 
-:doc:`session`
-       This document provides a good starting point. It describes the only class
-       you directly instantiate.
-:doc:`objects`
-       A complete overview of things you can do with the API.
-:doc:`etc`
-       Some implementation details and neat tricks.
+:doc:`session` describes the ``Session`` class, which is the only class you
+will ever directly get in touch with.

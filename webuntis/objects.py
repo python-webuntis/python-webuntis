@@ -324,12 +324,81 @@ class PeriodList(ListResult):
     instances.'''
     _itemclass = PeriodObject
 
-    def to_table(self, *args, **kwargs):
-        '''A shortcut for :py:func:`webuntis.utils.timetable_utils.table`.
-        Given arguments will be passed to that function.
+    def to_table(self, width=None):
+        '''
+        Creates a table-like nested list.
+
+        :param width: Optionally, a fixed width for the table. The function will
+            fill every row with empty cells until that width is met. If the
+            timetable is too big, it will raise a ``ValueError``.
+
+        :returns: A list containing "rows", which in turn contain "hours", which
+            contain :py:class:`webuntis.objects.PeriodObject` instances which are
+            happening at the same time.
+
+        Example::
+
+            today = datetime.datetime.today()
+            monday = today - datetime.timedelta(days=today.weekday())
+            friday = monday + datetime.timedelta(days=4)
+
+            table = s.timetable(klasse=878, start=monday, end=friday) \\
+                    .to_table(width=5)
+
+            print('<table><thead>')
+            for weekday in range(5):
+                print('<th>' + str(weekday) + '</th>')
+
+            print('</thead><tbody>')
+            for time, row in table:
+                print('<tr>')
+                for weekday_number, cell in row:
+                    print('<td>')
+                    for period in cell:
+                        print('<div>')
+                        print(', '.join(su.name for su in period.subjects))
+                        print('</div>')
+
+                    print('</td>')
+
+                print('</tr>')
+
+            print('</tbody></table>')
+
+        Gives you HTML like this:
+
+        +--------+--------+--------+--------+--------+
+        | 0      | 1      | 2      | 3      | 4      |
+        +========+========+========+========+========+
+        | ME     | M      | PH     | M      | GSK    |
+        +--------+--------+--------+--------+--------+
+        | M      | BU     | D      | FRA    | D      |
+        |        |        |        | LAT    |        |
+        |        |        |        | SPA    |        |
+        +--------+--------+--------+--------+--------+
+        | E      | BU     | FRA    | BU     | E      |
+        |        |        | LAT    |        |        |
+        |        |        | SPA    |        |        |
+        +--------+--------+--------+--------+--------+
+        | RK     | GSK    | E      | ME     | GWK    |
+        | RISL   |        |        |        |        |
+        +--------+--------+--------+--------+--------+
+        | D      | BE     | M      | PH     | PH     |
+        +--------+--------+--------+--------+--------+
+        | FRA    |        |        |        |        |
+        | LAT    |        |        |        |        |
+        | SPA    |        |        |        |        |
+        +--------+--------+--------+--------+--------+
+        | INF+   |        |        |        |        |
+        +--------+--------+--------+--------+--------+
+        | INF+   |        |        |        |        |
+        +--------+--------+--------+--------+--------+
+        | BSP    | RKO    |        |        |        |
+        +--------+--------+--------+--------+--------+
+
         '''
 
-        return timetable_utils.table(self, *args, **kwargs)
+        return timetable_utils.table(self, width=width)
 
 
 class RoomObject(ListItem):

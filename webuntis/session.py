@@ -52,12 +52,12 @@ class JSONRPCRequest(object):
         :type params: dict
         '''
 
-        url = self._session.options['server'] + \
+        url = self._session.config['server'] + \
             '?school=' + \
-            self._session.options['school']
+            self._session.config['school']
 
         headers = {
-            'User-Agent': self._session.options['useragent'],
+            'User-Agent': self._session.config['useragent'],
             'Content-Type': 'application/json'
         }
 
@@ -69,12 +69,12 @@ class JSONRPCRequest(object):
         }
 
         if self._method != 'authenticate':
-            if 'jsessionid' not in self._session.options:
+            if 'jsessionid' not in self._session.config:
                 raise errors.NotLoggedInError(
                     'Don\'t have JSESSIONID. Did you already log out?')
             else:
                 headers['Cookie'] = 'JSESSIONID=' + \
-                    self._session.options['jsessionid']
+                    self._session.config['jsessionid']
 
         logging.debug('Making new request:')
         logging.debug('URL: ' + url)
@@ -154,12 +154,12 @@ class JSONRPCRequest(object):
 class JSONRPCSession(object):
     '''Lower-level version of :py:class:`Session`. Do not use this.'''
 
-    options = None
+    config = None
     '''Dictionary with configuration.'''
 
     def __init__(self, **kwargs):
-        self.options = utils.FilterDict(utils.option_utils.options)
-        options = {
+        self.config = utils.FilterDict(utils.config_keys)
+        config = {
             'server': None,
             'school': None,
             'useragent': None,
@@ -168,8 +168,8 @@ class JSONRPCSession(object):
             'jsessionid': None,
             'login_repeat': 0
         }
-        options.update(kwargs)
-        self.options.update(options)
+        config.update(kwargs)
+        self.config.update(config)
 
     def __enter__(self):
         '''Context-manager'''
@@ -184,11 +184,11 @@ class JSONRPCSession(object):
         '''
         Log out of session
 
-        :param suppress_errors: boolean, whether to suppress errors if we
-            already were logged out.
+        :type suppress_errors: bool
+        :param suppress_errors: Whether to suppress errors.
 
-        :raises: :py:class:`webuntis.errors.NotLoggedInError`, unless
-            ``suppress_errors`` is ``True``.
+        :raises: :py:class:`webuntis.errors.NotLoggedInError` -- Can't log out
+            because not logged in. Raised unless ``suppress_errors`` is ``True``.
         '''
         def throw_errors():
             if not suppress_errors:
@@ -201,7 +201,7 @@ class JSONRPCSession(object):
             throw_errors()
 
         try:
-            del self.options['jsessionid']
+            del self.config['jsessionid']
         except KeyError:
             throw_errors()
 
@@ -214,29 +214,31 @@ class JSONRPCSession(object):
 
                 s = webuntis.Session(...).login()
 
-        :raises: :py:class:`webuntis.errors.BadCredentialsError`
-        :raises: :py:class:`webuntis.errors.AuthError`
+        :raises: :py:class:`webuntis.errors.BadCredentialsError` --
+            Username/Password missing or invalid.
+        :raises: :py:class:`webuntis.errors.AuthError` -- Didn't recieve a
+            session ID for unknown reasons.
         '''
 
-        if 'username' not in self.options \
-                or 'password' not in self.options:
-            raise errors.AuthError('No login data specified.')
+        if 'username' not in self.config \
+                or 'password' not in self.config:
+            raise errors.BadCredentialsError('No login data specified.')
 
         logging.debug('Trying to authenticate with username/password...')
         logging.debug('Username: ' +
-                      self.options['username'] +
+                      self.config['username'] +
                       ' Password: ' +
-                      self.options['password'])
+                      self.config['password'])
         res = self._request('authenticate', {
-            'user': self.options['username'],
-            'password': self.options['password'],
-            'client': self.options['useragent']
+            'user': self.config['username'],
+            'password': self.config['password'],
+            'client': self.config['useragent']
         }, use_login_repeat=False)
         logging.debug(res)
         if 'sessionId' in res:
             logging.debug('Did get a jsessionid from the server:')
-            self.options['jsessionid'] = res['sessionId']
-            logging.debug(self.options['jsessionid'])
+            self.config['jsessionid'] = res['sessionId']
+            logging.debug(self.config['jsessionid'])
         else:
             raise errors.AuthError(
                 'Something went wrong while authenticating',
@@ -248,7 +250,7 @@ class JSONRPCSession(object):
     def _request(self, method, params=None, use_login_repeat=None):
         if use_login_repeat is None:
             use_login_repeat = (method not in ('logout', 'authenticate'))
-        attempts_left = self.options['login_repeat'] if use_login_repeat else 0
+        attempts_left = self.config['login_repeat'] if use_login_repeat else 0
 
         data = None
 
@@ -322,7 +324,6 @@ class ResultWrapperMixin(object):
 
         :raises: :py:class:`ValueError` -- if something was wrong with the
             arguments supplied.
-
 
         '''
         element_type_table = {
@@ -424,9 +425,9 @@ class Session(JSONRPCSession, ResultWrapperMixin):
     '''The origin of everything you want to do with the WebUntis API. Can be
     used as a context-handler.
     
-    Configuration options can be set with keyword arguments when initializing
+    Configuration can be set with keyword arguments when initializing
     :py:class:`Session`. Unless noted otherwise, they get saved in a dictionary
-    located in the instance's :py:attr:`options` attribute and can be modified
+    located in the instance's :py:attr:`config` attribute and can be modified
     afterwards.
 
     :type username: str
@@ -435,43 +436,43 @@ class Session(JSONRPCSession, ResultWrapperMixin):
     :type password: str
     :param password: The password used for the API.
 
-    :type jsessionid: str
-    :param jsessionid: The current session key. Shouldn't be changed unless you
-        know what you're doing.
-
-    :type school: str
-    :param school: A valid school name.
-
     :type server: str
     :param server: A host name, a URL, or a URL without path.
 
             >>> s = webuntis.Session(..., server='thalia.webuntis.com')
-            >>> s.options['server']
+            >>> s.config['server']
             'http://thalia.webuntis.com/WebUntis/jsonrpc.do'
             >>> # notice that there's NO SLASH at the end!
-            >>> s.options['server'] = 'https://thalia.webuntis.com'
-            >>> s.options['server']
+            >>> s.config['server'] = 'https://thalia.webuntis.com'
+            >>> s.config['server']
             'https://thalia.webuntis.com/WebUntis/jsonrpc.do'
-            >>> s.options['server'] = 'https://thalia.webuntis.com/'
+            >>> s.config['server'] = 'https://thalia.webuntis.com/'
             >>> # because a slash gets interpreted as the full path to the API
             >>> # endpoint, which would crash during login
-            >>> s.options['server']
+            >>> s.config['server']
             'http://thalia.webuntis.com/'
-            >>> s.options['server'] = '!"$%/WebUntis/jsonrpc.do'
+            >>> s.config['server'] = '!"$%/WebUntis/jsonrpc.do'
             Traceback blah blah something ValueError
+
+    :type school: str
+    :param school: A valid school name.
 
     :type useragent: str
     :param useragent: A string containing a useragent. Please include useful
         information, such as an email address, for the server maintainer. Just
         like you would do with the HTTP useragents of bots.
 
-    :param cachelen: Amount of API requests kept in cache. Default to ``20``.
-        Isn't saved in the :py:attr:`options` dictionary and cannot be modified
-        afterwards.  
+    :param cachelen: Amount of API requests kept in cache. Default
+        to ``20``. Isn't saved in the :py:attr:`config` dictionary and cannot
+        be modified afterwards.  
 
-    :param login_repeat: The amount of times `python-webuntis` should try to
-        login when finding no or an expired session. Default to ``0``, meaning it
-        won't do that.
+    :type jsessionid: str
+    :param jsessionid: The session key to use. You usually shouldn't
+        touch this.
+
+    :param login_repeat: The amount of times `python-webuntis`
+        should try to login when finding no or an expired session. Default to
+        ``0``, meaning it won't do that.
 
     '''
 
@@ -479,16 +480,16 @@ class Session(JSONRPCSession, ResultWrapperMixin):
     '''Contains the caching dictionary for requests.'''
 
     # Repeated here because sphinx doesn't recognize it when defined in JSONRPCSession:
-    options = None
-    '''The options dictionary, filled with most keyword arguments from initialization.'''
+    config = None
+    '''The config dictionary, filled with most keyword arguments from initialization.'''
 
-    def __init__(self, **options):
+    def __init__(self, **config):
         try:
-            cachelen = options['cachelen']
-            del options['cachelen']
+            cachelen = config['cachelen']
+            del config['cachelen']
         except KeyError:
             cachelen = 20
 
         self.cache = utils.LruDict(maxlen=cachelen)
 
-        JSONRPCSession.__init__(self, **options)
+        JSONRPCSession.__init__(self, **config)

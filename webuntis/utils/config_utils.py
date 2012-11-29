@@ -48,12 +48,9 @@ def server(url):
 
 
 def string(value):
-    if value is None:
-        return None
+    return str(value)
 
-    return value
-
-options = {
+config_keys = {
     'username': string,
     'password': string,
     'jsessionid': string,

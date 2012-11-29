@@ -1,18 +1,4 @@
-===
-Etc
-===
-
-Here is random stuff that doesn't fit anywhere else.
-
-.. module:: webuntis.utils
-
-Timetable Utils
-===============
-
-.. module:: webuntis.utils.timetable_utils
-
-.. autofunction:: table
-
+=====================
 Errors and Exceptions
 =====================
 

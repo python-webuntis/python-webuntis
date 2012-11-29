@@ -108,5 +108,5 @@ class RemoteTests(TestCaseBase):
 
     def test_loggedout(self):
         self.session.logout()
-        self.assertFalse('jsessionid' in self.session.options)
+        self.assertFalse('jsessionid' in self.session.config)
         self.assertRaises(webuntis.errors.AuthError, self.session.klassen)
