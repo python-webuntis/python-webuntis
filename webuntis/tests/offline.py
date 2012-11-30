@@ -529,7 +529,7 @@ class InternalTests(OfflineTestCase):
         self.assertEqual(obj.minute, 0)
         self.assertEqual(obj.second, 0)
 
-    def test_filterdict(self):
+    def test_filterdict_basic(self):
         store = utils.FilterDict({
             'whatever': lambda x: x,
             'always_whoop': lambda x: 'whoop'
@@ -540,11 +540,43 @@ class InternalTests(OfflineTestCase):
         store['always_whoop'] = 'what'
         self.assertEqual(store['always_whoop'], 'whoop')
 
+    def test_filterdict_deletion_successful(self):
+        store = webuntis.utils.FilterDict({
+            'whatever': lambda x: x
+        })
+
+        store['whatever'] ='HUE'
+
         del store['whatever']
+        self.assertTrue('whatever' not in store)
         self.assertRaises(KeyError, store.__getitem__, 'whatever')
 
-        del store['always_whoop']
-        self.assertRaises(KeyError, store.__getitem__, 'always_whoop')
+    def test_filterdict_assigning_none_deletes(self):
+        store = webuntis.utils.FilterDict({
+            'whatever': lambda x: x
+        })
+
+        store['whatever'] = 'HUE'
+        self.assertTrue('whatever' in store)
+        store['whatever'] = None
+        self.assertTrue('whatever' not in store)
+        self.assertRaises(KeyError, store.__getitem__, 'whatever')
+
+    def test_filterdict_getting_none_from_filter_deletes(self):
+        return_val = True
+        store = webuntis.utils.FilterDict({
+            'whatever': lambda x: return_val
+        })
+
+        store['whatever'] = 'HUE'
+        self.assertEqual(store['whatever'], True)
+        self.assertTrue('whatever' in store)
+
+        return_val = None
+        store['whatever'] = 'HUE'
+        self.assertTrue('whatever' not in store)
+        self.assertRaises(KeyError, store.__getitem__, 'whatever')
+
 
     def test_session_invalidattribute(self):
         self.assertRaises(AttributeError, getattr, self.session, 'foobar')
@@ -753,20 +785,6 @@ class InternalTests(OfflineTestCase):
         self.assertEqual(boo.some_method, 42)
         self.assertTrue(boo.some_method is 42)
         self.assertEqual(len(meth_calls), 1)
-
-    def test_lazyproperty_from_class(self):
-        '''Test that the decorator only works on instances' methods.'''
-        meth_calls = []
-        class FooBoo(object):
-            @webuntis.utils.lazyproperty
-            def some_method(self):
-                meth_calls.append(True)
-                return 42
-
-
-        self.assertNotEqual(FooBoo.some_method, 42)
-        self.assertTrue(FooBoo.some_method is not 42)
-        self.assertEqual(len(meth_calls), 0)
 
     def test_sessioncachekey_is_unique(self):
         Key = webuntis.utils.SessionCacheKey
