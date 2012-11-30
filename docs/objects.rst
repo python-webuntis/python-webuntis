@@ -9,3 +9,4 @@ Objects and Models
 
 .. automodule:: webuntis.objects
     :members:
+    :show-inheritance:
