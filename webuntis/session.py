@@ -6,24 +6,11 @@
 '''
 from __future__ import unicode_literals
 from webuntis import utils, objects, errors
-result_wrapper = utils.result_wrapper
+from webuntis.utils import result_wrapper
+from webuntis.utils.third_party import json, urlrequest
 
-try:
-    # Python 3
-    import urllib.request as urlrequest
-    import urllib.error as urlerrors
-except ImportError:
-    # Python 2
-    import urllib2
-    urlrequest = urlerrors = urllib2
 import logging
 import datetime
-
-
-try:
-    import json  # Python >= 2.6
-except ImportError:
-    import simplejson as json  # from dependency "simplejson"
 
 
 class JSONRPCRequest(object):

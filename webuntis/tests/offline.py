@@ -8,8 +8,8 @@ from __future__ import unicode_literals
 
 import mock
 import webuntis
-import webuntis.utils as utils
 import datetime
+
 try:
     from StringIO import StringIO  # Python 2
 except ImportError:
@@ -498,20 +498,6 @@ class InternalTests(OfflineTestCase):
         hash(key('getStuff', {}))
         hash(key('getStuff', None))
 
-    def test_is_iterable_util(self):
-        tests = [
-            ((), True),
-            (None, False),
-            ([], True),
-            ({}, True),
-            ("FOO", False),
-            (str("FOO"), False),
-            (123, False)
-        ]
-
-        for given_input, expected_output in tests:
-            self.assertEqual(utils.is_iterable(given_input), expected_output)
-
     def test_config_invalidattribute(self):
         self.assertFalse('nigglywiggly' in self.session.config)
         self.assertRaises(
@@ -521,7 +507,7 @@ class InternalTests(OfflineTestCase):
         )
 
     def test_datetime_utils(self):
-        obj = utils.datetime_utils.parse_datetime(20121005, 0)
+        obj = webuntis.utils.datetime_utils.parse_datetime(20121005, 0)
         self.assertEqual(obj.year, 2012)
         self.assertEqual(obj.month, 10)
         self.assertEqual(obj.day, 5)
@@ -530,7 +516,7 @@ class InternalTests(OfflineTestCase):
         self.assertEqual(obj.second, 0)
 
     def test_filterdict_basic(self):
-        store = utils.FilterDict({
+        store = webuntis.utils.FilterDict({
             'whatever': lambda x: x,
             'always_whoop': lambda x: 'whoop'
         })
@@ -627,11 +613,11 @@ class InternalTests(OfflineTestCase):
 
         for parser_input, expected_output in tests:
             self.assertEqual(
-                webuntis.utils.config_utils.server(parser_input),
+                webuntis.utils.config.server(parser_input),
                 expected_output
             )
 
-        self.assertRaises(ValueError, webuntis.utils.config_utils.server, '!"$%')
+        self.assertRaises(ValueError, webuntis.utils.config.server, '!"$%')
 
     def test_resultclass_invalid_arguments(self):
         self.assertRaises(TypeError, webuntis.objects.Result, session=self.session, kwargs={}, data="LELELE")

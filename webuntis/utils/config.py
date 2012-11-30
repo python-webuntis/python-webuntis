@@ -7,11 +7,7 @@
 from __future__ import unicode_literals
 import re
 import logging
-try:
-    from urllib import parse as urlparse  # Python 3
-except ImportError:
-    import urlparse  # Python 2
-
+from webuntis.utils.third_party import urlparse
 
 def whatever(value):
     return value
