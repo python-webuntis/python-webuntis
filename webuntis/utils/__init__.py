@@ -11,3 +11,4 @@ from .misc import FilterDict, \
                   SessionCacheKey, \
                   lazyproperty, \
                   result_wrapper
+from .logger import log

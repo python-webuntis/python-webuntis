@@ -6,8 +6,8 @@
 '''
 from __future__ import unicode_literals
 import re
-import logging
-from webuntis.utils.third_party import urlparse
+from .logger import log
+from .third_party import urlparse
 
 def whatever(value):
     return value
@@ -15,7 +15,7 @@ def whatever(value):
 
 def server(url):
     if not re.match(r'^http(s?)\:\/\/', url):  # if we just have the hostname
-        logging.debug('The URL given doesn\'t seem to be a valid URL, just '
+        log('debug', 'The URL given doesn\'t seem to be a valid URL, just '
                       'gonna prepend "http://"')
 
         # append the http prefix and hope for the best
@@ -32,7 +32,7 @@ def server(url):
         raise ValueError('Not a valid hostname')
 
     if urlobj.path == '/':
-        logging.warning('You specified that the API endpoint should be "/".'
+        log('warning', 'You specified that the API endpoint should be "/".'
                         'That is uncommon. If you didn\'t mean to do so,'
                         'remove the slash at the end of your "server"'
                         'parameter.')

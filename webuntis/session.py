@@ -6,10 +6,9 @@
 '''
 from __future__ import unicode_literals
 from webuntis import utils, objects, errors
-from webuntis.utils import result_wrapper
+from webuntis.utils import result_wrapper, log
 from webuntis.utils.third_party import json, urlrequest
 
-import logging
 import datetime
 
 
@@ -63,9 +62,9 @@ class JSONRPCRequest(object):
                 headers['Cookie'] = 'JSESSIONID=' + \
                     self._session.config['jsessionid']
 
-        logging.debug('Making new request:')
-        logging.debug('URL: ' + url)
-        logging.debug('DATA: ' + str(request_body))
+        log('debug', 'Making new request:')
+        log('debug', 'URL: ' + url)
+        log('debug', 'DATA: ' + str(request_body))
 
         result_body = self._send_request(
             url,
@@ -97,7 +96,7 @@ class JSONRPCRequest(object):
     @classmethod
     def _parse_error_code(cls, request_body, result_body):
         '''A helper function for handling JSON error codes.'''
-        logging.error(result_body)
+        log('error', result_body)
         try:
             error = result_body['error']
             exc = cls._errorcodes[error['code']](error['message'])
@@ -130,8 +129,8 @@ class JSONRPCRequest(object):
 
         try:
             result_data = json.loads(result)
-            logging.debug('Valid JSON found')
-            logging.debug(result_data)
+            log('debug', 'Valid JSON found')
+            log('debug', result_data)
         except ValueError:
             raise errors.RemoteError('Invalid JSON', str(result))
         else:
@@ -211,8 +210,8 @@ class JSONRPCSession(object):
                 or 'password' not in self.config:
             raise errors.BadCredentialsError('No login data specified.')
 
-        logging.debug('Trying to authenticate with username/password...')
-        logging.debug('Username: ' +
+        log('debug', 'Trying to authenticate with username/password...')
+        log('debug', 'Username: ' +
                       self.config['username'] +
                       ' Password: ' +
                       self.config['password'])
@@ -221,11 +220,11 @@ class JSONRPCSession(object):
             'password': self.config['password'],
             'client': self.config['useragent']
         }, use_login_repeat=False)
-        logging.debug(res)
+        log('debug', res)
         if 'sessionId' in res:
-            logging.debug('Did get a jsessionid from the server:')
+            log('debug', 'Did get a jsessionid from the server:')
             self.config['jsessionid'] = res['sessionId']
-            logging.debug(self.config['jsessionid'])
+            log('debug', self.config['jsessionid'])
         else:
             raise errors.AuthError(
                 'Something went wrong while authenticating',
