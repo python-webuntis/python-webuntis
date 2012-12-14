@@ -4,5 +4,5 @@
     :copyright: (c) 2012 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
 '''
-__version__ = '0.1.5'
+__version__ = '0.1.6'
 from webuntis.session import Session

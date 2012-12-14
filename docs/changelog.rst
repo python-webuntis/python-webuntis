@@ -2,6 +2,10 @@
 Changelog
 =========
 
+* 0.1.6:
+
+    * Just documentation improvements (simplifying) and internal restructuring.
+
 * 0.1.5:
 
     * Bugfixes
