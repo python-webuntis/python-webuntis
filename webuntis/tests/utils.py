@@ -66,7 +66,7 @@ def mock_results(methods, swallow_not_found=False):
         try:
             method_mock = getattr(methods, method)
         except AttributeError:
-            if not swallow_not_found:
+            if not swallow_not_found:  # pragma: no cover
                 raise
             else:
                 data = {'result': {}}
@@ -79,10 +79,20 @@ def mock_results(methods, swallow_not_found=False):
         d = {'id': jsondata['id']}
         d.update(data)
 
-        
         return d
 
     return mock.patch(
         'webuntis.session.JSONRPCRequest._send_request',
         new=callback
     )
+
+
+def raw_vs_object(jsonstr, result):
+    known_hashes = set()
+    for raw, obj in zip(jsonstr, result):
+        assert hash(obj) not in known_hashes
+        known_hashes.add(hash(obj))
+        yield (raw, obj)
+
+    assert len(known_hashes) == len(jsonstr) == len(result), \
+            (len(known_hashes), len(jsonstr), len(result))

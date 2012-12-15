@@ -16,7 +16,8 @@ except ImportError:
     from io import BytesIO as StringIO  # Python 3
 
 from webuntis.tests.utils import OfflineTestCase, mock_results, \
-    get_json_resource, stub_session_parameters
+    get_json_resource, stub_session_parameters, raw_vs_object
+
 
 class DataFetchingTests(OfflineTestCase):
     '''Test all Result objects from a high level.'''
@@ -30,7 +31,7 @@ class DataFetchingTests(OfflineTestCase):
                 return {'result': jsonstr}
 
         with mock_results(methods):
-            for dep_raw, dep in zip(jsonstr, self.session.departments()):
+            for dep_raw, dep in raw_vs_object(jsonstr, self.session.departments()):
                 self.assertEqual(dep_raw['id'], dep.id)
                 self.assertEqual(dep_raw['longName'], dep.long_name)
                 self.assertEqual(dep_raw['name'], dep.name)
@@ -44,7 +45,7 @@ class DataFetchingTests(OfflineTestCase):
                 return {'result': jsonstr}
 
         with mock_results(methods):
-            for holiday_raw, holiday in zip(jsonstr, self.session.holidays()):
+            for holiday_raw, holiday in raw_vs_object(jsonstr, self.session.holidays()):
                 self.assertEqual(holiday_raw['id'], holiday.id)
                 self.assertEqual(holiday_raw['name'], holiday.short_name)
                 self.assertEqual(holiday_raw['longName'], holiday.name)
@@ -66,14 +67,15 @@ class DataFetchingTests(OfflineTestCase):
             @staticmethod
             def getKlassen(session, url, jsondata, headers):
                 if len(methods.getKlassen.calls) == 2:
-                    self.assertEqual(jsondata['params']['schoolyearId'], schoolyear_id)
+                    self.assertEqual(jsondata['params']['schoolyearId'],
+                                     schoolyear_id)
 
                 self.assertFalse(len(methods.getKlassen.calls) > 2)
                 return {'result': jsonstr}
 
         with mock_results(methods):
             klassen = self.session.klassen()
-            for klasse_raw, klasse in zip(jsonstr, klassen):
+            for klasse_raw, klasse in raw_vs_object(jsonstr, klassen):
                 self.assertEqual(klasse_raw['id'], klasse.id)
                 self.assertEqual(klasse_raw['name'], klasse.name)
                 self.assertEqual(klasse_raw['longName'], klasse.long_name)
@@ -124,7 +126,7 @@ class DataFetchingTests(OfflineTestCase):
         with mock_results(methods):
             tt = self.session.timetable(klasse=114)
 
-            for period_raw, period in zip(jsonstr, tt):
+            for period_raw, period in raw_vs_object(jsonstr, tt):
                 self.assertEqual(
                     int(period.start.strftime('%H%M')),
                     period_raw['startTime']
@@ -147,27 +149,29 @@ class DataFetchingTests(OfflineTestCase):
                 else:
                     self.assertEqual(period.code, None)
 
-                if 'type' in period_raw:
+                if 'lstype' in period_raw:
                     self.assertEqual(period_raw['lstype'], period.type)
                 else:
                     self.assertEqual(period.type, 'ls')
 
                 self.assertEqual(len(period_raw['kl']), len(period.klassen))
-                for klasse_raw, klasse in zip(period_raw['kl'], period.klassen):
+                for klasse_raw, klasse in raw_vs_object(period_raw['kl'],
+                                              period.klassen):
                     self.assertEqual(klasse.id, klasse_raw['id'])
 
                 self.assertEqual(len(period_raw['te']), len(period.teachers))
-                for teacher_raw, teacher in zip(period_raw['te'], period.teachers):
+                for teacher_raw, teacher in raw_vs_object(period_raw['te'],
+                                                period.teachers):
                     self.assertEqual(teacher.id, teacher_raw['id'])
 
                 self.assertEqual(len(period_raw['su']), len(period.subjects))
-                for subject_raw, subject in zip(period_raw['su'], period.subjects):
+                for subject_raw, subject in raw_vs_object(period_raw['su'],
+                                                period.subjects):
                     self.assertEqual(subject.id, subject_raw['id'])
 
                 self.assertEqual(len(period_raw['ro']), len(period.rooms))
-                for room_raw, room in zip(period_raw['ro'], period.rooms):
+                for room_raw, room in raw_vs_object(period_raw['ro'], period.rooms):
                     self.assertEqual(room.id, room_raw['id'])
-
 
             def validate_table(periods, width=None):
                 counter = 0
@@ -189,9 +193,12 @@ class DataFetchingTests(OfflineTestCase):
             self.assertEqual(len(webuntis.utils.timetable_utils.table([])), 0)
 
     def test_gettimetables_invalid_type_and_id(self):
-        self.assertRaises(TypeError, self.session.timetable, start=None, end=None, klasse=123, teacher=123)
-        self.assertRaises(TypeError, self.session.timetable, start=None, end=None)
-        self.assertRaises(TypeError, self.session.timetable, start=None, end=None, foo=123)
+        self.assertRaises(TypeError, self.session.timetable,
+                          start=None, end=None, klasse=123, teacher=123)
+        self.assertRaises(TypeError, self.session.timetable,
+                          start=None, end=None)
+        self.assertRaises(TypeError, self.session.timetable,
+                          start=None, end=None, foo=123)
 
     def test_gettimetables_start_xor_end(self):
         some_date = datetime.datetime.now()
@@ -208,7 +215,7 @@ class DataFetchingTests(OfflineTestCase):
                 return {'result': jsonstr}
 
         with mock_results(methods):
-            for room_raw, room in zip(jsonstr, self.session.rooms()):
+            for room_raw, room in raw_vs_object(jsonstr, self.session.rooms()):
                 self.assertEqual(room_raw['longName'], room.long_name)
                 self.assertEqual(room_raw['name'], room.name)
                 self.assertEqual(room_raw['id'], room.id)
@@ -232,7 +239,7 @@ class DataFetchingTests(OfflineTestCase):
             self.assertEqual(current_json['id'], schoolyears.current.id)
             self.assertTrue(schoolyears.current.is_current)
             current_count = 0
-            for year_raw, year in zip(jsonstr, schoolyears):
+            for year_raw, year in raw_vs_object(jsonstr, schoolyears):
                 self.assertEqual(year_raw['id'], year.id)
                 self.assertEqual(year_raw['name'], year.name)
 
@@ -258,7 +265,7 @@ class DataFetchingTests(OfflineTestCase):
                 return {'result': jsonstr}
 
         with mock_results(methods):
-            for subj_raw, subj in zip(jsonstr, self.session.subjects()):
+            for subj_raw, subj in raw_vs_object(jsonstr, self.session.subjects()):
                 self.assertEqual(subj_raw['id'], subj.id)
                 self.assertEqual(subj_raw['name'], subj.name)
                 self.assertEqual(subj_raw['longName'], subj.long_name)
@@ -272,7 +279,7 @@ class DataFetchingTests(OfflineTestCase):
                 return {'result': jsonstr}
 
         with mock_results(methods):
-            for t_raw, t in zip(jsonstr, self.session.teachers()):
+            for t_raw, t in raw_vs_object(jsonstr, self.session.teachers()):
                 self.assertEqual(t_raw['longName'], t.long_name)
                 self.assertEqual(t_raw['longName'], t.surname)
                 self.assertEqual(t_raw['foreName'], t.fore_name)
@@ -287,9 +294,9 @@ class DataFetchingTests(OfflineTestCase):
                 return {'result': jsonstr}
 
         with mock_results(methods):
-            for t_raw, t in zip(jsonstr, self.session.timegrid()):
+            for t_raw, t in raw_vs_object(jsonstr, self.session.timegrid()):
                 self.assertEqual(t_raw['day'], t.day)
-                for t2_raw, t2 in zip(t_raw['timeUnits'], t.times):
+                for t2_raw, t2 in raw_vs_object(t_raw['timeUnits'], t.times):
                     self.assertEqual(t2_raw['startTime'],
                                      int(t2[0].strftime('%H%M')))
                     self.assertEqual(t2_raw['endTime'],
@@ -312,11 +319,12 @@ class DataFetchingTests(OfflineTestCase):
 
         with mock_results(methods):
             statusdata = self.session.statusdata()
-            for lstype_raw, lstype in zip(jsonstr['lstypes'],
+            for lstype_raw, lstype in raw_vs_object(jsonstr['lstypes'],
                                           statusdata.lesson_types):
                 validate_statusdata(lstype_raw, lstype)
 
-            for code_raw, code in zip(jsonstr['codes'], statusdata.period_codes):
+            for code_raw, code in raw_vs_object(jsonstr['codes'],
+                                      statusdata.period_codes):
                 validate_statusdata(code_raw, code)
 
 
@@ -360,8 +368,9 @@ class SessionUsageTests(OfflineTestCase):
                 self.session.config,
                 {'login_repeat': retry_amount}
             ):
-                self.assertRaises(webuntis.errors.NotLoggedInError,
-                                  self.session._request, 'getCurrentSchoolyear')
+                self.assertRaises(
+                    webuntis.errors.NotLoggedInError, self.session._request,
+                    'getCurrentSchoolyear')
 
         self.assertEqual(calls, expected_calls)
 
@@ -398,8 +407,9 @@ class SessionUsageTests(OfflineTestCase):
                 self.session.config,
                 {'login_repeat': retry_amount, 'jsessionid': None}
             ):
-                self.assertRaises(webuntis.errors.NotLoggedInError,
-                                  self.session._request, 'getCurrentSchoolyear')
+                self.assertRaises(
+                    webuntis.errors.NotLoggedInError, self.session._request,
+                    'getCurrentSchoolyear')
 
         self.assertEqual(calls, expected_calls)
 
@@ -442,7 +452,8 @@ class SessionUsageTests(OfflineTestCase):
 
         with mock.patch(
             'webuntis.Session._request',
-            side_effect=Exception('Testing if login method raises AuthError due to invalid creds...')
+            side_effect=Exception('Testing if login method raises AuthError '
+                                  'due to invalid creds...')
         ):
             self.assertRaises(webuntis.errors.AuthError, s.login)
 
@@ -491,13 +502,6 @@ class SessionUsageTests(OfflineTestCase):
 class InternalTests(OfflineTestCase):
     '''Test certain internal interfaces, such as utils'''
 
-    def test_make_cache_key(self):
-        key = webuntis.utils.SessionCacheKey
-        # The hash builtin will take care of us if the results aren't hashable.
-        hash(key('getStuff', {'foo': 'bar'}))
-        hash(key('getStuff', {}))
-        hash(key('getStuff', None))
-
     def test_config_invalidattribute(self):
         self.assertFalse('nigglywiggly' in self.session.config)
         self.assertRaises(
@@ -531,7 +535,7 @@ class InternalTests(OfflineTestCase):
             'whatever': lambda x: x
         })
 
-        store['whatever'] ='HUE'
+        store['whatever'] = 'HUE'
 
         del store['whatever']
         self.assertTrue('whatever' not in store)
@@ -563,7 +567,6 @@ class InternalTests(OfflineTestCase):
         self.assertTrue('whatever' not in store)
         self.assertRaises(KeyError, store.__getitem__, 'whatever')
 
-
     def test_session_invalidattribute(self):
         self.assertRaises(AttributeError, getattr, self.session, 'foobar')
         self.assertFalse(hasattr(self.session, 'foobar'))
@@ -591,7 +594,8 @@ class InternalTests(OfflineTestCase):
         session = self.session
         parent = None
         data = {'id': 42}
-        item = webuntis.objects.ListItem(session=session, parent=parent, data=data)
+        item = webuntis.objects.ListItem(session=session, parent=parent,
+                                         data=data)
 
         self.assertEqual(item._session, session)
         self.assertEqual(item._parent, parent)
@@ -620,9 +624,11 @@ class InternalTests(OfflineTestCase):
         self.assertRaises(ValueError, webuntis.utils.config.server, '!"$%')
 
     def test_resultclass_invalid_arguments(self):
-        self.assertRaises(TypeError, webuntis.objects.Result, session=self.session, kwargs={}, data="LELELE")
+        self.assertRaises(TypeError, webuntis.objects.Result,
+                          session=self.session, kwargs={}, data="LELELE")
         self.assertRaises(TypeError, webuntis.objects.Result)
-        self.assertRaises(TypeError, webuntis.objects.Result, session=self.session)
+        self.assertRaises(TypeError, webuntis.objects.Result,
+                          session=self.session)
 
     def test_jsonrpcrequest_parse_result_invalid_request_id_returned(self):
         method = 'getThingsNotExisting'
@@ -682,7 +688,8 @@ class InternalTests(OfflineTestCase):
             def mocking_func(requestobj):
                 self.assertEqual(requestobj.get_full_url(), expected_url)
                 self.assertEqual(requestobj.data, expected_data)
-                self.assertEqual(dict(requestobj.header_items()), expected_headers)
+                self.assertEqual(dict(requestobj.header_items()),
+                                 expected_headers)
 
                 io = StringIO(data)
                 return io
@@ -695,7 +702,8 @@ class InternalTests(OfflineTestCase):
 
         with mock.patch(
             'webuntis.session.urlrequest.urlopen',
-            new=mock_urlopen(data, expected_url=url, expected_data=data, expected_headers=headers)
+            new=mock_urlopen(data, expected_url=url, expected_data=data,
+                             expected_headers=headers)
         ):
             self.assertEqual(
                 webuntis.session.JSONRPCRequest._send_request(
@@ -711,7 +719,8 @@ class InternalTests(OfflineTestCase):
         with mock.patch(
             'webuntis.session.urlrequest.urlopen',
             new=mock_urlopen(invalid_data,
-                             # actually not expected, since the method will crash
+                             # actually not expected, since the method will
+                             # crash
                              expected_url=url,
                              expected_data=invalid_data,
                              expected_headers=headers)
@@ -725,26 +734,35 @@ class InternalTests(OfflineTestCase):
             )
 
     def test_resultobject_invalid_params(self):
-        valid_result = webuntis.objects.Result(data={}, parent=None, session=self.session)
-        self.assertRaises(TypeError, webuntis.objects.Result, data={}, parent='WAT')
-        self.assertRaises(TypeError, webuntis.objects.Result, data={}, parent=valid_result, session=self.session)
+        valid_result = webuntis.objects.Result(data={}, parent=None,
+                                               session=self.session)
+        self.assertRaises(TypeError, webuntis.objects.Result, data={},
+                          parent='WAT')
+        self.assertRaises(TypeError, webuntis.objects.Result, data={},
+                          parent=valid_result, session=self.session)
 
     def test_datetime_utils_date(self):
         dateint = 20121212
         datestr = str(dateint)
         dateobj = datetime.datetime.strptime(datestr, '%Y%m%d')
-        self.assertEqual(webuntis.utils.datetime_utils.parse_date(dateint), dateobj)
-        self.assertEqual(webuntis.utils.datetime_utils.parse_date(datestr), dateobj)
-        self.assertEqual(webuntis.utils.datetime_utils.format_date(dateobj), dateint)
+        self.assertEqual(webuntis.utils.datetime_utils.parse_date(dateint),
+                         dateobj)
+        self.assertEqual(webuntis.utils.datetime_utils.parse_date(datestr),
+                         dateobj)
+        self.assertEqual(webuntis.utils.datetime_utils.format_date(dateobj),
+                         dateint)
 
     def test_datetime_utils_time(self):
         timeint = 1337
         timestr = str(timeint)
         timeobj = datetime.datetime.strptime(timestr, '%H%M')
 
-        self.assertEqual(webuntis.utils.datetime_utils.parse_time(timeint), timeobj)
-        self.assertEqual(webuntis.utils.datetime_utils.parse_time(timestr), timeobj)
-        self.assertEqual(webuntis.utils.datetime_utils.format_time(timeobj), timeint)
+        self.assertEqual(webuntis.utils.datetime_utils.parse_time(timeint),
+                         timeobj)
+        self.assertEqual(webuntis.utils.datetime_utils.parse_time(timestr),
+                         timeobj)
+        self.assertEqual(webuntis.utils.datetime_utils.format_time(timeobj),
+                         timeint)
 
     def test_lrudict(self):
         d = webuntis.utils.LruDict(maxlen=3)
@@ -760,12 +778,12 @@ class InternalTests(OfflineTestCase):
 
     def test_lazyproperty_from_instance(self):
         meth_calls = []
+
         class FooBoo(object):
             @webuntis.utils.lazyproperty
             def some_method(self):
                 meth_calls.append(True)
                 return 42
-
 
         boo = FooBoo()
         self.assertEqual(boo.some_method, 42)
@@ -785,9 +803,21 @@ class InternalTests(OfflineTestCase):
 
         self.assertNotEqual(a, b)
         self.assertNotEqual(hash(a), hash(b))
-        
+
         self.assertNotEqual(a, c)
         self.assertNotEqual(hash(a), hash(c))
+
+    def test_sessioncachekey_is_hashable(self):
+        now = datetime.datetime.now()
+        today = datetime.date.today()
+        key = webuntis.utils.SessionCacheKey
+
+        # The hash builtin will take care of us if the results aren't hashable.
+        hash(key('getStuff', {'foo': 'bar'}))
+        hash(key('getStuff', {}))
+        hash(key('getStuff', None))
+        hash(key('fooBar', {'start': now}))
+        hash(key('fooBar', {'start': today}))
 
     def test_sessioncachekey_repr(self):
         self.assertEqual(

@@ -12,6 +12,7 @@ class Error(Exception):
     '''Superclass for all `python-webuntis`-specific errors, never gets raised
     directly.'''
 
+
 class RemoteError(Error, IOError):
     '''There was some kind of error while interacting with the server.'''
     pass

@@ -130,7 +130,6 @@ class JSONRPCRequest(object):
         try:
             result_data = json.loads(result)
             log('debug', 'Valid JSON found')
-            log('debug', result_data)
         except ValueError:
             raise errors.RemoteError('Invalid JSON', str(result))
         else:
@@ -174,7 +173,8 @@ class JSONRPCSession(object):
         :param suppress_errors: Whether to suppress errors.
 
         :raises: :py:class:`webuntis.errors.NotLoggedInError` -- Can't log out
-            because not logged in. Raised unless ``suppress_errors`` is ``True``.
+            because not logged in. Raised unless ``suppress_errors`` is
+            ``True``.
         '''
         def throw_errors():
             if not suppress_errors:
@@ -211,10 +211,8 @@ class JSONRPCSession(object):
             raise errors.BadCredentialsError('No login data specified.')
 
         log('debug', 'Trying to authenticate with username/password...')
-        log('debug', 'Username: ' +
-                      self.config['username'] +
-                      ' Password: ' +
-                      self.config['password'])
+        log('debug', 'Username: %s Password: %s' %
+           (self.config['username'], self.config['password']))
         res = self._request('authenticate', {
             'user': self.config['username'],
             'password': self.config['password'],
@@ -249,12 +247,13 @@ class JSONRPCSession(object):
                     self.login()
                 else:
                     raise errors.NotLoggedInError(
-                        'Tried to login several times, failed. Original method '
-                        'was ' + method)
+                        'Tried to login several times, failed. Original method'
+                        ' was ' + method)
             else:
                 return data
 
             attempts_left -= 1  # new round!
+
 
 class ResultWrapperMixin(object):
     @result_wrapper
@@ -302,9 +301,9 @@ class ResultWrapperMixin(object):
 
         :rtype: :py:class:`webuntis.objects.PeriodList`
 
-        Furthermore you have to explicitly define a klasse, teacher, subject, room
-        or student parameter containing the id or the object of the thing you want
-        to get a timetable about::
+        Furthermore you have to explicitly define a klasse, teacher, subject,
+        room or student parameter containing the id or the object of the thing
+        you want to get a timetable about::
 
             schoolclass = s.klassen().filter(id=1)[0]  # schoolclass #1
 
@@ -357,13 +356,13 @@ class ResultWrapperMixin(object):
     @result_wrapper
     def rooms(self):
         '''Get all rooms of a school.
-        
+
         :rtype: :py:class:`webuntis.objects.RoomList`
         '''
         return objects.RoomList, 'getRooms', {}
 
     @result_wrapper
-    def schoolyears(self): 
+    def schoolyears(self):
         '''Get all schoolyears.
 
         :rtype: :py:class:`webuntis.objects.SchoolyearList`
@@ -410,7 +409,7 @@ class ResultWrapperMixin(object):
 class Session(JSONRPCSession, ResultWrapperMixin):
     '''The origin of everything you want to do with the WebUntis API. Can be
     used as a context-handler.
-    
+
     Configuration can be set with keyword arguments when initializing
     :py:class:`Session`. Unless noted otherwise, they get saved in a dictionary
     located in the instance's :py:attr:`config` attribute and can be modified
@@ -450,7 +449,7 @@ class Session(JSONRPCSession, ResultWrapperMixin):
 
     :param cachelen: Amount of API requests kept in cache. Default
         to ``20``. Isn't saved in the :py:attr:`config` dictionary and cannot
-        be modified afterwards.  
+        be modified afterwards.
 
     :type jsessionid: str
     :param jsessionid: The session key to use. You usually shouldn't
@@ -465,9 +464,11 @@ class Session(JSONRPCSession, ResultWrapperMixin):
     cache = None
     '''Contains the caching dictionary for requests.'''
 
-    # Repeated here because sphinx doesn't recognize it when defined in JSONRPCSession:
+    # Repeated here because sphinx doesn't recognize it when defined in
+    # JSONRPCSession:
     config = None
-    '''The config dictionary, filled with most keyword arguments from initialization.'''
+    '''The config dictionary, filled with most keyword arguments from
+    initialization.'''
 
     def __init__(self, **config):
         try:

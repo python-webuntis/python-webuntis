@@ -44,8 +44,11 @@ class Result(object):
 
     @lazyproperty
     def id(self):
-        '''the ID of this element. When dealing with arrays as result, it is
-        very common for an item to have its own ID.'''
+        '''The ID of this element.
+
+        An ID is needed for the object to be hashable. Therefore a result
+        may bring its own implementation of this method even though the
+        original API response didn't contain any ID.'''
         return self._data['id'] if 'id' in self._data else None
 
     def __int__(self):
@@ -53,6 +56,9 @@ class Result(object):
         is expected, so we just can put the thing through int(), regardless of
         what type it is.'''
         return self.id
+
+    def __hash__(self):
+        return hash('%s#%i' % (self.__class__.__name__, self.id))
 
 
 class ListItem(Result):
@@ -328,13 +334,13 @@ class PeriodList(ListResult):
         '''
         Creates a table-like nested list.
 
-        :param width: Optionally, a fixed width for the table. The function will
-            fill every row with empty cells until that width is met. If the
-            timetable is too big, it will raise a ``ValueError``.
+        :param width: Optionally, a fixed width for the table. The function
+            will fill every row with empty cells until that width is met. If
+            the timetable is too big, it will raise a ``ValueError``.
 
-        :returns: A list containing "rows", which in turn contain "hours", which
-            contain :py:class:`webuntis.objects.PeriodObject` instances which are
-            happening at the same time.
+        :returns: A list containing "rows", which in turn contain "hours",
+            which contain :py:class:`webuntis.objects.PeriodObject` instances
+            which are happening at the same time.
 
         Example::
 
@@ -535,6 +541,10 @@ class TimeunitObject(ListItem):
         '''The day the timeunit list is for'''
         return self._data['day']
 
+    @lazyproperty
+    def id(self):
+        return int(self.day)
+
 
 class TimeunitList(ListResult):
     '''A list of times and dates for the current week, in form of
@@ -586,6 +596,10 @@ class ColorInfo(Result):
         'FF0000'
 
     '''
+
+    @lazyproperty
+    def id(self):
+        return hash(self.name)
 
     @lazyproperty
     def name(self):

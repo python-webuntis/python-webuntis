@@ -10,8 +10,10 @@ from __future__ import unicode_literals
 from functools import wraps
 from .third_party import OrderedDict
 
+
 class lazyproperty(object):
-    '''A read-only @property that is only evaluated once. Only usable on class instances' methods.
+    '''A read-only @property that is only evaluated once. Only usable on class
+    instances' methods.
 
     Stolen from http://www.reddit.com/r/Python/comments/ejp25/cached_property_decorator_that_is_memory_friendly/
     '''
@@ -21,7 +23,7 @@ class lazyproperty(object):
         self.__name__ = fget.__name__
 
     def __get__(self, obj, cls):
-        if obj is None:
+        if obj is None:  # pragma: no cover
             return self
         obj.__dict__[self.__name__] = result = self.fget(obj)
         return result
@@ -38,7 +40,7 @@ class LruDict(OrderedDict):
             self.popitem(last=False)
 
 
-class FilterDict(dict):
+class FilterDict(object):
     '''A dictionary which passes new values to a function found at the
     corresponding key in self.filters
 
@@ -56,15 +58,17 @@ class FilterDict(dict):
 
     '''
     filters = None
+    _contents = None
 
     def __init__(self, filters):
         self.filters = filters
+        self._contents = {}
 
     def __getitem__(self, name):
         # check if we got a real Option subclass
-        if name in self and dict.__getitem__(self, name) is not None:
+        if name in self._contents and self._contents[name] is not None:
             # every Option subclass has this
-            return dict.__getitem__(self, name)
+            return self._contents[name]
         elif name in self.filters:
             raise KeyError('No value for key: ' + name)
         else:
@@ -72,22 +76,31 @@ class FilterDict(dict):
 
     def __setitem__(self, key, value):
         if value is None:
-            if key in self:
-                del self[key]
+            if key in self._contents:
+                del self._contents[key]
             return
 
         new_value = self.filters[key](value)
 
         if new_value is None:
-            if key in self:
-                del self[key]
+            if key in self._contents:
+                del self._contents[key]
             return
 
-        dict.__setitem__(self, key, new_value)
+        self._contents[key] = new_value
 
-    def update(self, *args, **kwargs):
-        for key, value in dict(*args, **kwargs).items():
-            self.__setitem__(key, value)
+    def __delitem__(self, key):
+        del self._contents[key]
+
+    def update(self, new_pairs):
+        for key, value in new_pairs.items():
+            self[key] = value
+
+    def __contains__(self, key):
+        return key in self._contents
+
+    def __iter__(self):
+        return iter(self._contents)
 
 
 def result_wrapper(func):
@@ -122,17 +135,19 @@ class SessionCacheKey(object):
     '''A hashable object whose primary purpose is to get used as a dictionary
     key.'''
     def __init__(self, method, kwargs):
+        kwargs = kwargs or {}
         self.method = method
         self.kwargs = kwargs
 
-    def _cache_key(self):
-        return (self.method, frozenset((self.kwargs or {}).items()))
+        hash_kwargs = [(k, v) for k, v in kwargs.items()]
+
+        self._hashable = (self.method, frozenset(hash_kwargs))
 
     def __hash__(self):
-        return hash(self._cache_key())
+        return hash(self._hashable)
 
     def __eq__(self, other):
-        return type(other) == type(self) and hash(other) == hash(self)
+        return type(other) is type(self) and hash(other) == hash(self)
 
     def __repr__(self):
         return 'webuntis.utils.%s(%s)' % (
