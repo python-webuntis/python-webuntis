@@ -263,7 +263,7 @@ class PeriodObject(ListItem):
         '''A :py:class:`KlassenList` containing the classes which are attending
         this period.'''
 
-        return self._session.klassen().filter(
+        return self._session.klassen(from_cache=True).filter(
             id=set([kl['id'] for kl in self._data['kl']])
         )
 
@@ -272,7 +272,7 @@ class PeriodObject(ListItem):
         '''A list of :py:class:`TeacherObject` instances,
         which are attending this period.'''
 
-        return self._session.teachers().filter(
+        return self._session.teachers(from_cache=True).filter(
             id=set([te['id'] for te in self._data['te']])
         )
 
@@ -283,7 +283,7 @@ class PeriodObject(ListItem):
         (*e.g.* Latin, Spanish, French) -- each of those will get placed in
         their own period.'''
 
-        return self._session.subjects().filter(
+        return self._session.subjects(from_cache=True).filter(
             id=set([su['id'] for su in self._data['su']])
         )
 
@@ -293,7 +293,7 @@ class PeriodObject(ListItem):
         at. This also is not used for multiple lessons, but rather for a single
         lesson that is actually occuring at multiple locations (?).'''
 
-        return self._session.rooms().filter(
+        return self._session.rooms(from_cache=True).filter(
             id=set([ro['id'] for ro in self._data['ro']])
         )
 

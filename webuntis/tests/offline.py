@@ -577,24 +577,61 @@ class InternalTests(OfflineTestCase):
         self.assertRaises(AttributeError, getattr, self.session, 'foobar')
         self.assertFalse(hasattr(self.session, 'foobar'))
 
-    def test_requestcaching(self):
+    def test_requestcaching_no_io_on_second_time(self):
         jsonstr = get_json_resource('getklassen_mock.json')
 
-        def result_mock(s, method, params=None, use_login_repeat=None):
-            self.assertEqual(method, 'getKlassen')
-            return jsonstr
+        def getKlassen(request, url, jsondata, headers):
+            return {'result': jsonstr}
 
-        with mock.patch(
-            'webuntis.session.Session._request',
-            new=result_mock
-        ):
+        methods = {'getKlassen': getKlassen}
+
+        with mock_results(methods):
+            self.session.klassen(from_cache=True)
+
+        self.session.klassen(from_cache=True)
+
+        self.assertEqual(len(getKlassen.calls), 1)
+
+    def test_requestcaching_no_caching_without_being_told_so(self):
+        jsonstr = get_json_resource('getklassen_mock.json')
+
+        def getKlassen(request, url, jsondata, headers):
+            return {'result': jsonstr}
+
+        class ThisVeryCustomException(Exception): pass
+
+        def blow_up(*args, **kwargs):
+            raise ThisVeryCustomException
+
+        methods = {'getKlassen': getKlassen}
+
+        failing_methods = {'getKlassen': blow_up}
+
+        with mock_results(methods):
+            self.session.klassen()
             self.session.klassen()
 
-        with mock.patch(
-            'webuntis.session.Session._request',
-            side_effect=Exception('CHUCK TESTA')
-        ):
-            self.session.klassen()
+        self.assertEqual(len(getKlassen.calls), 2)
+        
+        with mock_results(failing_methods):
+            self.assertRaises(ThisVeryCustomException, self.session.klassen)
+
+    def test_no_cache_argument_in_caching_key(self):
+        '''Any result wrapper method takes a ``cache`` arg which activates the
+        cache if True. This test ensures that this arg doesn't show up in the
+        cache dict key at the end.'''
+
+        jsonstr = get_json_resource('getklassen_mock.json')
+
+        def getKlassen(request, url, jsondata, headers):
+            return {'result': jsonstr}
+
+        with mock_results({'getKlassen': getKlassen}):
+            self.session.klassen(from_cache='LELE')  # 'LELE' should be True-ish.
+            self.session.klassen(from_cache='YESPLS')  # This should be too.
+
+        self.assertEqual(len(getKlassen.calls), 1)
+        self.assertEqual(len(self.session.cache), 1)
 
     def test_listitem(self):
         session = self.session

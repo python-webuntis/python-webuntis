@@ -113,19 +113,19 @@ def result_wrapper(func):
     '''
     @wraps(func)
     def inner(self, **kwargs):
+        from_cache = False
+        if 'from_cache' in kwargs and kwargs['from_cache']:
+            from_cache = True
+            del kwargs['from_cache']
+
         result_class, jsonrpc_method, jsonrpc_args = func(self, **kwargs)
         key = SessionCacheKey(func.__name__, kwargs)
 
-        if key not in self.cache:
-            data = self._request(
-                jsonrpc_method,
-                jsonrpc_args
-            )
-            obj = result_class(session=self, data=data)
-            self.cache[key] = result = obj
-        else:
-            result = self.cache[key]
+        if from_cache and key in self.cache:
+            return self.cache[key]
 
+        data = self._request(jsonrpc_method, jsonrpc_args)
+        self.cache[key] = result = result_class(session=self, data=data)
         return result
 
     return inner
