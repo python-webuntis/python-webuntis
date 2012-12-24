@@ -64,8 +64,8 @@ def mock_results(methods, swallow_not_found=False):
         jsondata = json.loads(data.decode('utf-8'))
         method = jsondata['method']
         try:
-            method_mock = getattr(methods, method)
-        except AttributeError:
+            method_mock = methods[method]
+        except KeyError:
             if not swallow_not_found:  # pragma: no cover
                 raise
             else:

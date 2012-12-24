@@ -25,10 +25,10 @@ class DataFetchingTests(OfflineTestCase):
     def test_getdepartments(self):
         jsonstr = get_json_resource('getdepartments_mock.json')
 
-        class methods(object):
-            @staticmethod
-            def getDepartments(self, url, jsondata, headers):
-                return {'result': jsonstr}
+        def getDepartments(request, url, jsondata, headers):
+            return {'result': jsonstr}
+
+        methods = {'getDepartments': getDepartments}
 
         with mock_results(methods):
             for dep_raw, dep in raw_vs_object(jsonstr, self.session.departments()):
@@ -39,10 +39,10 @@ class DataFetchingTests(OfflineTestCase):
     def test_getholidays(self):
         jsonstr = get_json_resource('getholidays_mock.json')
 
-        class methods(object):
-            @staticmethod
-            def getHolidays(self, url, jsondata, headers):
-                return {'result': jsonstr}
+        def getHolidays(request, url, jsondata, headers):
+            return {'result': jsonstr}
+
+        methods = {'getHolidays': getHolidays}
 
         with mock_results(methods):
             for holiday_raw, holiday in raw_vs_object(jsonstr, self.session.holidays()):
@@ -63,15 +63,15 @@ class DataFetchingTests(OfflineTestCase):
         jsonstr = get_json_resource('getklassen_mock.json')
         schoolyear_id = 123
 
-        class methods(object):
-            @staticmethod
-            def getKlassen(session, url, jsondata, headers):
-                if len(methods.getKlassen.calls) == 2:
-                    self.assertEqual(jsondata['params']['schoolyearId'],
-                                     schoolyear_id)
+        def getKlassen(session, url, jsondata, headers):
+            if len(methods['getKlassen'].calls) == 2:
+                self.assertEqual(jsondata['params']['schoolyearId'],
+                                 schoolyear_id)
 
-                self.assertFalse(len(methods.getKlassen.calls) > 2)
-                return {'result': jsonstr}
+            self.assertFalse(len(methods['getKlassen'].calls) > 2)
+            return {'result': jsonstr}
+
+        methods = {'getKlassen': getKlassen}
 
         with mock_results(methods):
             klassen = self.session.klassen()
@@ -102,26 +102,28 @@ class DataFetchingTests(OfflineTestCase):
         jsonstr_su = get_json_resource('getsubjects_mock.json')
         jsonstr_ro = get_json_resource('getrooms_mock.json')
 
-        class methods(object):
-            @staticmethod
-            def getTimetable(self, url, jsondata, headers):
-                return {'result': jsonstr}
+        def getTimetable(request, url, jsondata, headers):
+            return {'result': jsonstr}
 
-            @staticmethod
-            def getKlassen(self, url, jsondata, headers):
-                return {'result': jsonstr_kl}
+        def getKlassen(request, url, jsondata, headers):
+            return {'result': jsonstr_kl}
 
-            @staticmethod
-            def getTeachers(self, url, jsondata, headers):
-                return {'result': jsonstr_te}
+        def getTeachers(request, url, jsondata, headers):
+            return {'result': jsonstr_te}
 
-            @staticmethod
-            def getSubjects(self, url, jsondata, headers):
-                return {'result': jsonstr_su}
+        def getSubjects(request, url, jsondata, headers):
+            return {'result': jsonstr_su}
 
-            @staticmethod
-            def getRooms(self, url, jsondata, headers):
-                return {'result': jsonstr_ro}
+        def getRooms(request, url, jsondata, headers):
+            return {'result': jsonstr_ro}
+
+        methods = {
+            'getTimetable': getTimetable,
+            'getKlassen': getKlassen,
+            'getTeachers': getTeachers,
+            'getSubjects': getSubjects,
+            'getRooms': getRooms
+        }
 
         with mock_results(methods):
             tt = self.session.timetable(klasse=114)
@@ -202,17 +204,17 @@ class DataFetchingTests(OfflineTestCase):
 
     def test_gettimetables_start_xor_end(self):
         some_date = datetime.datetime.now()
-        with mock_results(None, swallow_not_found=True):
+        with mock_results({}, swallow_not_found=True):
             self.session.timetable(start=some_date, end=None, klasse=123)
             self.session.timetable(start=None, end=some_date, klasse=123)
 
     def test_getrooms(self):
         jsonstr = get_json_resource('getrooms_mock.json')
 
-        class methods(object):
-            @staticmethod
-            def getRooms(self, url, jsondata, headers):
-                return {'result': jsonstr}
+        def getRooms(self, url, jsondata, headers):
+            return {'result': jsonstr}
+
+        methods = {'getRooms': getRooms}
 
         with mock_results(methods):
             for room_raw, room in raw_vs_object(jsonstr, self.session.rooms()):
@@ -224,14 +226,16 @@ class DataFetchingTests(OfflineTestCase):
         jsonstr = get_json_resource('getschoolyears_mock.json')
         current_json = jsonstr[3]
 
-        class methods(object):
-            @staticmethod
-            def getSchoolyears(self, url, jsondata, headers):
-                return {'result': jsonstr}
+        def getSchoolyears(self, url, jsondata, headers):
+            return {'result': jsonstr}
 
-            @staticmethod
-            def getCurrentSchoolyear(self, url, jsondata, headers):
-                return {'result': current_json}
+        def getCurrentSchoolyear(self, url, jsondata, headers):
+            return {'result': current_json}
+
+        methods = {
+            'getSchoolyears': getSchoolyears,
+            'getCurrentSchoolyear': getCurrentSchoolyear
+        }
 
         with mock_results(methods):
             schoolyears = self.session.schoolyears()
@@ -259,10 +263,10 @@ class DataFetchingTests(OfflineTestCase):
     def test_getsubjects(self):
         jsonstr = get_json_resource('getsubjects_mock.json')
 
-        class methods(object):
-            @staticmethod
-            def getSubjects(self, url, jsondata, headers):
-                return {'result': jsonstr}
+        def getSubjects(self, url, jsondata, headers):
+            return {'result': jsonstr}
+
+        methods = {'getSubjects': getSubjects}
 
         with mock_results(methods):
             for subj_raw, subj in raw_vs_object(jsonstr, self.session.subjects()):
@@ -273,10 +277,10 @@ class DataFetchingTests(OfflineTestCase):
     def test_getteachers(self):
         jsonstr = get_json_resource('getteachers_mock.json')
 
-        class methods(object):
-            @staticmethod
-            def getTeachers(self, url, jsondata, headers):
-                return {'result': jsonstr}
+        def getTeachers(self, url, jsondata, headers):
+            return {'result': jsonstr}
+
+        methods = {'getTeachers': getTeachers}
 
         with mock_results(methods):
             for t_raw, t in raw_vs_object(jsonstr, self.session.teachers()):
@@ -288,10 +292,10 @@ class DataFetchingTests(OfflineTestCase):
     def test_gettimegrid(self):
         jsonstr = get_json_resource('gettimegrid_mock.json')
 
-        class methods(object):
-            @staticmethod
-            def getTimegridUnits(self, url, jsondata, headers):
-                return {'result': jsonstr}
+        def getTimegridUnits(self, url, jsondata, headers):
+            return {'result': jsonstr}
+
+        methods = {'getTimegridUnits': getTimegridUnits}
 
         with mock_results(methods):
             for t_raw, t in raw_vs_object(jsonstr, self.session.timegrid()):
@@ -305,10 +309,10 @@ class DataFetchingTests(OfflineTestCase):
     def test_getstatusdata(self):
         jsonstr = get_json_resource('getstatusdata_mock.json')
 
-        class methods(object):
-            @staticmethod
-            def getStatusData(self, url, jsondata, headers):
-                return {'result': jsonstr}
+        def getStatusData(self, url, jsondata, headers):
+            return {'result': jsonstr}
+
+        methods = {'getStatusData': getStatusData}
 
         def validate_statusdata(raw, processed):
             name = list(raw.items())[0][0]
@@ -341,27 +345,29 @@ class SessionUsageTests(OfflineTestCase):
             * (retry_amount + 1)
         )[:-2]
 
-        class methods(object):
-            @staticmethod
-            def authenticate(self, url, jsondata, headers):
-                calls.append(jsondata['method'])
-                return {
-                    'result': {'sessionId': 'Foobar_session_' + jsondata['id']}
-                }
+        def authenticate(self, url, jsondata, headers):
+            calls.append(jsondata['method'])
+            return {
+                'result': {'sessionId': 'Foobar_session_' + jsondata['id']}
+            }
 
-            @staticmethod
-            def getCurrentSchoolyear(self, url, jsondata, headers):
-                calls.append(jsondata['method'])
-                return {
-                    'error': {'code': -8520, 'message': 'Not Logged In!'}
-                }
+        def getCurrentSchoolyear(self, url, jsondata, headers):
+            calls.append(jsondata['method'])
+            return {
+                'error': {'code': -8520, 'message': 'Not Logged In!'}
+            }
 
-            @staticmethod
-            def logout(self, url, jsondata, headers):
-                calls.append(jsondata['method'])
-                return {
-                    'result': {'bla': 'blub'}
-                }
+        def logout(self, url, jsondata, headers):
+            calls.append(jsondata['method'])
+            return {
+                'result': {'bla': 'blub'}
+            }
+
+        methods = {
+            'authenticate': authenticate,
+            'getCurrentSchoolyear': getCurrentSchoolyear,
+            'logout': logout
+        }
 
         with mock_results(methods):
             with mock.patch.dict(
@@ -382,25 +388,25 @@ class SessionUsageTests(OfflineTestCase):
         # 'authenticate'] between each.
         expected_calls = ['authenticate', 'getCurrentSchoolyear']
 
-        class methods(object):
-            @staticmethod
-            def authenticate(self, url, jsondata, headers):
-                calls.append(jsondata['method'])
-                return {
-                    'id': jsondata['id'],
-                    'result': {'sessionId': 'Foobar_session_' + jsondata['id']}
-                }
+        def authenticate(self, url, jsondata, headers):
+            calls.append(jsondata['method'])
+            return {
+                'id': jsondata['id'],
+                'result': {'sessionId': 'Foobar_session_' + jsondata['id']}
+            }
 
-            @staticmethod
-            def _nope(self, url, jsondata, headers):
-                calls.append(jsondata['method'])
-                return {
-                    'id': jsondata['id'],
-                    'error': {'code': -8520, 'message': 'Not Logged In!'}
-                }
+        def _nope(self, url, jsondata, headers):
+            calls.append(jsondata['method'])
+            return {
+                'id': jsondata['id'],
+                'error': {'code': -8520, 'message': 'Not Logged In!'}
+            }
 
-            getCurrentSchoolyear = logout = _nope
-            del _nope
+        methods = {
+            'authenticate': authenticate,
+            'getCurrentSchoolyear': _nope,
+            'logout': _nope
+        }
 
         with mock_results(methods):
             with mock.patch.dict(
