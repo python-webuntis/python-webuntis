@@ -8,6 +8,7 @@
 
 from __future__ import unicode_literals
 from functools import wraps
+from copy import deepcopy
 from .third_party import OrderedDict
 
 
@@ -119,7 +120,7 @@ def result_wrapper(func):
             del kwargs['from_cache']
 
         result_class, jsonrpc_method, jsonrpc_args = func(self, **kwargs)
-        key = SessionCacheKey(func.__name__, kwargs)
+        key = SessionCacheKey(func.__name__, jsonrpc_args)
 
         if from_cache and key in self.cache:
             return self.cache[key]
@@ -135,7 +136,7 @@ class SessionCacheKey(object):
     '''A hashable object whose primary purpose is to get used as a dictionary
     key.'''
     def __init__(self, method, kwargs):
-        kwargs = kwargs or {}
+        kwargs = deepcopy(kwargs) or {}
         self.method = method
         self.kwargs = kwargs
 
