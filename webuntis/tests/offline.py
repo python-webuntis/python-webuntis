@@ -834,7 +834,7 @@ class InternalTests(OfflineTestCase):
         self.assertEqual(len(meth_calls), 1)
 
     def test_sessioncachekey_is_unique(self):
-        Key = webuntis.utils.SessionCacheKey
+        Key = webuntis.utils.cache_key
 
         a = Key('klassen', {})
         a1 = Key('klassen', {})
@@ -853,7 +853,7 @@ class InternalTests(OfflineTestCase):
     def test_sessioncachekey_is_hashable(self):
         now = datetime.datetime.now()
         today = datetime.date.today()
-        key = webuntis.utils.SessionCacheKey
+        key = webuntis.utils.cache_key
 
         # The hash builtin will take care of us if the results aren't hashable.
         hash(key('getStuff', {'foo': 'bar'}))
@@ -861,9 +861,3 @@ class InternalTests(OfflineTestCase):
         hash(key('getStuff', None))
         hash(key('fooBar', {'start': now}))
         hash(key('fooBar', {'start': today}))
-
-    def test_sessioncachekey_repr(self):
-        self.assertEqual(
-            repr(webuntis.utils.SessionCacheKey('foomethod', {'a': 'B'})).replace("u'", "'"),
-            "webuntis.utils.SessionCacheKey('foomethod', {'a': 'B'})"
-        )

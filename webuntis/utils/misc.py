@@ -120,7 +120,7 @@ def result_wrapper(func):
             del kwargs['from_cache']
 
         result_class, jsonrpc_method, jsonrpc_args = func(self, **kwargs)
-        key = SessionCacheKey(func.__name__, jsonrpc_args)
+        key = cache_key(func.__name__, jsonrpc_args)
 
         if from_cache and key in self.cache:
             return self.cache[key]
@@ -132,26 +132,10 @@ def result_wrapper(func):
     return inner
 
 
-class SessionCacheKey(object):
-    '''A hashable object whose primary purpose is to get used as a dictionary
-    key.'''
-    def __init__(self, method, kwargs):
-        kwargs = deepcopy(kwargs) or {}
-        self.method = method
-        self.kwargs = kwargs
+def cache_key(method, args=None):
+    '''Get a hashable object given a string and a dictionary.'''
+    if args is None:
+        args = {}
+    hash_args = frozenset(deepcopy(args).items())
 
-        hash_kwargs = [(k, v) for k, v in kwargs.items()]
-
-        self._hashable = (self.method, frozenset(hash_kwargs))
-
-    def __hash__(self):
-        return hash(self._hashable)
-
-    def __eq__(self, other):
-        return type(other) is type(self) and hash(other) == hash(self)
-
-    def __repr__(self):
-        return 'webuntis.utils.%s(%s)' % (
-            self.__class__.__name__,
-            ', '.join((repr(self.method), repr(self.kwargs)))
-        )
+    return (method, hash_args)

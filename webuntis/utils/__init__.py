@@ -8,7 +8,7 @@
 from .config import config_keys
 from .misc import FilterDict, \
     LruDict, \
-    SessionCacheKey, \
+    cache_key, \
     lazyproperty, \
     result_wrapper
 from .logger import log
