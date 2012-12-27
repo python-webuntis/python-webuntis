@@ -57,7 +57,7 @@ So what does this do?
 
 ::
 
-    # a minimal example, these keywords are absolutely neccessary
+    # a minimal example, these parameters are absolutely neccessary
     s = webuntis.Session(
         server='webuntis.grupet.at:8080',
         username='api',
