@@ -279,7 +279,7 @@ class ResultWrapperMixin(object):
         :param schoolyear: The schoolyear where the classes should be fetched
             from.
         :type schoolyear: :py:class:`webuntis.objects.SchoolyearObject` or an
-            integer ID of it.
+            integer ID of it
 
         :rtype: :py:class:`webuntis.objects.KlassenList`
         '''
