@@ -489,6 +489,6 @@ class Session(JSONRPCSession, ResultWrapperMixin):
         except KeyError:
             cachelen = 20
 
-        self.cache = utils.LruDict(maxlen=cachelen)
+        self.cache = utils.SessionCache(maxlen=cachelen)
 
         JSONRPCSession.__init__(self, **config)

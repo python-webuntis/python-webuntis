@@ -819,6 +819,21 @@ class InternalTests(OfflineTestCase):
         self.assertTrue('baz' in d)
         self.assertTrue('blah' in d)
 
+    def test_sessioncache_clear_by_method(self):
+        d = webuntis.utils.SessionCache(maxlen=5)
+
+        d[webuntis.utils.cache_key('timetable', {})] = 'POOP'
+        d[webuntis.utils.cache_key('timetable', {'A': 'B'})] = 'POOP2'
+        d[webuntis.utils.cache_key('klassen', {})] = 'POOP3'
+
+        d.clear('timetable')
+        self.assertEqual(len(d), 1)
+        self.assertTrue(webuntis.utils.cache_key('klassen', {}) in d)
+        self.assertEqual(d[webuntis.utils.cache_key('klassen', {})], 'POOP3')
+
+        # is that even used?
+        self.assertEqual(type(self.session.cache), webuntis.utils.SessionCache)
+
     def test_lazyproperty_from_instance(self):
         meth_calls = []
 

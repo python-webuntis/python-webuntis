@@ -7,6 +7,7 @@
 
 from .config import config_keys
 from .misc import FilterDict, \
+    SessionCache, \
     LruDict, \
     cache_key, \
     lazyproperty, \

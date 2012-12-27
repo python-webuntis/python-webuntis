@@ -41,6 +41,16 @@ class LruDict(OrderedDict):
             self.popitem(last=False)
 
 
+class SessionCache(LruDict):
+    def clear(self, method=None):
+        if method is None:
+            LruDict.clear(self)
+        else:
+            for k in self.keys():
+                if k[0] == method:
+                    del self[k]
+
+
 class FilterDict(object):
     '''A dictionary which passes new values to a function found at the
     corresponding key in self.filters
