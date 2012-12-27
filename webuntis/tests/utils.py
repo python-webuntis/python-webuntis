@@ -95,4 +95,4 @@ def raw_vs_object(jsonstr, result):
         yield (raw, obj)
 
     assert len(known_hashes) == len(jsonstr) == len(result), \
-            (len(known_hashes), len(jsonstr), len(result))
+        (len(known_hashes), len(jsonstr), len(result))

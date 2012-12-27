@@ -31,7 +31,8 @@ class DataFetchingTests(OfflineTestCase):
         methods = {'getDepartments': getDepartments}
 
         with mock_results(methods):
-            for dep_raw, dep in raw_vs_object(jsonstr, self.session.departments()):
+            for dep_raw, dep in raw_vs_object(
+                    jsonstr, self.session.departments()):
                 self.assertEqual(dep_raw['id'], dep.id)
                 self.assertEqual(dep_raw['longName'], dep.long_name)
                 self.assertEqual(dep_raw['name'], dep.name)
@@ -45,7 +46,8 @@ class DataFetchingTests(OfflineTestCase):
         methods = {'getHolidays': getHolidays}
 
         with mock_results(methods):
-            for holiday_raw, holiday in raw_vs_object(jsonstr, self.session.holidays()):
+            for holiday_raw, holiday in raw_vs_object(
+                    jsonstr, self.session.holidays()):
                 self.assertEqual(holiday_raw['id'], holiday.id)
                 self.assertEqual(holiday_raw['name'], holiday.short_name)
                 self.assertEqual(holiday_raw['longName'], holiday.name)
@@ -157,22 +159,23 @@ class DataFetchingTests(OfflineTestCase):
                     self.assertEqual(period.type, 'ls')
 
                 self.assertEqual(len(period_raw['kl']), len(period.klassen))
-                for klasse_raw, klasse in raw_vs_object(period_raw['kl'],
-                                              period.klassen):
+                for klasse_raw, klasse in raw_vs_object(
+                        period_raw['kl'], period.klassen):
                     self.assertEqual(klasse.id, klasse_raw['id'])
 
                 self.assertEqual(len(period_raw['te']), len(period.teachers))
-                for teacher_raw, teacher in raw_vs_object(period_raw['te'],
-                                                period.teachers):
+                for teacher_raw, teacher in raw_vs_object(
+                        period_raw['te'], period.teachers):
                     self.assertEqual(teacher.id, teacher_raw['id'])
 
                 self.assertEqual(len(period_raw['su']), len(period.subjects))
-                for subject_raw, subject in raw_vs_object(period_raw['su'],
-                                                period.subjects):
+                for subject_raw, subject in raw_vs_object(
+                        period_raw['su'], period.subjects):
                     self.assertEqual(subject.id, subject_raw['id'])
 
                 self.assertEqual(len(period_raw['ro']), len(period.rooms))
-                for room_raw, room in raw_vs_object(period_raw['ro'], period.rooms):
+                for room_raw, room in raw_vs_object(
+                        period_raw['ro'], period.rooms):
                     self.assertEqual(room.id, room_raw['id'])
 
             def validate_table(periods, width=None):
@@ -269,7 +272,8 @@ class DataFetchingTests(OfflineTestCase):
         methods = {'getSubjects': getSubjects}
 
         with mock_results(methods):
-            for subj_raw, subj in raw_vs_object(jsonstr, self.session.subjects()):
+            for subj_raw, subj in raw_vs_object(
+                    jsonstr, self.session.subjects()):
                 self.assertEqual(subj_raw['id'], subj.id)
                 self.assertEqual(subj_raw['name'], subj.name)
                 self.assertEqual(subj_raw['longName'], subj.long_name)
@@ -323,12 +327,12 @@ class DataFetchingTests(OfflineTestCase):
 
         with mock_results(methods):
             statusdata = self.session.statusdata()
-            for lstype_raw, lstype in raw_vs_object(jsonstr['lstypes'],
-                                          statusdata.lesson_types):
+            for lstype_raw, lstype in raw_vs_object(
+                    jsonstr['lstypes'], statusdata.lesson_types):
                 validate_statusdata(lstype_raw, lstype)
 
-            for code_raw, code in raw_vs_object(jsonstr['codes'],
-                                      statusdata.period_codes):
+            for code_raw, code in raw_vs_object(
+                    jsonstr['codes'], statusdata.period_codes):
                 validate_statusdata(code_raw, code)
 
 
@@ -598,7 +602,8 @@ class InternalTests(OfflineTestCase):
         def getKlassen(request, url, jsondata, headers):
             return {'result': jsonstr}
 
-        class ThisVeryCustomException(Exception): pass
+        class ThisVeryCustomException(Exception):
+            pass
 
         def blow_up(*args, **kwargs):
             raise ThisVeryCustomException
@@ -612,7 +617,7 @@ class InternalTests(OfflineTestCase):
             self.session.klassen()
 
         self.assertEqual(len(getKlassen.calls), 2)
-        
+
         with mock_results(failing_methods):
             self.assertRaises(ThisVeryCustomException, self.session.klassen)
 
@@ -627,8 +632,8 @@ class InternalTests(OfflineTestCase):
             return {'result': jsonstr}
 
         with mock_results({'getKlassen': getKlassen}):
-            self.session.klassen(from_cache='LELE')  # 'LELE' should be True-ish.
-            self.session.klassen(from_cache='YESPLS')  # This should be too.
+            self.session.klassen(from_cache='LELE')  # should be True-ish
+            self.session.klassen(from_cache='YESPLS')  # should be too
 
         self.assertEqual(len(getKlassen.calls), 1)
         self.assertEqual(len(self.session.cache), 1)

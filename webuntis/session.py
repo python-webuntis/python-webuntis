@@ -453,9 +453,9 @@ class Session(JSONRPCSession, ResultWrapperMixin):
         session method to ``True``.
 
         ::
-            s.timetable(klasse=123)  # saves in cache whether you want or not
-            s.timetable(klasse=123)  # fetch the same data again, override old value in cache
-            s.timetable(klasse=123, from_cache=True)  # get directly from cache.
+            s.timetable(klasse=123)  # saves in cache
+            s.timetable(klasse=123)  # fetch data again, override old value
+            s.timetable(klasse=123, from_cache=True)  # get directly from cache
 
         The reason this cache was added is because the API doesn't allow you to
         fetch information for e.g. a single teacher. It would seriously harm
