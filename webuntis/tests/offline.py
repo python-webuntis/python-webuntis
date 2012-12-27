@@ -861,3 +861,19 @@ class InternalTests(OfflineTestCase):
         hash(key('getStuff', None))
         hash(key('fooBar', {'start': now}))
         hash(key('fooBar', {'start': today}))
+
+    def test_dont_cache_the_same_thing(self):
+        jsonstr = get_json_resource('gettimetables_mock.json')
+        today = datetime.datetime.now()
+        today2 = datetime.datetime.now()
+
+        self.assertNotEqual(today, today2)
+
+        def getTimetable(self, url, jsondata, headers):
+            return {'result': jsonstr}
+
+        with mock_results({'getTimetable': getTimetable}):
+            self.session.timetable(start=today, klasse=123, from_cache=True)
+            self.assertEqual(len(getTimetable.calls), 1)
+            self.session.timetable(start=today2, klasse=123, from_cache=True)
+            self.assertEqual(len(getTimetable.calls), 1)
