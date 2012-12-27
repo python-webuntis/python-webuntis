@@ -447,9 +447,21 @@ class Session(JSONRPCSession, ResultWrapperMixin):
         information, such as an email address, for the server maintainer. Just
         like you would do with the HTTP useragents of bots.
 
-    :param cachelen: Amount of API requests kept in cache. Default
-        to ``20``. Isn't saved in the :py:attr:`config` dictionary and cannot
-        be modified afterwards.
+    :type cachelen: int
+    :param cachelen: The maximum size of the internal cache. All results are
+        saved in it, but only used if you set the ``from_cache`` parameter on a
+        session method to ``True``.
+
+        ::
+            s.timetable(klasse=123)  # saves in cache whether you want or not
+            s.timetable(klasse=123)  # fetch the same data again, override old value in cache
+            s.timetable(klasse=123, from_cache=True)  # get directly from cache.
+
+        The reason this cache was added is because the API doesn't allow you to
+        fetch information for e.g. a single teacher. It would seriously harm
+        performance to fetch the whole list each time we want information about
+        a teacher. And i am not just talking about some milliseconds, but up to
+        thirty seconds of difference.
 
     :type jsessionid: str
     :param jsessionid: The session key to use. You usually shouldn't
