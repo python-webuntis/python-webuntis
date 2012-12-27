@@ -449,10 +449,12 @@ class Session(JSONRPCSession, ResultWrapperMixin):
 
     :type cachelen: int
     :param cachelen: The maximum size of the internal cache. All results are
-        saved in it, but only used if you set the ``from_cache`` parameter on a
-        session method to ``True``.
+        saved in it, but they only get used if you set the ``from_cache``
+        parameter on a session method to ``True``. This parameter is not saved
+        in the configuration dictionary.
 
         ::
+
             s.timetable(klasse=123)  # saves in cache
             s.timetable(klasse=123)  # fetch data again, override old value
             s.timetable(klasse=123, from_cache=True)  # get directly from cache
@@ -460,16 +462,21 @@ class Session(JSONRPCSession, ResultWrapperMixin):
         The reason this cache was added is because the API doesn't allow you to
         fetch information for e.g. a single teacher. It would seriously harm
         performance to fetch the whole list each time we want information about
-        a teacher. And i am not just talking about some milliseconds, but up to
-        thirty seconds of difference.
+        a teacher. Without the cache, i experienced a performance decrease
+        about twenty seconds, so i wouldn't set the ``cachelen`` to ``0``.
+
+        You can clear the cache using::
+
+            s.cache.clear('timetable')  # clears all cached timetables
+            s.cache.clear()  # clears everything from the cache
 
     :type jsessionid: str
-    :param jsessionid: The session key to use. You usually shouldn't
-        touch this.
+    :param jsessionid: The session key to use. You usually shouldn't touch
+        this.
 
-    :param login_repeat: The amount of times `python-webuntis`
-        should try to login when finding no or an expired session. Default to
-        ``0``, meaning it won't do that.
+    :param login_repeat: The amount of times `python-webuntis` should try to
+        login when finding no or an expired session. Default to ``0``, meaning
+        it won't do that.
 
     '''
 
