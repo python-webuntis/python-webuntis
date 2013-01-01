@@ -82,8 +82,8 @@ class RemoteTests(TestCaseBase):
             teacher.long_name
             teacher.id
 
-    def test_gettimeunits(self):
-        self.session.timeunits()
+    def test_gettimegrid(self):
+        self.session.timegrid()
 
     def test_gettimetables(self):
         print('TEST_GETTIMETABLES')
