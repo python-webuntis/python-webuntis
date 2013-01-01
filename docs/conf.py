@@ -43,7 +43,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'python-webuntis'
-copyright = '2012, Markus Unterwaditzer'
+copyright = '2013, Markus Unterwaditzer'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
