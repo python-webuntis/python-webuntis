@@ -113,7 +113,7 @@ class JSONRPCSession(object):
 
         while data is None:
             try:
-                data = rpc_request(self, method, params)
+                data = rpc_request(self.config, method, params)
             except errors.NotLoggedInError:
                 if attempts_left > 0:
                     self.logout(suppress_errors=True)

@@ -17,27 +17,32 @@ _errorcodes = {
     -8504: errors.BadCredentialsError,
     -8520: errors.NotLoggedInError
 }
-'''This lists the API-errorcodes python-webuntis is able to interpret,
-together with the exception that will be thrown.'''
+'''The API-errorcodes python-webuntis is able to interpret, together with the
+exception that will be thrown.'''
 
-def rpc_request(session, method, params):
+
+def rpc_request(config, method, params):
     '''
     A method for sending a JSON-RPC request.
+
+    :param config: A dictionary containing ``useragent``, ``server``,
+        ``school``, ``username`` and ``password``
+    :type config: dict
 
     :param method: The JSON-RPC method to be executed
     :type method: str
 
     :param params: JSON-RPC parameters to the method (should be JSON
-    serializable)
+        serializable)
     :type params: dict
     '''
 
-    url = session.config['server'] + \
+    url = config['server'] + \
         '?school=' + \
-        session.config['school']
+        config['school']
 
     headers = {
-        'User-Agent': session.config['useragent'],
+        'User-Agent': config['useragent'],
         'Content-Type': 'application/json'
     }
 
@@ -49,12 +54,12 @@ def rpc_request(session, method, params):
     }
 
     if method != 'authenticate':
-        if 'jsessionid' not in session.config:
+        if 'jsessionid' not in config:
             raise errors.NotLoggedInError(
                 'Don\'t have JSESSIONID. Did you already log out?')
         else:
             headers['Cookie'] = 'JSESSIONID=' + \
-                session.config['jsessionid']
+                config['jsessionid']
 
     log('debug', 'Making new request:')
     log('debug', 'URL: ' + url)
@@ -66,6 +71,7 @@ def rpc_request(session, method, params):
         headers
     )
     return _parse_result(request_body, result_body)
+
 
 def _parse_result(request_body, result_body):
     '''A subfunction of request, that, given the decoded JSON result,
@@ -86,6 +92,7 @@ def _parse_result(request_body, result_body):
     except KeyError:
         _parse_error_code(request_body, result_body)
 
+
 def _parse_error_code(request_body, result_body):
     '''A helper function for handling JSON error codes.'''
     log('error', result_body)
@@ -101,6 +108,7 @@ def _parse_error_code(request_body, result_body):
         )
 
     raise exc
+
 
 def _send_request(url, data, headers):
     '''Sends a POST request given the endpoint URL, JSON-encodable data and
