@@ -6,134 +6,7 @@
 '''
 from __future__ import unicode_literals
 from webuntis import utils, objects, errors
-from webuntis.utils import result_wrapper, log
-from webuntis.utils.third_party import json, urlrequest
-
-import datetime
-
-
-class JSONRPCRequest(object):
-    _errorcodes = {
-        -32601: errors.MethodNotFoundError,
-        -8504: errors.BadCredentialsError,
-        -8520: errors.NotLoggedInError
-    }
-    '''This lists the API-errorcodes python-webuntis is able to interpret,
-    together with the exception that will be thrown.'''
-
-    def __init__(self, session, method, params=None):
-        self._session = session
-        self._method = method
-        self._params = params or {}
-
-    def request(self):
-        '''
-        A method for sending a JSON-RPC request.
-
-        :param method: The JSON-RPC method to be executed
-        :type method: str
-
-        :param params: JSON-RPC parameters to the method (should be JSON
-        serializable)
-        :type params: dict
-        '''
-
-        url = self._session.config['server'] + \
-            '?school=' + \
-            self._session.config['school']
-
-        headers = {
-            'User-Agent': self._session.config['useragent'],
-            'Content-Type': 'application/json'
-        }
-
-        request_body = {
-            'id': str(datetime.datetime.today()),
-            'method': self._method,
-            'params': self._params,
-            'jsonrpc': '2.0'
-        }
-
-        if self._method != 'authenticate':
-            if 'jsessionid' not in self._session.config:
-                raise errors.NotLoggedInError(
-                    'Don\'t have JSESSIONID. Did you already log out?')
-            else:
-                headers['Cookie'] = 'JSESSIONID=' + \
-                    self._session.config['jsessionid']
-
-        log('debug', 'Making new request:')
-        log('debug', 'URL: ' + url)
-        log('debug', 'DATA: ' + str(request_body))
-
-        result_body = self._send_request(
-            url,
-            json.dumps(request_body).encode(),
-            headers
-        )
-        return self._parse_result(request_body, result_body)
-
-    @classmethod
-    def _parse_result(cls, request_body, result_body):
-        '''A subfunction of request, that, given the decoded JSON result,
-        handles the error codes or, if everything went well, returns the result
-        attribute of it. The request data has to be given too for logging and
-        ID validation.
-
-        :param request_body: The not-yet-encoded body of the request sent.
-        :param result_body: The decoded body of the result recieved.
-        '''
-
-        if request_body['id'] != result_body['id']:
-            raise errors.RemoteError(
-                'Request ID was not the same one as returned.')
-
-        try:
-            return result_body['result']
-        except KeyError:
-            cls._parse_error_code(request_body, result_body)
-
-    @classmethod
-    def _parse_error_code(cls, request_body, result_body):
-        '''A helper function for handling JSON error codes.'''
-        log('error', result_body)
-        try:
-            error = result_body['error']
-            exc = cls._errorcodes[error['code']](error['message'])
-        except KeyError:
-            exc = errors.RemoteError(
-                ('Some JSON-RPC-ish error happened. Please report this to the '
-                    'developer so he can implement a proper handling.'),
-                str(result_body),
-                str(request_body)
-            )
-
-        raise exc
-
-    @staticmethod
-    def _send_request(url, data, headers):
-        '''A subfunction of request, mostly because of mocking. Sends the
-        given headers and data to the url and tries to return the result
-        JSON-decoded.
-        '''
-
-        request = urlrequest.Request(
-            url,
-            data,
-            headers
-        )
-        # this will eventually raise errors, e.g. if there's an unexpected http
-        # status code
-        result_obj = urlrequest.urlopen(request)
-        result = result_obj.read().decode('utf-8')
-
-        try:
-            result_data = json.loads(result)
-            log('debug', 'Valid JSON found')
-        except ValueError:
-            raise errors.RemoteError('Invalid JSON', str(result))
-        else:
-            return result_data
+from webuntis.utils import result_wrapper, log, rpc_request
 
 
 class JSONRPCSession(object):
@@ -240,7 +113,7 @@ class JSONRPCSession(object):
 
         while data is None:
             try:
-                data = JSONRPCRequest(self, method, params).request()
+                data = rpc_request(self, method, params)
             except errors.NotLoggedInError:
                 if attempts_left > 0:
                     self.logout(suppress_errors=True)

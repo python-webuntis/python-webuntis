@@ -15,6 +15,10 @@ import json
 import webuntis
 import logging
 
+try:
+    from StringIO import StringIO  # Python 2
+except ImportError:
+    from io import BytesIO as StringIO  # Python 3
 
 tests_path = os.path.abspath(os.path.dirname(__file__))
 data_path = tests_path + '/static'
@@ -60,8 +64,7 @@ class OfflineTestCase(TestCaseBase):
 
 
 def mock_results(methods, swallow_not_found=False):
-    def callback(self, url, data, headers):
-        jsondata = json.loads(data.decode('utf-8'))
+    def callback(url, jsondata, headers):
         method = jsondata['method']
         try:
             method_mock = methods[method]
@@ -73,8 +76,8 @@ def mock_results(methods, swallow_not_found=False):
         else:
             if not hasattr(method_mock, 'calls'):
                 method_mock.calls = []
-            method_mock.calls.append((self, url, jsondata, headers))
-            data = method_mock(self, url, jsondata, headers)
+            method_mock.calls.append((url, jsondata, headers))
+            data = method_mock(url, jsondata, headers)
 
         d = {'id': jsondata['id']}
         d.update(data)
@@ -82,7 +85,7 @@ def mock_results(methods, swallow_not_found=False):
         return d
 
     return mock.patch(
-        'webuntis.session.JSONRPCRequest._send_request',
+        'webuntis.utils.remote._send_request',
         new=callback
     )
 
@@ -96,3 +99,25 @@ def raw_vs_object(jsonstr, result):
 
     assert len(known_hashes) == len(jsonstr) == len(result), \
         (len(known_hashes), len(jsonstr), len(result))
+
+
+def mock_urlopen(data, expected_url, expected_data, expected_headers):
+    def mocking_func(requestobj):
+        given_url = requestobj.get_full_url()
+        given_data = requestobj.data
+        given_headers = dict(requestobj.header_items())
+
+        assert given_url == expected_url, given_url
+        assert given_data == expected_data, given_data
+        assert given_headers == expected_headers, given_headers
+
+        if isinstance(data, Exception):
+            raise data
+
+        io = StringIO(data)
+        return io
+
+    return mock.patch(
+        'webuntis.utils.third_party.urlrequest.urlopen',
+        new=mocking_func
+    )

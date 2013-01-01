@@ -10,13 +10,8 @@ import mock
 import webuntis
 import datetime
 
-try:
-    from StringIO import StringIO  # Python 2
-except ImportError:
-    from io import BytesIO as StringIO  # Python 3
-
 from webuntis.tests.utils import OfflineTestCase, mock_results, \
-    get_json_resource, stub_session_parameters, raw_vs_object
+    get_json_resource, stub_session_parameters, raw_vs_object, mock_urlopen
 
 
 class DataFetchingTests(OfflineTestCase):
@@ -25,7 +20,7 @@ class DataFetchingTests(OfflineTestCase):
     def test_getdepartments(self):
         jsonstr = get_json_resource('getdepartments_mock.json')
 
-        def getDepartments(request, url, jsondata, headers):
+        def getDepartments(url, jsondata, headers):
             return {'result': jsonstr}
 
         methods = {'getDepartments': getDepartments}
@@ -40,7 +35,7 @@ class DataFetchingTests(OfflineTestCase):
     def test_getholidays(self):
         jsonstr = get_json_resource('getholidays_mock.json')
 
-        def getHolidays(request, url, jsondata, headers):
+        def getHolidays(url, jsondata, headers):
             return {'result': jsonstr}
 
         methods = {'getHolidays': getHolidays}
@@ -65,7 +60,7 @@ class DataFetchingTests(OfflineTestCase):
         jsonstr = get_json_resource('getklassen_mock.json')
         schoolyear_id = 123
 
-        def getKlassen(session, url, jsondata, headers):
+        def getKlassen(url, jsondata, headers):
             if len(methods['getKlassen'].calls) == 2:
                 self.assertEqual(jsondata['params']['schoolyearId'],
                                  schoolyear_id)
@@ -104,19 +99,19 @@ class DataFetchingTests(OfflineTestCase):
         jsonstr_su = get_json_resource('getsubjects_mock.json')
         jsonstr_ro = get_json_resource('getrooms_mock.json')
 
-        def getTimetable(request, url, jsondata, headers):
+        def getTimetable(url, jsondata, headers):
             return {'result': jsonstr}
 
-        def getKlassen(request, url, jsondata, headers):
+        def getKlassen(url, jsondata, headers):
             return {'result': jsonstr_kl}
 
-        def getTeachers(request, url, jsondata, headers):
+        def getTeachers(url, jsondata, headers):
             return {'result': jsonstr_te}
 
-        def getSubjects(request, url, jsondata, headers):
+        def getSubjects(url, jsondata, headers):
             return {'result': jsonstr_su}
 
-        def getRooms(request, url, jsondata, headers):
+        def getRooms(url, jsondata, headers):
             return {'result': jsonstr_ro}
 
         methods = {
@@ -214,7 +209,7 @@ class DataFetchingTests(OfflineTestCase):
     def test_getrooms(self):
         jsonstr = get_json_resource('getrooms_mock.json')
 
-        def getRooms(self, url, jsondata, headers):
+        def getRooms(url, jsondata, headers):
             return {'result': jsonstr}
 
         methods = {'getRooms': getRooms}
@@ -229,10 +224,10 @@ class DataFetchingTests(OfflineTestCase):
         jsonstr = get_json_resource('getschoolyears_mock.json')
         current_json = jsonstr[3]
 
-        def getSchoolyears(self, url, jsondata, headers):
+        def getSchoolyears(url, jsondata, headers):
             return {'result': jsonstr}
 
-        def getCurrentSchoolyear(self, url, jsondata, headers):
+        def getCurrentSchoolyear(url, jsondata, headers):
             return {'result': current_json}
 
         methods = {
@@ -266,7 +261,7 @@ class DataFetchingTests(OfflineTestCase):
     def test_getsubjects(self):
         jsonstr = get_json_resource('getsubjects_mock.json')
 
-        def getSubjects(self, url, jsondata, headers):
+        def getSubjects(url, jsondata, headers):
             return {'result': jsonstr}
 
         methods = {'getSubjects': getSubjects}
@@ -281,7 +276,7 @@ class DataFetchingTests(OfflineTestCase):
     def test_getteachers(self):
         jsonstr = get_json_resource('getteachers_mock.json')
 
-        def getTeachers(self, url, jsondata, headers):
+        def getTeachers(url, jsondata, headers):
             return {'result': jsonstr}
 
         methods = {'getTeachers': getTeachers}
@@ -296,7 +291,7 @@ class DataFetchingTests(OfflineTestCase):
     def test_gettimegrid(self):
         jsonstr = get_json_resource('gettimegrid_mock.json')
 
-        def getTimegridUnits(self, url, jsondata, headers):
+        def getTimegridUnits(url, jsondata, headers):
             return {'result': jsonstr}
 
         methods = {'getTimegridUnits': getTimegridUnits}
@@ -313,7 +308,7 @@ class DataFetchingTests(OfflineTestCase):
     def test_getstatusdata(self):
         jsonstr = get_json_resource('getstatusdata_mock.json')
 
-        def getStatusData(self, url, jsondata, headers):
+        def getStatusData(url, jsondata, headers):
             return {'result': jsonstr}
 
         methods = {'getStatusData': getStatusData}
@@ -349,19 +344,19 @@ class SessionUsageTests(OfflineTestCase):
             * (retry_amount + 1)
         )[:-2]
 
-        def authenticate(self, url, jsondata, headers):
+        def authenticate(url, jsondata, headers):
             calls.append(jsondata['method'])
             return {
                 'result': {'sessionId': 'Foobar_session_' + jsondata['id']}
             }
 
-        def getCurrentSchoolyear(self, url, jsondata, headers):
+        def getCurrentSchoolyear(url, jsondata, headers):
             calls.append(jsondata['method'])
             return {
                 'error': {'code': -8520, 'message': 'Not Logged In!'}
             }
 
-        def logout(self, url, jsondata, headers):
+        def logout(url, jsondata, headers):
             calls.append(jsondata['method'])
             return {
                 'result': {'bla': 'blub'}
@@ -392,14 +387,14 @@ class SessionUsageTests(OfflineTestCase):
         # 'authenticate'] between each.
         expected_calls = ['authenticate', 'getCurrentSchoolyear']
 
-        def authenticate(self, url, jsondata, headers):
+        def authenticate(url, jsondata, headers):
             calls.append(jsondata['method'])
             return {
                 'id': jsondata['id'],
                 'result': {'sessionId': 'Foobar_session_' + jsondata['id']}
             }
 
-        def _nope(self, url, jsondata, headers):
+        def _nope(url, jsondata, headers):
             calls.append(jsondata['method'])
             return {
                 'id': jsondata['id'],
@@ -584,7 +579,7 @@ class InternalTests(OfflineTestCase):
     def test_requestcaching_no_io_on_second_time(self):
         jsonstr = get_json_resource('getklassen_mock.json')
 
-        def getKlassen(request, url, jsondata, headers):
+        def getKlassen(url, jsondata, headers):
             return {'result': jsonstr}
 
         methods = {'getKlassen': getKlassen}
@@ -599,7 +594,7 @@ class InternalTests(OfflineTestCase):
     def test_requestcaching_no_caching_without_being_told_so(self):
         jsonstr = get_json_resource('getklassen_mock.json')
 
-        def getKlassen(request, url, jsondata, headers):
+        def getKlassen(url, jsondata, headers):
             return {'result': jsonstr}
 
         class ThisVeryCustomException(Exception):
@@ -628,7 +623,7 @@ class InternalTests(OfflineTestCase):
 
         jsonstr = get_json_resource('getklassen_mock.json')
 
-        def getKlassen(request, url, jsondata, headers):
+        def getKlassen(url, jsondata, headers):
             return {'result': jsonstr}
 
         with mock_results({'getKlassen': getKlassen}):
@@ -684,7 +679,7 @@ class InternalTests(OfflineTestCase):
 
         self.assertRaises(
             webuntis.errors.RemoteError,
-            webuntis.session.JSONRPCRequest._parse_result,
+            webuntis.utils.remote._parse_result,
             {
                 'jsonrpc': '2.0',
                 'method': method,
@@ -705,7 +700,7 @@ class InternalTests(OfflineTestCase):
         def check():
             self.assertRaises(
                 webuntis.errors.RemoteError,
-                webuntis.session.JSONRPCRequest._parse_error_code,
+                webuntis.utils.remote._parse_error_code,
                 request_data, result_data
             )
 
@@ -729,55 +724,55 @@ class InternalTests(OfflineTestCase):
         del result_data['error']
         check()
 
-    def test_jsonrpcrequest_send_request(self):
+    def test_jsonrpcrequest_send_request_valid_request(self):
         self.request_patcher.stop()
 
-        def mock_urlopen(data, expected_url, expected_data, expected_headers):
-            def mocking_func(requestobj):
-                self.assertEqual(requestobj.get_full_url(), expected_url)
-                self.assertEqual(requestobj.data, expected_data)
-                self.assertEqual(dict(requestobj.header_items()),
-                                 expected_headers)
-
-                io = StringIO(data)
-                return io
-            return mocking_func
-
         url = 'http://example.com'
-        decoded_data = {'le': 'LE'}
-        data = b'{"le": "LE"}'
         headers = {'User-agent': 'Netscape'}
 
-        with mock.patch(
-            'webuntis.session.urlrequest.urlopen',
-            new=mock_urlopen(data, expected_url=url, expected_data=data,
-                             expected_headers=headers)
-        ):
+        with mock_urlopen('{"ret": "VAL"}', expected_url=url,
+                          expected_data='{"la": "LU"}',
+                          expected_headers=headers):
             self.assertEqual(
-                webuntis.session.JSONRPCRequest._send_request(
+                webuntis.utils.remote._send_request(
                     url,
-                    data,
+                    {'la': 'LU'},
                     headers
                 ),
-                decoded_data
+                {'ret': 'VAL'}
             )
 
-        invalid_data = b'LELELE'
+    def test_jsonrpcrequest_send_request_invalid_json_response(self):
+        self.request_patcher.stop()
 
-        with mock.patch(
-            'webuntis.session.urlrequest.urlopen',
-            new=mock_urlopen(invalid_data,
-                             # actually not expected, since the method will
-                             # crash
-                             expected_url=url,
-                             expected_data=invalid_data,
-                             expected_headers=headers)
-        ):
+        url = 'http://example.com'
+        headers = {'User-agent': 'Netscape'}
+
+        with mock_urlopen('LOL DUDE', expected_url=url,
+                          expected_data='{"la": "LU"}',
+                          expected_headers=headers):
             self.assertRaises(
                 webuntis.errors.RemoteError,
-                webuntis.session.JSONRPCRequest._send_request,
+                webuntis.utils.remote._send_request,
                 url,
-                invalid_data,
+                {'la': 'LU'},
+                headers
+            )
+
+    def test_jsonrpcrequest_send_request_invalid_json_input(self):
+        self.request_patcher.stop()
+
+        url = 'http://example.com'
+        headers = {'User-agent': 'Netscape'}
+
+        with mock_urlopen(Exception('No.'), expected_url=url,
+                          expected_data='Does not matter',
+                          expected_headers=headers):
+            self.assertRaises(
+                TypeError,
+                webuntis.utils.remote._send_request,
+                url,
+                object(),
                 headers
             )
 
@@ -889,7 +884,7 @@ class InternalTests(OfflineTestCase):
 
         self.assertNotEqual(today, today2)
 
-        def getTimetable(self, url, jsondata, headers):
+        def getTimetable(url, jsondata, headers):
             return {'result': jsonstr}
 
         with mock_results({'getTimetable': getTimetable}):

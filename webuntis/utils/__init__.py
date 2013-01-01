@@ -13,3 +13,4 @@ from .misc import FilterDict, \
     lazyproperty, \
     result_wrapper
 from .logger import log
+from .remote import rpc_request
