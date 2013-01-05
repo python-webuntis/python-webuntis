@@ -20,7 +20,7 @@ Things you can do with the API
 
 .. class:: Session
 
-    .. automethod:: departments(foo, bar)
+    .. automethod:: departments
     .. automethod:: holidays
     .. automethod:: klassen
     .. automethod:: timetable

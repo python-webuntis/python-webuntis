@@ -180,7 +180,7 @@ class ResultWrapperMixin(object):
 
             schoolclass = s.klassen().filter(id=1)[0]  # schoolclass #1
 
-        :raises: :py:class:`ValueError` -- if something was wrong with the
+        :raises: :exc:`ValueError` -- if something was wrong with the
             arguments supplied.
 
         '''
@@ -347,6 +347,7 @@ class Session(JSONRPCSession, ResultWrapperMixin):
     :param jsessionid: The session key to use. You usually shouldn't touch
         this.
 
+    :type login_repeat: int
     :param login_repeat: The amount of times `python-webuntis` should try to
         login when finding no or an expired session. Default to ``0``, meaning
         it won't do that.
