@@ -163,7 +163,7 @@ class ResultWrapperMixin(object):
         return objects.KlassenList, 'getKlassen', params
 
     @result_wrapper
-    def timetable(self, start=None, end=None, **type_and_id):
+    def timetable(self, start, end, **type_and_id):
         '''Get the timetable for a specific school class and time period.
 
         :param start: The beginning of the time period. Can be a
@@ -180,9 +180,7 @@ class ResultWrapperMixin(object):
 
             schoolclass = s.klassen().filter(id=1)[0]  # schoolclass #1
 
-        :raises: :exc:`ValueError` -- if something was wrong with the
-            arguments supplied.
-
+        :raises: :exc:`ValueError`, :exc:`TypeError`
         '''
         element_type_table = {
             'klasse':  1,
@@ -206,23 +204,21 @@ class ResultWrapperMixin(object):
         if element_type not in element_type_table:
             raise invalid_type_error
 
-        # apply end to start and vice-versa if one of them is missing
-        if not start and end:
-            start = end
-        elif not end and start:
-            end = start
-
         # if we have to deal with an object in element_id,
         # its id gets placed here anyway
+
+        json_start = utils.datetime_utils.format_date(start)
+        json_end =   utils.datetime_utils.format_date(end)
+
+        if json_start > json_end:
+            raise ValueError('Start can\'t be later than the end.')
+
         parameters = {
             'id': int(element_id),
             'type': element_type_table[element_type],
+            'startDate': json_start,
+            'endDate': json_end
         }
-
-        if start:
-            parameters['startDate'] = utils.datetime_utils.format_date(start)
-        if end:
-            parameters['endDate'] = utils.datetime_utils.format_date(end)
 
         return objects.PeriodList, 'getTimetable', parameters
 

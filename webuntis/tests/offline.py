@@ -123,7 +123,7 @@ class DataFetchingTests(OfflineTestCase):
         }
 
         with mock_results(methods):
-            tt = self.session.timetable(klasse=114)
+            tt = self.session.timetable(klasse=114, start='20120301', end='20120301')
 
             for period_raw, period in raw_vs_object(jsonstr, tt):
                 self.assertEqual(
@@ -200,11 +200,16 @@ class DataFetchingTests(OfflineTestCase):
         self.assertRaises(TypeError, self.session.timetable,
                           start=None, end=None, foo=123)
 
-    def test_gettimetables_start_xor_end(self):
-        some_date = datetime.datetime.now()
-        with mock_results({}, swallow_not_found=True):
-            self.session.timetable(start=some_date, end=None, klasse=123)
-            self.session.timetable(start=None, end=some_date, klasse=123)
+    def test_gettimetables_start_later_than_end(self):
+        start = datetime.datetime.strptime('20130101', '%Y%m%d')
+        end = datetime.datetime.strptime('20120101', '%Y%m%d')
+
+        self.assertRaises(ValueError, self.session.timetable,
+                          start=start, end=end, klasse=123)
+
+    def test_gettimetables_start_and_end_are_none(self):
+        self.assertRaises(TypeError, self.session.timetable,
+                          start=None, end=None, klasse=123)
 
     def test_getrooms(self):
         jsonstr = get_json_resource('getrooms_mock.json')
@@ -831,6 +836,9 @@ class InternalTests(OfflineTestCase):
         self.assertTrue(webuntis.utils.cache_key('klassen', {}) in d)
         self.assertEqual(d[webuntis.utils.cache_key('klassen', {})], 'POOP3')
 
+        d.clear()
+        self.assertEqual(len(d), 0)
+
         # is that even used?
         self.assertEqual(type(self.session.cache), webuntis.utils.SessionCache)
 
@@ -888,7 +896,9 @@ class InternalTests(OfflineTestCase):
             return {'result': jsonstr}
 
         with mock_results({'getTimetable': getTimetable}):
-            self.session.timetable(start=today, klasse=123, from_cache=True)
+            self.session.timetable(start=today, end=today, klasse=123,
+                                   from_cache=True)
             self.assertEqual(len(getTimetable.calls), 1)
-            self.session.timetable(start=today2, klasse=123, from_cache=True)
+            self.session.timetable(start=today2, end=today2, klasse=123,
+                                   from_cache=True)
             self.assertEqual(len(getTimetable.calls), 1)

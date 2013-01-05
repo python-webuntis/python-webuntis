@@ -6,7 +6,7 @@
 '''
 
 from __future__ import unicode_literals
-from datetime import datetime as datetime
+from datetime import datetime
 
 
 forms = {
@@ -39,14 +39,8 @@ def parse_datetime(date, time):
 
 
 def _parse(string, form):
-    if type(string) == int:
-        string = str(string)
-
-    formlen = forms[form][1]
-    while len(string) < formlen:
-        string = '0' + string
-
-    return datetime.strptime(string, forms[form][0])
+    form_string, formlen = forms[form]
+    return datetime.strptime(_satinize(string, form), form_string)
 
 
 def format_date(obj):
@@ -58,4 +52,20 @@ def format_time(obj):
 
 
 def _format(obj, form):
-    return int(datetime.strftime(obj, forms[form][0]))
+    form_string, formlen = forms[form]
+    try:
+        int(obj)  # is this already formatted?
+    except TypeError:
+        return int(datetime.strftime(obj, form_string))
+    else:
+        return int(obj)
+
+def _satinize(raw_date, form):
+    '''Convert a raw date/time integer or string to a string with fixed length.'''
+    form_string, formlen = forms[form]
+    raw_date = str(raw_date)
+
+    while len(raw_date) < formlen:
+        raw_date = '0' + raw_date
+
+    return raw_date

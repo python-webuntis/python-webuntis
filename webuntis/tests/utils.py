@@ -44,11 +44,10 @@ stub_session_parameters = {
 
 class OfflineTestCase(TestCaseBase):
     def setUp(self):
-        class methods(object):
-            '''This eliminates any remote access.'''
-            pass
+        def cb(*args, **kwargs):  # pragma: no cover
+            raise Exception('These are offline tests.')
 
-        self.request_patcher = patcher = mock_results(methods)
+        self.request_patcher = patcher = mock_results(None, new=cb)
         patcher.start()
 
         self.session = webuntis.Session(**stub_session_parameters)
@@ -63,31 +62,29 @@ class OfflineTestCase(TestCaseBase):
         self.session = None
 
 
-def mock_results(methods, swallow_not_found=False):
-    def callback(url, jsondata, headers):
-        method = jsondata['method']
-        try:
-            method_mock = methods[method]
-        except KeyError:
-            if not swallow_not_found:  # pragma: no cover
-                raise
+def mock_results(methods, swallow_not_found=False, new=None):
+    if new is None:
+        def new(url, jsondata, headers):
+            method = jsondata['method']
+            try:
+                method_mock = methods[method]
+            except KeyError:  # pragma: no cover
+                if not swallow_not_found:
+                    raise
+                else:
+                    data = {'result': {}}
             else:
-                data = {'result': {}}
-        else:
-            if not hasattr(method_mock, 'calls'):
-                method_mock.calls = []
-            method_mock.calls.append((url, jsondata, headers))
-            data = method_mock(url, jsondata, headers)
+                if not hasattr(method_mock, 'calls'):
+                    method_mock.calls = []
+                method_mock.calls.append((url, jsondata, headers))
+                data = method_mock(url, jsondata, headers)
 
-        d = {'id': jsondata['id']}
-        d.update(data)
+            d = {'id': jsondata['id']}
+            d.update(data)
 
-        return d
+            return d
 
-    return mock.patch(
-        'webuntis.utils.remote._send_request',
-        new=callback
-    )
+    return mock.patch('webuntis.utils.remote._send_request', new=new)
 
 
 def raw_vs_object(jsonstr, result):
