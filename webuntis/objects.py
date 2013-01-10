@@ -317,11 +317,12 @@ class PeriodList(ListResult):
 
     def to_table(self, width=None):
         '''
-        Creates a table-like nested list.
+        Creates a table-like structure out of the periods. Useful for rendering
+        timetables in HTML and other markup languages.
 
         :param width: Optionally, a fixed width for the table. The function
-            will fill every row with empty cells until that width is met. If
-            the timetable is too big, it will raise a ``ValueError``.
+            will create empty columns until that width is met. If the timetable
+            is too big, it will raise a ``ValueError``.
 
         :returns: A list containing "rows", which in turn contain "hours",
             which contain :py:class:`webuntis.objects.PeriodObject` instances
@@ -336,6 +337,11 @@ class PeriodList(ListResult):
             table = s.timetable(klasse=878, start=monday, end=friday) \\
                     .to_table(width=5)
 
+            # DON'T USE THIS EXAMPLE AS-IS
+            # Properties that are printed here may contain arbitrary
+            # *unescaped* HTML. That is not expected, but you should not trust
+            # input from remote sources in general.
+
             print('<table><thead>')
             for weekday in range(5):
                 print('<th>' + str(weekday) + '</th>')
@@ -343,7 +349,7 @@ class PeriodList(ListResult):
             print('</thead><tbody>')
             for time, row in table:
                 print('<tr>')
-                for weekday_number, cell in row:
+                for date, cell in row:
                     print('<td>')
                     for period in cell:
                         print('<div>')
