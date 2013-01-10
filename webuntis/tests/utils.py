@@ -14,6 +14,7 @@ import os
 import json
 import webuntis
 import logging
+from copy import deepcopy
 
 try:
     from StringIO import StringIO  # Python 2
@@ -47,7 +48,8 @@ class OfflineTestCase(TestCaseBase):
         def cb(*args, **kwargs):  # pragma: no cover
             raise Exception('These are offline tests.')
 
-        self.request_patcher = patcher = mock_results(None, new=cb)
+        self.request_patcher = patcher = \
+                mock.patch('webuntis.utils.remote._send_request', new=cb)
         patcher.start()
 
         self.session = webuntis.Session(**stub_session_parameters)
@@ -62,40 +64,53 @@ class OfflineTestCase(TestCaseBase):
         self.session = None
 
 
-def mock_results(methods, swallow_not_found=False, new=None):
-    if new is None:
-        def new(url, jsondata, headers):
-            method = jsondata['method']
-            try:
-                method_mock = methods[method]
-            except KeyError:  # pragma: no cover
-                if not swallow_not_found:
-                    raise
-                else:
-                    data = {'result': {}}
+def mock_results(methods, swallow_not_found=False):
+    '''Mock API methods more easily.
+
+    :type methods: dict
+    :param methods: A dictionary containing one callable for each API method.
+
+    :type swallow_not_found: bool
+    :param swallow_not_found: Whether to return {'result': {}} on unmocked API
+        methods.
+    '''
+    def new(url, jsondata, headers):
+        method = jsondata['method']
+        try:
+            method_mock = methods[method]
+        except KeyError:  # pragma: no cover
+            if not swallow_not_found:
+                raise
             else:
-                if not hasattr(method_mock, 'calls'):
-                    method_mock.calls = []
-                method_mock.calls.append((url, jsondata, headers))
-                data = method_mock(url, jsondata, headers)
+                data = {'result': {}}
+        else:
+            if not hasattr(method_mock, 'calls'):
+                method_mock.calls = []
+            method_mock.calls.append((url, jsondata, headers))
+            data = method_mock(url, jsondata, headers)
 
-            d = {'id': jsondata['id']}
-            d.update(data)
+        d = {'id': jsondata['id']}
+        d.update(data)
 
-            return d
+        return deepcopy(d)
 
     return mock.patch('webuntis.utils.remote._send_request', new=new)
 
 
-def raw_vs_object(jsonstr, result):
+def raw_vs_object(jsondata, result):
+    '''zip json data and results, but grouped by id instead of order. Also runs
+    some checks that hashes are unique.'''
+    raw_lookup = dict((x['id'], x) for x in jsondata)
     known_hashes = set()
-    for raw, obj in zip(jsonstr, result):
-        assert hash(obj) not in known_hashes
-        known_hashes.add(hash(obj))
-        yield (raw, obj)
 
-    assert len(known_hashes) == len(jsonstr) == len(result), \
-        (len(known_hashes), len(jsonstr), len(result))
+    for obj in result:
+        assert hash(obj) not in known_hashes, obj.id
+        known_hashes.add(hash(obj))
+
+        yield (raw_lookup[obj.id], obj)
+
+    assert len(known_hashes) == len(jsondata) == len(result), \
+        (len(known_hashes), len(jsondata), len(result))
 
 
 def mock_urlopen(data, expected_url, expected_data, expected_headers):

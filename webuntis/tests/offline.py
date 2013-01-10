@@ -180,7 +180,7 @@ class DataFetchingTests(OfflineTestCase):
                     if width is not None:
                         row = list(row)
                         self.assertEqual(len(row), width)
-                    for weekday_number, cell in row:
+                    for date, cell in row:
                         for hour in cell:
                             counter += 1
 
@@ -302,9 +302,9 @@ class DataFetchingTests(OfflineTestCase):
         methods = {'getTimegridUnits': getTimegridUnits}
 
         with mock_results(methods):
-            for t_raw, t in raw_vs_object(jsonstr, self.session.timegrid()):
+            for t_raw, t in zip(jsonstr, self.session.timegrid()):
                 self.assertEqual(t_raw['day'], t.day)
-                for t2_raw, t2 in raw_vs_object(t_raw['timeUnits'], t.times):
+                for t2_raw, t2 in zip(t_raw['timeUnits'], t.times):
                     self.assertEqual(t2_raw['startTime'],
                                      int(t2[0].strftime('%H%M')))
                     self.assertEqual(t2_raw['endTime'],
@@ -327,11 +327,11 @@ class DataFetchingTests(OfflineTestCase):
 
         with mock_results(methods):
             statusdata = self.session.statusdata()
-            for lstype_raw, lstype in raw_vs_object(
+            for lstype_raw, lstype in zip(
                     jsonstr['lstypes'], statusdata.lesson_types):
                 validate_statusdata(lstype_raw, lstype)
 
-            for code_raw, code in raw_vs_object(
+            for code_raw, code in zip(
                     jsonstr['codes'], statusdata.period_codes):
                 validate_statusdata(code_raw, code)
 
@@ -735,8 +735,8 @@ class InternalTests(OfflineTestCase):
         url = 'http://example.com'
         headers = {'User-agent': 'Netscape'}
 
-        with mock_urlopen('{"ret": "VAL"}', expected_url=url,
-                          expected_data='{"la": "LU"}',
+        with mock_urlopen(b'{"ret": "VAL"}', expected_url=url,
+                          expected_data=b'{"la": "LU"}',
                           expected_headers=headers):
             self.assertEqual(
                 webuntis.utils.remote._send_request(
@@ -753,8 +753,8 @@ class InternalTests(OfflineTestCase):
         url = 'http://example.com'
         headers = {'User-agent': 'Netscape'}
 
-        with mock_urlopen('LOL DUDE', expected_url=url,
-                          expected_data='{"la": "LU"}',
+        with mock_urlopen(b'LOL DUDE', expected_url=url,
+                          expected_data=b'{"la": "LU"}',
                           expected_headers=headers):
             self.assertRaises(
                 webuntis.errors.RemoteError,
