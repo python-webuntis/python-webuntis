@@ -80,15 +80,6 @@ class ListResult(Result):
     #: the class which should be used to instantiate an array item.
     _itemclass = ListItem
 
-    #: Contains the object representation of each item found in _data. Is a
-    #: dictionary instead of a list to allow random r/w access without
-    #: IndexErrors.
-    _itemcache = None
-
-    def __init__(self, *args, **kwargs):
-        Result.__init__(self, *args, **kwargs)
-        self._itemcache = {}
-
     def filter(self, **criterions):
         '''
         Return a list of all objects, filtered by attributes::
@@ -148,19 +139,13 @@ class ListResult(Result):
         '''Makes the object iterable and behave like a list'''
         data = self._data[i]  # fails if there is no such item
 
-        try:
-            value = self._itemcache[i]
-        except KeyError:
-            # if we don't have an object yet
-            if type(data) is not self._itemclass:
-                self._itemcache[i] = value = self._itemclass(
-                    parent=self,
-                    data=data
-                )
-            else:
-                self._itemcache[i] = value = data
+        if type(data) is not self._itemclass:
+            data = self._data[i] = self._itemclass(
+                parent=self,
+                data=data
+            )
 
-        return value
+        return data
 
     def __len__(self):
         '''Return the length of the items'''
@@ -599,7 +584,7 @@ class ColorInfo(Result):
 
     @lazyproperty
     def id(self):
-        return hash(self.name)
+        return hash(self.__class__.__name__ + self.name)
 
     @lazyproperty
     def name(self):
