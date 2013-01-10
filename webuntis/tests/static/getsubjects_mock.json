@@ -1,66 +1,322 @@
 [
-    {"longName": "Anwesenheit", "id": 49, "name": "A"},
-    {"longName": "Ast", "id": 62, "name": "Ast"},
-    {"longName": "LÜ (Basketball)", "id": 45, "name": "BB"},
-    {"longName": "Bildnerische Erziehung", "id": 20, "name": "BE"},
-    {"longName": "Betreuung in Frei- und Lernzeit", "id": 56, "name": "BFLZ"},
-    {"longName": "Biologie", "id": 13, "name": "BIO"},
-    {"longName": "Chemie", "id": 14, "name": "CH"},
-    {"longName": "Deutsch", "id": 4, "name": "D"},
-    {"longName": "Darstellende Geometrie", "id": 16, "name": "DG"},
-    {"longName": "Darstellendes Spiel", "id": 44, "name": "DSP"},
-    {"longName": "Englisch", "id": 5, "name": "E"},
-    {"longName": "E-Olympiade", "id": 52, "name": "E/O"},
-    {"longName": "E1", "id": 63, "name": "E1"},
-    {"longName": "Ethik", "id": 3, "name": "ETH"},
-    {"longName": "französisch", "id": 8, "name": "F"},
-    {"longName": "F-Olympiade", "id": 53, "name": "F/O"},
-    {"longName": "LÜ (Fußball)", "id": 46, "name": "FB"},
-    {"longName": "Instrumentalunterricht Flöte", "id": 41, "name": "FLOE"},
-    {"longName": "Griechisch", "id": 7, "name": "G"},
-    {"longName": "Gr-Olympiade", "id": 54, "name": "G/O"},
-    {"longName": "Instrumentalunterricht Gitarre", "id": 42, "name": "GIT"},
-    {"longName": "Geschichte und Sozialkunde", "id": 10, "name": "GSK"},
-    {"longName": "Geschichte und Politische Bildung", "id": 9, "name": "GSPB"},
-    {"longName": "Geographie und Wirtschaftskunde", "id": 11, "name": "GWK"},
-    {"longName": "Informationstechnologie", "id": 58, "name": "IKT"},
-    {"longName": "Informatik", "id": 18, "name": "INF"},
-    {"longName": "KFBU", "id": 61, "name": "KFBU"},
-    {"longName": "Instrumentalunterricht Klavier", "id": 43, "name": "KLAV"},
-    {"longName": "Latein", "id": 6, "name": "L"},
-    {"longName": "L-Olympiade", "id": 55, "name": "L/O"},
-    {"longName": "Leibesübungen Knaben", "id": 23, "name": "LUK"},
-    {"longName": "Leibesübungen Mädchen", "id": 24, "name": "LUM"},
-    {"longName": "Mathematik", "id": 12, "name": "M"},
-    {"longName": "Konfl.L.+Komm.", "id": 59, "name": "MASALA"},
-    {"longName": "Musikerziehung", "id": 19, "name": "ME"},
-    {"longName": "Physik", "id": 15, "name": "PH"},
-    {"longName": "Psychologie und Philosophie", "id": 17, "name": "PP"},
-    {"longName": "PV-STUNDE", "id": 51, "name": "PV"},
-    {"longName": "R", "id": 57, "name": "R"},
-    {"longName": "Evang. Religion", "id": 2, "name": "RE"},
-    {"longName": "Kath.Religion", "id": 1, "name": "RK"},
-    {"longName": "Sprechstunde", "id": 50, "name": "S"},
-    {"longName": "Schwimmassistenz", "id": 25, "name": "SASS"},
-    {"longName": "Schulversuch Italienisch", "id": 27, "name": "SVIT"},
-    {"longName": "LÜ (Jazzgymnastik)", "id": 47, "name": "TANZ"},
-    {"longName": "Textverarbeitung", "id": 60, "name": "TEV"},
-    {"longName": "LÜ (Volleyball)", "id": 48, "name": "VB"},
-    {"longName": "Bildnerische Erziehung WPG", "id": 40, "name": "WBE"},
-    {"longName": "Biologie WPG", "id": 34, "name": "WBI"},
-    {"longName": "Chemie WPG", "id": 35, "name": "WCH"},
-    {"longName": "Deutsch WPG", "id": 28, "name": "WD"},
-    {"longName": "Englisch WPG", "id": 30, "name": "WE"},
-    {"longName": "Informatik WPG", "id": 26, "name": "WED"},
-    {"longName": "Technisches Werken", "id": 21, "name": "WEK"},
-    {"longName": "Textiles Werken", "id": 22, "name": "WEM"},
-    {"longName": "Französisch WPG", "id": 31, "name": "WF"},
-    {"longName": "Geschichte;SK;PB;RK/WPG", "id": 32, "name": "WH"},
-    {"longName": "Italienisch WPG", "id": 29, "name": "WIT"},
-    {"longName": "Latein WPG", "id": 38, "name": "WL"},
-    {"longName": "Mathematik WPG", "id": 33, "name": "WM"},
-    {"longName": "Musik WPG", "id": 39, "name": "WME"},
-    {"longName": "Physik WPG", "id": 36, "name": "WPH"},
-    {"longName": "Philosophie WPG", "id": 37, "name": "WPP"},
-    {"longName": "XABS", "id": 64, "name": "XABS"}
+    {
+        "longName": "Anwesenheit",
+        "id": 49,
+        "name": "A"
+    },
+    {
+        "longName": "Ast",
+        "id": 62,
+        "name": "Ast"
+    },
+    {
+        "longName": "LÜ (Basketball)",
+        "id": 45,
+        "name": "BB"
+    },
+    {
+        "longName": "Bildnerische Erziehung",
+        "id": 20,
+        "name": "BE"
+    },
+    {
+        "longName": "Betreuung in Frei- und Lernzeit",
+        "id": 56,
+        "name": "BFLZ"
+    },
+    {
+        "longName": "Biologie",
+        "id": 13,
+        "name": "BIO"
+    },
+    {
+        "longName": "Chemie",
+        "id": 14,
+        "name": "CH"
+    },
+    {
+        "longName": "Deutsch",
+        "id": 4,
+        "name": "D"
+    },
+    {
+        "longName": "Darstellende Geometrie",
+        "id": 16,
+        "name": "DG"
+    },
+    {
+        "longName": "Darstellendes Spiel",
+        "id": 44,
+        "name": "DSP"
+    },
+    {
+        "longName": "Englisch",
+        "id": 5,
+        "name": "E"
+    },
+    {
+        "longName": "E-Olympiade",
+        "id": 52,
+        "name": "E/O"
+    },
+    {
+        "longName": "E1",
+        "id": 63,
+        "name": "E1"
+    },
+    {
+        "longName": "Ethik",
+        "id": 3,
+        "name": "ETH"
+    },
+    {
+        "longName": "französisch",
+        "id": 8,
+        "name": "F"
+    },
+    {
+        "longName": "F-Olympiade",
+        "id": 53,
+        "name": "F/O"
+    },
+    {
+        "longName": "LÜ (Fußball)",
+        "id": 46,
+        "name": "FB"
+    },
+    {
+        "longName": "Instrumentalunterricht Flöte",
+        "id": 41,
+        "name": "FLOE"
+    },
+    {
+        "longName": "Griechisch",
+        "id": 7,
+        "name": "G"
+    },
+    {
+        "longName": "Gr-Olympiade",
+        "id": 54,
+        "name": "G/O"
+    },
+    {
+        "longName": "Instrumentalunterricht Gitarre",
+        "id": 42,
+        "name": "GIT"
+    },
+    {
+        "longName": "Geschichte und Sozialkunde",
+        "id": 10,
+        "name": "GSK"
+    },
+    {
+        "longName": "Geschichte und Politische Bildung",
+        "id": 9,
+        "name": "GSPB"
+    },
+    {
+        "longName": "Geographie und Wirtschaftskunde",
+        "id": 11,
+        "name": "GWK"
+    },
+    {
+        "longName": "Informationstechnologie",
+        "id": 58,
+        "name": "IKT"
+    },
+    {
+        "longName": "Informatik",
+        "id": 18,
+        "name": "INF"
+    },
+    {
+        "longName": "KFBU",
+        "id": 61,
+        "name": "KFBU"
+    },
+    {
+        "longName": "Instrumentalunterricht Klavier",
+        "id": 43,
+        "name": "KLAV"
+    },
+    {
+        "longName": "Latein",
+        "id": 6,
+        "name": "L"
+    },
+    {
+        "longName": "L-Olympiade",
+        "id": 55,
+        "name": "L/O"
+    },
+    {
+        "longName": "Leibesübungen Knaben",
+        "id": 23,
+        "name": "LUK"
+    },
+    {
+        "longName": "Leibesübungen Mädchen",
+        "id": 24,
+        "name": "LUM"
+    },
+    {
+        "longName": "Mathematik",
+        "id": 12,
+        "name": "M"
+    },
+    {
+        "longName": "Konfl.L.+Komm.",
+        "id": 59,
+        "name": "MASALA"
+    },
+    {
+        "longName": "Musikerziehung",
+        "id": 19,
+        "name": "ME"
+    },
+    {
+        "longName": "Physik",
+        "id": 15,
+        "name": "PH"
+    },
+    {
+        "longName": "Psychologie und Philosophie",
+        "id": 17,
+        "name": "PP"
+    },
+    {
+        "longName": "PV-STUNDE",
+        "id": 51,
+        "name": "PV"
+    },
+    {
+        "longName": "R",
+        "id": 57,
+        "name": "R"
+    },
+    {
+        "longName": "Evang. Religion",
+        "id": 2,
+        "name": "RE"
+    },
+    {
+        "longName": "Kath.Religion",
+        "id": 1,
+        "name": "RK"
+    },
+    {
+        "longName": "Sprechstunde",
+        "id": 50,
+        "name": "S"
+    },
+    {
+        "longName": "Schwimmassistenz",
+        "id": 25,
+        "name": "SASS"
+    },
+    {
+        "longName": "Schulversuch Italienisch",
+        "id": 27,
+        "name": "SVIT"
+    },
+    {
+        "longName": "LÜ (Jazzgymnastik)",
+        "id": 47,
+        "name": "TANZ"
+    },
+    {
+        "longName": "Textverarbeitung",
+        "id": 60,
+        "name": "TEV"
+    },
+    {
+        "longName": "LÜ (Volleyball)",
+        "id": 48,
+        "name": "VB"
+    },
+    {
+        "longName": "Bildnerische Erziehung WPG",
+        "id": 40,
+        "name": "WBE"
+    },
+    {
+        "longName": "Biologie WPG",
+        "id": 34,
+        "name": "WBI"
+    },
+    {
+        "longName": "Chemie WPG",
+        "id": 35,
+        "name": "WCH"
+    },
+    {
+        "longName": "Deutsch WPG",
+        "id": 28,
+        "name": "WD"
+    },
+    {
+        "longName": "Englisch WPG",
+        "id": 30,
+        "name": "WE"
+    },
+    {
+        "longName": "Informatik WPG",
+        "id": 26,
+        "name": "WED"
+    },
+    {
+        "longName": "Technisches Werken",
+        "id": 21,
+        "name": "WEK"
+    },
+    {
+        "longName": "Textiles Werken",
+        "id": 22,
+        "name": "WEM"
+    },
+    {
+        "longName": "Französisch WPG",
+        "id": 31,
+        "name": "WF"
+    },
+    {
+        "longName": "Geschichte;SK;PB;RK/WPG",
+        "id": 32,
+        "name": "WH"
+    },
+    {
+        "longName": "Italienisch WPG",
+        "id": 29,
+        "name": "WIT"
+    },
+    {
+        "longName": "Latein WPG",
+        "id": 38,
+        "name": "WL"
+    },
+    {
+        "longName": "Mathematik WPG",
+        "id": 33,
+        "name": "WM"
+    },
+    {
+        "longName": "Musik WPG",
+        "id": 39,
+        "name": "WME"
+    },
+    {
+        "longName": "Physik WPG",
+        "id": 36,
+        "name": "WPH"
+    },
+    {
+        "longName": "Philosophie WPG",
+        "id": 37,
+        "name": "WPP"
+    },
+    {
+        "longName": "XABS",
+        "id": 64,
+        "name": "XABS"
+    }
 ]

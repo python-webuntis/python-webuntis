@@ -1,22 +1,102 @@
 [
-    {"longName": "Klasse 1A", "id": 129, "name": "1A"},
-    {"longName": "Klasse 1B", "id": 130, "name": "1B"},
-    {"longName": "Klasse 2A", "id": 131, "name": "2A"},
-    {"longName": "Klasse 2B", "id": 132, "name": "2B"},
-    {"longName": "Klasse 3A", "id": 133, "name": "3A"},
-    {"longName": "Klasse 3B", "id": 134, "name": "3B"},
-    {"longName": "Klasse 3C", "id": 135, "name": "3C"},
-    {"longName": "Klasse 4A", "id": 136, "name": "4A"},
-    {"longName": "Klasse 4B", "id": 137, "name": "4B"},
-    {"longName": "Klasse 4C", "id": 138, "name": "4C"},
-    {"longName": "Klasse 5A", "id": 139, "name": "5A"},
-    {"longName": "Klasse 5B", "id": 140, "name": "5B"},
-    {"longName": "Klasse 5C", "id": 141, "name": "5C"},
-    {"longName": "Klasse 6A", "id": 142, "name": "6A"},
-    {"longName": "Klasse 6B", "id": 143, "name": "6B"},
-    {"longName": "Klasse 7A", "id": 144, "name": "7A"},
-    {"longName": "Klasse 7B", "id": 145, "name": "7B"},
-    {"longName": "Klasse 8A", "id": 113, "name": "8A"},
-    {"longName": "Klasse 8B", "id": 114, "name": "8B"},
-    {"longName": "Klasse 8C", "id": 115, "name": "8C"}
+    {
+        "longName": "Klasse 1A",
+        "id": 129,
+        "name": "1A"
+    },
+    {
+        "longName": "Klasse 1B",
+        "id": 130,
+        "name": "1B"
+    },
+    {
+        "longName": "Klasse 2A",
+        "id": 131,
+        "name": "2A"
+    },
+    {
+        "longName": "Klasse 2B",
+        "id": 132,
+        "name": "2B"
+    },
+    {
+        "longName": "Klasse 3A",
+        "id": 133,
+        "name": "3A"
+    },
+    {
+        "longName": "Klasse 3B",
+        "id": 134,
+        "name": "3B"
+    },
+    {
+        "longName": "Klasse 3C",
+        "id": 135,
+        "name": "3C"
+    },
+    {
+        "longName": "Klasse 4A",
+        "id": 136,
+        "name": "4A"
+    },
+    {
+        "longName": "Klasse 4B",
+        "id": 137,
+        "name": "4B"
+    },
+    {
+        "longName": "Klasse 4C",
+        "id": 138,
+        "name": "4C"
+    },
+    {
+        "longName": "Klasse 5A",
+        "id": 139,
+        "name": "5A"
+    },
+    {
+        "longName": "Klasse 5B",
+        "id": 140,
+        "name": "5B"
+    },
+    {
+        "longName": "Klasse 5C",
+        "id": 141,
+        "name": "5C"
+    },
+    {
+        "longName": "Klasse 6A",
+        "id": 142,
+        "name": "6A"
+    },
+    {
+        "longName": "Klasse 6B",
+        "id": 143,
+        "name": "6B"
+    },
+    {
+        "longName": "Klasse 7A",
+        "id": 144,
+        "name": "7A"
+    },
+    {
+        "longName": "Klasse 7B",
+        "id": 145,
+        "name": "7B"
+    },
+    {
+        "longName": "Klasse 8A",
+        "id": 113,
+        "name": "8A"
+    },
+    {
+        "longName": "Klasse 8B",
+        "id": 114,
+        "name": "8B"
+    },
+    {
+        "longName": "Klasse 8C",
+        "id": 115,
+        "name": "8C"
+    }
 ]

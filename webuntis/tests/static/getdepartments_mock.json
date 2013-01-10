@@ -1,6 +1,22 @@
 [
-    {"longName": "A1", "id": 2, "name": "A1"},
-    {"longName": "A2", "id": 3, "name": "A2"},
-    {"longName": "A3", "id": 4, "name": "A3"},
-    {"longName": "politecninco", "id": 1, "name": "politecninco"}
+    {
+        "longName": "A1",
+        "id": 2,
+        "name": "A1"
+    },
+    {
+        "longName": "A2",
+        "id": 3,
+        "name": "A2"
+    },
+    {
+        "longName": "A3",
+        "id": 4,
+        "name": "A3"
+    },
+    {
+        "longName": "politecninco",
+        "id": 1,
+        "name": "politecninco"
+    }
 ]
