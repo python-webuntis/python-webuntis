@@ -6,7 +6,8 @@
 '''
 
 from __future__ import unicode_literals
-import itertools
+from . import log
+from datetime import timedelta
 
 
 def table(periods, width=None):
@@ -15,47 +16,44 @@ def table(periods, width=None):
     if not len(periods):
         return []
 
-    time = lambda x: int(x.start.strftime('%H%M%S'))
-    date = lambda x: int(x.start.strftime('%Y%m%d'))
+    times = set()
+    dates = set()
+    table = {}
 
-    grouped = []
-    times = []
-    for i, row in itertools.groupby(sorted(periods, key=time), time):
-        new_row = []
+    for period in periods:
+        time = period.start.time()
+        date = period.start.date()
 
-        starttime = None
+        if time not in table:
+            table[time] = {}
+        row = table[time]
 
-        # group lessons by date -- now all lessons occuring at the same time
-        # are grouped
-        for i2, hour in itertools.groupby(sorted(row, key=date), date):
-            if hour:
-                # itertools._grouper objects can't be accessed like lists
-                hour = list(hour)
-                weekday = hour[0].start.weekday()
+        if date not in row:
+            row[date] = set()
+        hour = row[date]
 
-                while (len(new_row) - 1) < weekday:
-                    new_row.append(list())  # expand row as much as needed
-                new_row[weekday] = hour
+        hour.add(period)
+        times.add(time)
+        dates.add(date)
 
-                if not starttime:
-                    starttime = hour[0].start
-
-        grouped.append(new_row)
-        times.append(starttime)
-
-    # expand each row to the maximal length
-    longest_row = len(max(grouped, key=len))
-
+    # len(dates) = width
+    # Add additional dates so the next step will create stub cells for them.
     if width is not None:
-        if longest_row > width:
+        if len(dates) > width:
             raise ValueError(
-                'Fixed width too small. Need at least %i' % longest_row)
+                'Fixed width too small. Need at least %i' % len(dates))
         else:
-            longest_row = width
+            while len(dates) < width:
+                dates.add(max(dates) + timedelta(days=1))
 
-    for row in grouped:
-        while len(row) < longest_row:
-            row.append(list())
+    # Add stub cells for missing combinations of date and time.
+    for time in times:
+        for date in dates:
+            if date not in table[time]:
+                table[time][date] = set()
 
-    # at last add a weekday indicator
-    return zip(times, [enumerate(row) for row in grouped])
+    # Convert the hashtable to the output format by sorting each dictionary's
+    # .items() by key.
+    table = sorted((time, sorted(row.items())) for time, row in table.items())
+
+    return table
