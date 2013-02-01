@@ -40,13 +40,12 @@ class LruDict(OrderedDict):
         while len(self.items()) > self._maxlen:
             self.popitem(last=False)
 
-
 class SessionCache(LruDict):
     def clear(self, method=None):
         if method is None:
             LruDict.clear(self)
         else:
-            for k in self.keys():
+            for k in list(self):
                 if k[0] == method:
                     del self[k]
 
