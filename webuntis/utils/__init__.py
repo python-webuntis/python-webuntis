@@ -5,7 +5,7 @@
     :license: BSD, see LICENSE for more details.
 '''
 
-from .config import config_keys
+from .userinput import config_keys
 from .misc import FilterDict, \
     SessionCache, \
     LruDict, \

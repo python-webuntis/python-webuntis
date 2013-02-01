@@ -665,11 +665,11 @@ class InternalTests(OfflineTestCase):
 
         for parser_input, expected_output in tests:
             self.assertEqual(
-                webuntis.utils.config.server(parser_input),
+                webuntis.utils.userinput.server(parser_input),
                 expected_output
             )
 
-        self.assertRaises(ValueError, webuntis.utils.config.server, '!"$%')
+        self.assertRaises(ValueError, webuntis.utils.userinput.server, '!"$%')
 
     def test_resultclass_invalid_arguments(self):
         self.assertRaises(TypeError, webuntis.objects.Result,

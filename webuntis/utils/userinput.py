@@ -10,10 +10,6 @@ from .logger import log
 from .third_party import urlparse
 
 
-def whatever(value):
-    return value
-
-
 def server(url):
     if not re.match(r'^http(s?)\:\/\/', url):  # if we just have the hostname
         log('debug', 'The URL given doesn\'t seem to be a valid URL, just '
@@ -45,14 +41,15 @@ def server(url):
 
 
 def string(value):
-    return str(value)
+    '''Make the string unicode'''
+    return '' + value
 
 config_keys = {
     'username': string,
     'password': string,
     'jsessionid': string,
-    'school': whatever,
+    'school': string,
     'server': server,
-    'useragent': whatever,
+    'useragent': string,
     'login_repeat': int
 }
