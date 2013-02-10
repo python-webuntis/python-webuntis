@@ -4,8 +4,6 @@
     :copyright: (c) 2012 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
 '''
-from __future__ import unicode_literals
-
 import mock
 import webuntis
 import datetime
@@ -173,13 +171,10 @@ class DataFetchingTests(OfflineTestCase):
                         period_raw['ro'], period.rooms):
                     self.assertEqual(room.id, room_raw['id'])
 
-            def validate_table(periods, width=None):
+            def validate_table(periods):
                 counter = 0
-                table = periods.to_table(width=width)
+                table = periods.to_table()
                 for time, row in table:
-                    if width is not None:
-                        row = list(row)
-                        self.assertEqual(len(row), width)
                     for date, cell in row:
                         for hour in cell:
                             counter += 1
@@ -187,9 +182,6 @@ class DataFetchingTests(OfflineTestCase):
                 self.assertEqual(counter, len(periods))
 
             validate_table(tt)
-            validate_table(tt, width=999)
-            self.assertRaises(ValueError, validate_table, tt, width=0)
-
             self.assertEqual(len(webuntis.utils.timetable_utils.table([])), 0)
 
     def test_gettimetables_invalid_type_and_id(self):
@@ -651,7 +643,7 @@ class InternalTests(OfflineTestCase):
         self.assertEqual(item.id, data['id'])
         self.assertEqual(int(item), item.id)
 
-    def test_configkeys_server(self):
+    def test_userinput_server(self):
         tests = [
             ('webuntis.grupet.at',
                 'http://webuntis.grupet.at/WebUntis/jsonrpc.do'),
@@ -670,6 +662,15 @@ class InternalTests(OfflineTestCase):
             )
 
         self.assertRaises(ValueError, webuntis.utils.userinput.server, '!"$%')
+
+    def test_userinput_string(self):
+        s = webuntis.utils.userinput.string
+        try:
+            string = unicode
+        except NameError:
+            string = str
+
+        assert type(s('foo')) is string
 
     def test_resultclass_invalid_arguments(self):
         self.assertRaises(TypeError, webuntis.objects.Result,

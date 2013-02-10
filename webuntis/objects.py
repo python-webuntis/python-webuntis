@@ -315,7 +315,7 @@ class PeriodList(ListResult):
     instances.'''
     _itemclass = PeriodObject
 
-    def to_table(self, width=None):
+    def to_table(self, dates=None, times=None):
         '''
         Creates a table-like structure out of the periods. Useful for rendering
         timetables in HTML and other markup languages.
@@ -395,7 +395,7 @@ class PeriodList(ListResult):
 
         '''
 
-        return timetable_utils.table(self, width=width)
+        return timetable_utils.table(self, dates=dates, times=times)
 
 
 class RoomObject(ListItem):

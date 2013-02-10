@@ -201,6 +201,8 @@ class ResultWrapperMixin(object):
 
         element_type, element_id = list(type_and_id.items())[0]
 
+        element_type = utils.userinput.string(element_type)
+
         if element_type not in element_type_table:
             raise invalid_type_error
 
