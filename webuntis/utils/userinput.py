@@ -20,7 +20,7 @@ def server(url):
 
     urlobj = urlparse.urlparse(url)
 
-    if not urlobj.scheme or not urlobj.netloc:  # pragma: no cover
+    if not urlobj.scheme or not urlobj.netloc:
         # urlparse failed
         raise ValueError('Not a valid URL or hostname')
 

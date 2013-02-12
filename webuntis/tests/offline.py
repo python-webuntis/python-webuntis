@@ -295,7 +295,7 @@ class DataFetchingTests(OfflineTestCase):
 
         with mock_results(methods):
             for t_raw, t in zip(jsonstr, self.session.timegrid()):
-                self.assertEqual(t_raw['day'], t.day)
+                assert t_raw['day'] == t.day == t.id
                 for t2_raw, t2 in zip(t_raw['timeUnits'], t.times):
                     self.assertEqual(t2_raw['startTime'],
                                      int(t2[0].strftime('%H%M')))
@@ -316,6 +316,7 @@ class DataFetchingTests(OfflineTestCase):
             self.assertEqual(name, processed.name)
             self.assertEqual(colors['foreColor'], processed.forecolor)
             self.assertEqual(colors['backColor'], processed.backcolor)
+            assert type(processed.id) is int
 
         with mock_results(methods):
             statusdata = self.session.statusdata()
@@ -662,12 +663,13 @@ class InternalTests(OfflineTestCase):
             )
 
         self.assertRaises(ValueError, webuntis.utils.userinput.server, '!"$%')
+        self.assertRaises(ValueError, webuntis.utils.userinput.server, '')
 
     def test_userinput_string(self):
         s = webuntis.utils.userinput.string
         try:
             string = unicode
-        except NameError:
+        except NameError:  # pragma: no cover
             string = str
 
         assert type(s('foo')) is string
