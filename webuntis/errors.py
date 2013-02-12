@@ -28,7 +28,7 @@ class AuthError(RemoteError):
     pass
 
 
-class BadCredentialsError(AuthError):
+class BadCredentialsError(AuthError, ValueError):
     '''Invalid or missing username or password.'''
     pass
 
