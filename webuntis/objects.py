@@ -320,78 +320,21 @@ class PeriodList(ListResult):
         Creates a table-like structure out of the periods. Useful for rendering
         timetables in HTML and other markup languages.
 
-        :param width: Optionally, a fixed width for the table. The function
-            will create empty columns until that width is met. If the timetable
-            is too big, it will raise a ``ValueError``.
+        Check out the example from the repository for clarification.
+
+        :param dates: An iterable of :py:class:`datetime.date` objects that
+            definetly should be included in the table. If this parameter is
+            ``None``, the timetable is just as wide as it has to be, leaving
+            out days without periods.
+
+        :param times: An iterable of :py:class:`datetime.time` objects that
+            definetly should be included in the table. If this parameter is
+            ``None``, the timetable is just as tall as it has to be, leaving
+            out hours without periods.
 
         :returns: A list containing "rows", which in turn contain "hours",
             which contain :py:class:`webuntis.objects.PeriodObject` instances
             which are happening at the same time.
-
-        Example::
-
-            today = datetime.datetime.today()
-            monday = today - datetime.timedelta(days=today.weekday())
-            friday = monday + datetime.timedelta(days=4)
-
-            table = s.timetable(klasse=878, start=monday, end=friday) \\
-                    .to_table(width=5)
-
-            # DON'T USE THIS EXAMPLE AS-IS
-            # Properties that are printed here may contain arbitrary
-            # *unescaped* HTML. That is not expected, but you should not trust
-            # input from remote sources in general.
-
-            print('<table><thead>')
-            for weekday in range(5):
-                print('<th>' + str(weekday) + '</th>')
-
-            print('</thead><tbody>')
-            for time, row in table:
-                print('<tr>')
-                for date, cell in row:
-                    print('<td>')
-                    for period in cell:
-                        print('<div>')
-                        print(', '.join(su.name for su in period.subjects))
-                        print('</div>')
-
-                    print('</td>')
-
-                print('</tr>')
-
-            print('</tbody></table>')
-
-        Gives you HTML like this:
-
-        +--------+--------+--------+--------+--------+
-        | 0      | 1      | 2      | 3      | 4      |
-        +========+========+========+========+========+
-        | ME     | M      | PH     | M      | GSK    |
-        +--------+--------+--------+--------+--------+
-        | M      | BU     | D      | FRA    | D      |
-        |        |        |        | LAT    |        |
-        |        |        |        | SPA    |        |
-        +--------+--------+--------+--------+--------+
-        | E      | BU     | FRA    | BU     | E      |
-        |        |        | LAT    |        |        |
-        |        |        | SPA    |        |        |
-        +--------+--------+--------+--------+--------+
-        | RK     | GSK    | E      | ME     | GWK    |
-        | RISL   |        |        |        |        |
-        +--------+--------+--------+--------+--------+
-        | D      | BE     | M      | PH     | PH     |
-        +--------+--------+--------+--------+--------+
-        | FRA    |        |        |        |        |
-        | LAT    |        |        |        |        |
-        | SPA    |        |        |        |        |
-        +--------+--------+--------+--------+--------+
-        | INF+   |        |        |        |        |
-        +--------+--------+--------+--------+--------+
-        | INF+   |        |        |        |        |
-        +--------+--------+--------+--------+--------+
-        | BSP    | RKO    |        |        |        |
-        +--------+--------+--------+--------+--------+
 
         '''
 

@@ -178,7 +178,13 @@ class ResultWrapperMixin(object):
         room or student parameter containing the id or the object of the thing
         you want to get a timetable about::
 
-            schoolclass = s.klassen().filter(id=1)[0]  # schoolclass #1
+            import datetime
+            today = datetime.date.today()
+            monday = today - datetime.timedelta(days=today.weekday())
+            friday = monday + datetime.timedelta(days=4)
+
+            klasse = s.klassen().filter(id=1)[0]  # schoolclass #1
+            tt = s.timetable(klasse=klasse, start=monday, end=friday)
 
         :raises: :exc:`ValueError`, :exc:`TypeError`
         '''
