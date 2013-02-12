@@ -166,11 +166,11 @@ class ResultWrapperMixin(object):
     def timetable(self, start, end, **type_and_id):
         '''Get the timetable for a specific school class and time period.
 
-        :param start: The beginning of the time period. Can be a
-            :py:class:`datetime.datetime` object or a string of the format
-            ``YYMMDD``.
+        :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date`
+        :param start: The beginning of the time period.
 
-        :param end: The end of the time period, same type as ``start``.
+        :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date`
+        :param end: The end of the time period.
 
         :rtype: :py:class:`webuntis.objects.PeriodList`
 
@@ -336,11 +336,14 @@ class Session(JSONRPCSession, ResultWrapperMixin):
             s.timetable(klasse=123)  # fetch data again, override old value
             s.timetable(klasse=123, from_cache=True)  # get directly from cache
 
-        The reason this cache was added is because the API doesn't allow you to
-        fetch information for e.g. a single teacher. It would seriously harm
-        performance to fetch the whole list each time we want information about
-        a teacher. Without the cache, i experienced a performance decrease
-        about twenty seconds, so i wouldn't set the ``cachelen`` to ``0``.
+        The reason this cache was added is that the API only allows you to
+        fetch a whole list of objects (teachers/schoolclasses/...), not single
+        ones. It would seriously harm performance to fetch the whole list each
+        time we want information about a single object. Without the cache, i
+        sometimes experienced a performance decrease about twenty seconds, so i
+        wouldn't set the ``cachelen`` to anything smaller than ``5``.
+
+        Default value is ``20``.
 
         You can clear the cache using::
 

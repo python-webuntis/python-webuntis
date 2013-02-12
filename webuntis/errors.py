@@ -24,7 +24,7 @@ class MethodNotFoundError(RemoteError):
 
 
 class AuthError(RemoteError):
-    '''Errors while authenticating/logging in.'''
+    '''Errors while logging in.'''
     pass
 
 
