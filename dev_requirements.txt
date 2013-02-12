@@ -1,0 +1,4 @@
+sphinx
+mock
+nose
+tox
