@@ -2,6 +2,20 @@
 Changelog
 =========
 
+* 0.1.7:
+
+    * Bugfixes, as always.
+
+    * :py:exc:`webuntis.errors.BadCredentialsError` now subclasses
+      :py:exc:`ValueError`.
+
+    * **Backwards incompatible:** Completely changed the API of
+      :py:func:`webuntis.objects.PeriodList.to_table`, along with a rewrite of
+      that function. Basically it doesn't accept a width parameter anymore, but
+      sets of dates and times that should occur in the table. It now also pairs
+      a :py:class:`datetime.date` object with a set of hours instead of the
+      weekday number.
+
 * 0.1.6:
 
     * Just documentation improvements (simplifying) and internal restructuring.
