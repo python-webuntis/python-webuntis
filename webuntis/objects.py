@@ -60,6 +60,9 @@ class Result(object):
     def __hash__(self):
         return hash('%s#%i' % (self.__class__.__name__, self.id))
 
+    def __cmp__(self, other):
+        return type(self) is type(other) and hash(self) == hash(other)
+
 
 class ListItem(Result):
     '''ListItems represent an item in a
