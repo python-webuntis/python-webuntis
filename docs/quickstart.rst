@@ -21,8 +21,9 @@ and its API:
     - **Different schools, different rules.** It is not neccessary that schools
       enter information about, for example, a teacher, in the correct format.
       It might happen that a school abuses the name field of a teacher to just
-      write the teacher's initials in it. Testing is the only sane way out of
-      this.
+      write the teacher's initials in it. The timezone of the dates and times
+      is also dependent on how your school inserted those. Testing is the only
+      sane way out of this.
 
     - **Don't like something about the usage of my package?** Please, `let me
       know! <https://github.com/untitaker/python-webuntis/issues/new>`_ I don't
