@@ -61,7 +61,9 @@ class Result(object):
         return hash('%s#%i' % (self.__class__.__name__, self.id))
 
     def __eq__(self, other):
-        return type(self) is type(other) and hash(self) == hash(other)
+        if type(self) is not type(other):
+            return NotImplemented
+        return hash(self) == hash(other)
 
 
 class ListItem(Result):
