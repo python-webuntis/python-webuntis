@@ -10,6 +10,7 @@ from __future__ import unicode_literals
 
 import unittest
 import mock
+import sys
 import os
 import json
 import webuntis
@@ -46,6 +47,9 @@ class WebUntisTestCase(unittest.TestCase):
             logging.warning(
                 'Failed to tear the request_patcher down properly.')
 
+    if sys.version_info < (3, 0, 0):
+        def assertRaisesRegex(self, *a, **kw):
+            return self.assertRaisesRegexp(*a, **kw)
 
 
 stub_session_parameters = {

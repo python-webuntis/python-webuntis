@@ -91,3 +91,160 @@ class BasicUsage(WebUntisTestCase):
             return_value={}
         ) as mock_obj:
             self.assertRaises(webuntis.errors.AuthError, s.login)
+
+    def test_context_manager(self):
+        session_params = dict(stub_session_parameters)
+        del session_params['jsessionid']
+        s = webuntis.Session(**session_params)
+
+        with s as mgr:
+            assert mgr is s
+            assert 'jsessionid' not in s.config
+
+        sessionid = 'foobar_session'
+        with mock.patch(
+            'webuntis.Session._request',
+            return_value={'sessionId': sessionid}
+        ) as mock_obj:
+            with s.login() as msg:
+                assert mgr is s
+                assert s.config['jsessionid'] == sessionid
+
+    def test_custom_cachelen(self):
+        s = webuntis.Session(cachelen=20, **stub_session_parameters)
+        assert s.cache._maxlen == 20
+
+class WrapperMethodTests(WebUntisTestCase):
+    @staticmethod
+    def noop_result_mock(methodname):
+        def inner(url, jsondata, headers):
+            return {'result': {}}
+        return mock_results({methodname: inner})
+
+    def test_departments(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.noop_result_mock('getDepartments'):
+            dep = s.departments()
+            assert type(dep) is webuntis.objects.DepartmentList
+            assert not dep
+
+    def test_holidays(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.noop_result_mock('getHolidays'):
+            hol = s.holidays()
+            assert type(hol) is webuntis.objects.HolidayList
+            assert not hol
+
+    def test_klassen(self):
+        s = webuntis.Session(**stub_session_parameters)
+        def getKlassen(url, jsondata, headers):
+            assert not jsondata['params']
+            return {'result': {}}
+
+        with mock_results({'getKlassen': getKlassen}):
+            kl = s.klassen()
+            assert type(kl) is webuntis.objects.KlassenList
+            assert not kl
+
+    def test_klassen_with_schoolyear(self):
+        s = webuntis.Session(**stub_session_parameters)
+        yearid = 1232
+        def getKlassen(url, jsondata, headers):
+            assert jsondata['params']['schoolyearId'] == yearid
+            return {'result': {}}
+
+        with mock_results({'getKlassen': getKlassen}):
+            kl = s.klassen(schoolyear=yearid)
+            assert type(kl) is webuntis.objects.KlassenList
+            assert not kl
+
+    def test_timetable(self):
+        s = webuntis.Session(**stub_session_parameters)
+
+        startbase = 20120303
+        endbase   = 20120304
+
+        idbase = 12330
+        for i, name in enumerate((
+            'klasse',
+            'teacher',
+            'subject',
+            'room',
+            'student'
+        ), start=1):
+            id = idbase + i
+            start = startbase + i
+            end = endbase + i
+            def getTimetable(url, jsondata, headers):
+                assert jsondata['params']['type'] == i
+                assert jsondata['params']['id'] == id
+
+                assert jsondata['params']['startDate'] == start
+                assert jsondata['params']['endDate'] == end
+                return {'result': {}}
+
+            with mock_results({'getTimetable': getTimetable}):
+                tt = s.timetable(start=start, end=end, **{name: id})
+                assert type(tt) is webuntis.objects.PeriodList
+                assert not tt
+
+    def test_timetable_start_later_than_end(self):
+        s = webuntis.Session(**stub_session_parameters)
+        start = 20120308
+        end   = 20120303
+
+        self.assertRaisesRegex(ValueError, 'later', s.timetable,
+                               start=start, end=end, klasse=123)
+
+    def test_timetable_invalid_obj_given(self):
+        s = webuntis.Session(**stub_session_parameters)
+        start = 20120303
+        end   = 20120304
+
+        self.assertRaisesRegex(TypeError, 'by keyword', s.timetable,
+                               start=start, end=end)
+        self.assertRaisesRegex(TypeError, 'by keyword', s.timetable,
+                               start=start, end=end, klasse=123, teacher=124)
+        self.assertRaisesRegex(TypeError, 'by keyword', s.timetable,
+                               start=start, end=end, foobar=128)
+
+    def test_rooms(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.noop_result_mock('getRooms'):
+            ro = s.rooms()
+            assert type(ro) is webuntis.objects.RoomList
+            assert not ro
+
+    def test_schoolyears(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.noop_result_mock('getSchoolyears'):
+            sch = s.schoolyears()
+            assert type(sch) is webuntis.objects.SchoolyearList
+            assert not sch
+
+    def test_subjects(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.noop_result_mock('getSubjects'):
+            sb = s.subjects()
+            assert type(sb) is webuntis.objects.SubjectList
+            assert not sb
+
+    def test_teachers(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.noop_result_mock('getTeachers'):
+            te = s.teachers()
+            assert type(te) is webuntis.objects.TeacherList
+            assert not te
+
+    def test_timegrid(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.noop_result_mock('getTimegridUnits'):
+            grid = s.timegrid()
+            assert type(grid) is webuntis.objects.TimeunitList
+            assert not grid
+
+    def test_statusdata(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.noop_result_mock('getStatusData'):
+            st = s.statusdata()
+            assert type(st) is webuntis.objects.StatusData
