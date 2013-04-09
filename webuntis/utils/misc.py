@@ -36,9 +36,11 @@ class LruDict(OrderedDict):
         self._maxlen = maxlen
 
     def __setitem__(self, key, value):
+        self.pop(key, None)
         super(LruDict, self).__setitem__(key, value)
         while len(self.items()) > self._maxlen:
             self.popitem(last=False)
+
 
 class SessionCache(LruDict):
     def clear(self, method=None):
@@ -74,40 +76,39 @@ class FilterDict(object):
         self.filters = filters
         self._contents = {}
 
-    def __getitem__(self, name):
+    def __getitem__(self, key):
         # check if we got a real Option subclass
-        if name in self._contents and self._contents[name] is not None:
+        if key in self:
             # every Option subclass has this
-            return self._contents[name]
-        elif name in self.filters:
-            raise KeyError('No value for key: ' + name)
+            return self._contents[key]
+        elif key in self.filters:
+            raise KeyError('No value for key: ' + key)
         else:
-            raise KeyError('No value or filter for key: ' + name)
+            raise KeyError('No value or filter for key: ' + key)
 
     def __setitem__(self, key, value):
         if value is None:
-            if key in self._contents:
-                del self._contents[key]
+            self._contents.pop(key, None)
             return
 
         new_value = self.filters[key](value)
 
         if new_value is None:
-            if key in self._contents:
-                del self._contents[key]
+            self._contents.pop(key, None)
             return
 
         self._contents[key] = new_value
 
     def __delitem__(self, key):
-        del self._contents[key]
+        self._contents.pop(key, None)
 
     def update(self, new_pairs):
         for key, value in new_pairs.items():
             self[key] = value
 
     def __contains__(self, key):
-        return key in self._contents
+        return (key in self._contents and
+                self._contents[key] is not None)
 
     def __iter__(self):
         return iter(self._contents)
