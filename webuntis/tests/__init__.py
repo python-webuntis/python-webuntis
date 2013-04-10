@@ -152,5 +152,3 @@ def mock_urlopen(data, expected_url, expected_data, expected_headers):
         'webuntis.utils.third_party.urlrequest.urlopen',
         new=mocking_func
     )
-
-from webuntis.tests.session import *
