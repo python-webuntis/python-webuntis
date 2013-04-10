@@ -79,28 +79,25 @@ class JSONRPCSession(object):
             session ID for unknown reasons.
         '''
 
-        if 'username' not in self.config \
-                or 'password' not in self.config:
-            raise errors.BadCredentialsError('No login data specified.')
+        try:
+            username = self.config['username']
+            password = self.config['password']
+            useragent = self.config['useragent']
+        except KeyError as e:
+            raise errors.BadCredentialsError('Missing config: ' + str(e))
 
-        log('debug', 'Trying to authenticate with username/password...')
-        log('debug', 'Username: %s Password: %s' %
-           (self.config['username'], self.config['password']))
         res = self._request('authenticate', {
-            'user': self.config['username'],
-            'password': self.config['password'],
-            'client': self.config['useragent']
+            'user': username,
+            'password': password,
+            'client': useragent
         }, use_login_repeat=False)
-        log('debug', res)
+
         if 'sessionId' in res:
-            log('debug', 'Did get a jsessionid from the server:')
-            self.config['jsessionid'] = res['sessionId']
-            log('debug', self.config['jsessionid'])
+            sid = self.config['jsessionid'] = res['sessionId']
+            log('debug', 'Did get a jsessionid from the server: ' + sid)
         else:
-            raise errors.AuthError(
-                'Something went wrong while authenticating',
-                res
-            )
+            raise errors.AuthError('Something went wrong while authenticating',
+                                   res)
 
         return self
 

@@ -54,12 +54,11 @@ def rpc_request(config, method, params):
     }
 
     if method != 'authenticate':
-        if 'jsessionid' not in config:
+        if 'jsessionid' in config:
+            headers['Cookie'] = 'JSESSIONID=' + config['jsessionid']
+        else:
             raise errors.NotLoggedInError(
                 'Don\'t have JSESSIONID. Did you already log out?')
-        else:
-            headers['Cookie'] = 'JSESSIONID=' + \
-                config['jsessionid']
 
     log('debug', 'Making new request:')
     log('debug', 'URL: ' + url)
@@ -74,7 +73,7 @@ def rpc_request(config, method, params):
 
 
 def _parse_result(request_body, result_body):
-    '''A subfunction of request, that, given the decoded JSON result,
+    '''A subfunction of rpc_request, that, given the decoded JSON result,
     handles the error codes or, if everything went well, returns the result
     attribute of it. The request data has to be given too for logging and
     ID validation.
@@ -125,6 +124,6 @@ def _send_request(url, data, headers):
         result_data = json.loads(result)
         log('debug', 'Valid JSON found')
     except ValueError:
-        raise errors.RemoteError('Invalid JSON', str(result))
+        raise errors.RemoteError('Invalid JSON', result)
     else:
         return result_data
