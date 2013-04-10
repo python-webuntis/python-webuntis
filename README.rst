@@ -48,7 +48,7 @@ Unittests
 
 ::
 
-    $ nosetests
+    $ python run-tests.py
 
 For the single testsuites and their descriptions, look at the docstrings of the
 modules in ``webuntis.tests``.
