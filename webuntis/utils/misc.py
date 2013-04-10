@@ -100,7 +100,7 @@ class FilterDict(object):
         self._contents[key] = new_value
 
     def __delitem__(self, key):
-        self._contents.pop(key, None)
+        del self._contents[key]
 
     def update(self, new_pairs):
         for key, value in new_pairs.items():
