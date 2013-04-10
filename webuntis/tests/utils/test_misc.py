@@ -149,16 +149,14 @@ class FilterDictTests(WebUntisTestCase):
 
         d['foo'] = None
         assert 'foo' not in d
+        d['foo'] = 'somethingelse'
+        assert 'foo' in d
+        del d['foo']
+        assert 'foo' not in d
 
         d['alwaysnone'] = 'YES'
         assert 'alwaysnone' not in d
 
-        del d['foo']
-        assert 'foo' not in d
-        del d['foo']
-        del d['foo']
-
         assert list(d) == []
-        
         d.update({'foo': 'bar', 'alwaysnone': True})
         assert set(d) == set(['foo'])
