@@ -130,25 +130,3 @@ def raw_vs_object(jsondata, result):
 
     assert len(known_hashes) == len(jsondata) == len(result), \
         (len(known_hashes), len(jsondata), len(result))
-
-
-def mock_urlopen(data, expected_url, expected_data, expected_headers):
-    def mocking_func(requestobj):
-        given_url = requestobj.get_full_url()
-        given_data = requestobj.data
-        given_headers = dict(requestobj.header_items())
-
-        assert given_url == expected_url, given_url
-        assert given_data == expected_data, given_data
-        assert given_headers == expected_headers, given_headers
-
-        if isinstance(data, Exception):
-            raise data
-
-        io = StringIO(data)
-        return io
-
-    return mock.patch(
-        'webuntis.utils.third_party.urlrequest.urlopen',
-        new=mocking_func
-    )
