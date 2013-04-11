@@ -76,32 +76,32 @@ class LruDictTests(WebUntisTestCase):
             d['two'] = 2
             d['three'] = 3
 
-            self.assertEqual(list(d.items()), [
+            assert list(d.items()) == [
                 ('one', 1),
                 ('two', 2),
                 ('three', 3)
-            ])
+            ]
 
             d['four'] = 4
-            self.assertEqual(list(d.items()), [
+            assert list(d.items()) == [
                 ('two', 2),
                 ('three', 3),
                 ('four', 4)
-            ])
+            ]
 
             d['two'] = 5
-            self.assertEqual(list(d.items()), [
+            assert list(d.items()) == [
                 ('three', 3),
                 ('four', 4),
                 ('two', 5)
-            ])
+            ]
 
             d['three']
-            self.assertEqual(list(d.items()), [
+            assert list(d.items()) == [
                 ('three', 3),
                 ('four', 4),
                 ('two', 5)
-            ])
+            ]
 
             d.clear()
             assert not d

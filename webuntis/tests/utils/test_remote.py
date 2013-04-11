@@ -18,7 +18,7 @@ class BasicUsage(WebUntisTestCase):
 
         a = {'id': 2}
         b = {'id': 2, 'result': 'YESSIR'}
-        self.assertEqual(x(a, b), 'YESSIR')
+        assert x(a, b) == 'YESSIR'
 
     def test_parse_error_code(self):
         x = webuntis.utils.remote._parse_error_code

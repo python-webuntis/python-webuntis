@@ -46,7 +46,7 @@ class BasicUsage(WebUntisTestCase):
                                   s._request,
                                   'getCurrentSchoolyear')
 
-        self.assertEqual(calls, expected_calls)
+        assert calls == expected_calls
 
     def test_logout_not_logged_in(self):
         session_params = dict(stub_session_parameters)
@@ -77,8 +77,8 @@ class BasicUsage(WebUntisTestCase):
             return_value={'sessionId': '123456'}
         ) as mock_obj:
             s.login()
-            self.assertEqual(s.config['jsessionid'], '123456')
-            self.assertEqual(mock_obj.call_count, 1)
+            assert s.config['jsessionid'] == '123456'
+            assert mock_obj.call_count == 1
 
     def test_login_no_response(self):
         session_params = dict(stub_session_parameters)
