@@ -7,6 +7,7 @@
 from __future__ import unicode_literals
 from webuntis import utils, objects, errors
 from webuntis.utils import result_wrapper, log, rpc_request
+from webuntis.utils.userinput import unicode_string
 
 
 class JSONRPCSession(object):
@@ -102,6 +103,9 @@ class JSONRPCSession(object):
         return self
 
     def _request(self, method, params=None, use_login_repeat=None):
+        if not isinstance(method, unicode_string):
+            method = method.decode('ascii')
+
         if use_login_repeat is None:
             use_login_repeat = (method not in ('logout', 'authenticate'))
         attempts_left = self.config['login_repeat'] if use_login_repeat else 0
@@ -110,7 +114,7 @@ class JSONRPCSession(object):
 
         while data is None:
             try:
-                data = rpc_request(self.config, method, params)
+                data = rpc_request(self.config, method, params or {})
             except errors.NotLoggedInError:
                 if attempts_left > 0:
                     self.logout(suppress_errors=True)

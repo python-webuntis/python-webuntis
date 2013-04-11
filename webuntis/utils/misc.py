@@ -113,6 +113,12 @@ class FilterDict(object):
     def __iter__(self):
         return iter(self._contents)
 
+    def items(self):
+        for key in self:
+            value = self[key]
+            if value:
+                yield key, value
+
 
 def result_wrapper(func):
     '''A decorator for the session methods that return result objects. The

@@ -53,3 +53,10 @@ config_keys = {
     'useragent': string,
     'login_repeat': int
 }
+
+try:
+    unicode_string = unicode
+    bytestring = str
+except NameError:
+    unicode_string = str
+    bytestring = bytes

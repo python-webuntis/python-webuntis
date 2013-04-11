@@ -4,9 +4,9 @@
     :copyright: (c) 2012 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
 '''
-from __future__ import unicode_literals
 from webuntis import errors
 from webuntis.utils import log
+from webuntis.utils.userinput import unicode_string, bytestring
 from webuntis.utils.third_party import json, urlrequest
 
 import datetime
@@ -36,26 +36,37 @@ def rpc_request(config, method, params):
         serializable)
     :type params: dict
     '''
+    server = config['server']
+    school = config['school']
+    useragent = config['useragent']
 
-    url = config['server'] + \
-        '?school=' + \
-        config['school']
+    assert isinstance(method, unicode_string)
+    assert isinstance(server, unicode_string)
+    assert isinstance(school, unicode_string)
+    assert isinstance(useragent, unicode_string)
+
+    for v in params.values():
+        assert not isinstance(v, bytestring)
+
+
+    url = server + u'?school=' + school
 
     headers = {
-        'User-Agent': config['useragent'],
-        'Content-Type': 'application/json'
+        u'User-Agent': useragent,
+        u'Content-Type': u'application/json'
     }
 
     request_body = {
-        'id': str(datetime.datetime.today()),
-        'method': method,
-        'params': params,
-        'jsonrpc': '2.0'
+        u'id': str(datetime.datetime.today()),
+        u'method': method,
+        u'params': params,
+        u'jsonrpc': u'2.0'
     }
 
-    if method != 'authenticate':
+    if method != u'authenticate':
         if 'jsessionid' in config:
-            headers['Cookie'] = 'JSESSIONID=' + config['jsessionid']
+            assert isinstance(config['jsessionid'], unicode_string)
+            headers['Cookie'] = u'JSESSIONID=' + config['jsessionid']
         else:
             raise errors.NotLoggedInError(
                 'Don\'t have JSESSIONID. Did you already log out?')
@@ -82,12 +93,12 @@ def _parse_result(request_body, result_body):
     :param result_body: The decoded body of the result recieved.
     '''
 
-    if request_body['id'] != result_body['id']:
+    if request_body[u'id'] != result_body[u'id']:
         raise errors.RemoteError(
             'Request ID was not the same one as returned.')
 
     try:
-        return result_body['result']
+        return result_body[u'result']
     except KeyError:
         _parse_error_code(request_body, result_body)
 
@@ -96,14 +107,13 @@ def _parse_error_code(request_body, result_body):
     '''A helper function for handling JSON error codes.'''
     log('error', result_body)
     try:
-        error = result_body['error']
-        exc = _errorcodes[error['code']](error['message'])
+        error = result_body[u'error']
+        exc = _errorcodes[error[u'code']](error[u'message'])
     except KeyError:
         exc = errors.RemoteError(
             ('Some JSON-RPC-ish error happened. Please report this to the '
                 'developer so he can implement a proper handling.'),
-            str(result_body),
-            str(request_body)
+            result_body, request_body
         )
 
     raise exc
