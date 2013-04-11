@@ -1,7 +1,7 @@
 import webuntis
 import mock
 from webuntis.utils.third_party import json
-from webuntis.tests import WebUntisTestCase, StringIO
+from webuntis.tests import WebUntisTestCase, BytesIO
 
 class BasicUsage(WebUntisTestCase):
     def test_parse_result(self):
@@ -45,18 +45,18 @@ class BasicUsage(WebUntisTestCase):
         headers = {'x-foobar': 'HAHA'}
 
         rv = {'result': 'HOIHOI'}
-        enc_rv = json.dumps(rv)
+        enc_rv = b'{"result": "HOIHOI"}'
 
         def cb(req):
             assert req.get_full_url() == endpoint
-            assert json.loads(req.data) == data
+            assert json.loads(req.data.decode('utf-8')) == data
             h = dict((k.lower(), v) for k, v in req.header_items())
             assert h == headers
 
-            return StringIO(enc_rv)
+            return BytesIO(enc_rv)
 
         with mock.patch('webuntis.utils.third_party.urlrequest.urlopen', new=cb):
             assert x(endpoint, data, headers) == rv
-            enc_rv = 'alert("HELLO");'
+            enc_rv = b'alert("HELLO");'
 
             self.assertRaisesRegex(webuntis.errors.RemoteError, 'JSON', x, endpoint, data, headers)

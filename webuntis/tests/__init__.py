@@ -8,8 +8,10 @@
 
 from __future__ import unicode_literals
 
+import re
 import unittest
 import mock
+import pytest
 import sys
 import os
 import json
@@ -18,9 +20,9 @@ import logging
 from copy import deepcopy
 
 try:
-    from StringIO import StringIO  # Python 2
+    from StringIO import StringIO as BytesIO  # Python 2
 except ImportError:
-    from io import BytesIO as StringIO  # Python 3
+    from io import BytesIO  # Python 3
 
 tests_path = os.path.abspath(os.path.dirname(__file__))
 data_path = tests_path + '/static'
@@ -47,9 +49,11 @@ class WebUntisTestCase(unittest.TestCase):
             logging.warning(
                 'Failed to tear the request_patcher down properly.')
 
-    if sys.version_info < (3, 0, 0):
-        def assertRaisesRegex(self, *a, **kw):
-            return self.assertRaisesRegexp(*a, **kw)
+    def assertRaisesRegex(self, exc, regexp, callback, *a, **kw):
+        with pytest.raises(exc) as excinfo:
+            callback(*a, **kw)
+
+        assert re.search(regexp, repr(excinfo.value)), excinfo.value
 
 
 stub_session_parameters = {
