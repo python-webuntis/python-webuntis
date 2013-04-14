@@ -61,9 +61,7 @@ class Result(object):
         return hash('%s#%i' % (self.__class__.__name__, self.id))
 
     def __eq__(self, other):
-        if type(self) is not type(other):
-            return NotImplemented
-        return hash(self) == hash(other)
+        return type(self) is type(other) and hash(self) == hash(other)
 
 
 class ListItem(Result):
@@ -138,6 +136,8 @@ class ListResult(Result):
         )
 
     def __contains__(self, criterion):
+        if isinstance(criterion, self._itemclass):
+            return any(item is criterion for item in self)
         return bool(self.filter(**criterion))
 
     def __getitem__(self, i):
