@@ -46,9 +46,9 @@ class ListResultTests(WebUntisTestCase):
             _itemclass = CustomItem
 
         data = [
-            {'id': 1, 'val': 3},
-            {'id': 2, 'val': 19},
-            {'id': 3, 'val': 29}
+            {u'id': 1, u'val': 3},
+            {u'id': 2, u'val': 19},
+            {u'id': 3, u'val': 29}
         ]
 
         r = CustomListResult(data=list(data), session=object())
@@ -74,9 +74,9 @@ class ListResultTests(WebUntisTestCase):
             _itemclass = CustomItem
 
         data = [
-            {'id': 1, 'one': 'eins', 'two': 'zwei'},
-            {'id': 2, 'one': 'oans', 'two': 'zwoa'},
-            {'id': 3, 'one': 'unus', 'two': 'duo'}
+            {u'id': 1, u'one': u'eins', u'two': u'zwei'},
+            {u'id': 2, u'one': u'oans', u'two': u'zwoa'},
+            {u'id': 3, u'one': u'unus', u'two': u'duo'}
         ]
 
         r = CustomListResult(data=list(data), session=object())
@@ -93,45 +93,167 @@ class ListResultTests(WebUntisTestCase):
 class DepartmentTests(WebUntisTestCase):
     def test_basics(self):
         x = webuntis.objects.DepartmentObject(
-            data={'id': 1, 'name': 'ZIMMER', 'longName': 'Das Zimmer'},
+            data={u'id': 1, u'name': u'ZIMMER', u'longName': u'Das Zimmer'},
             session=object())
 
-        assert x.name == 'ZIMMER'
-        assert x.long_name == 'Das Zimmer'
+        assert x.name == u'ZIMMER'
+        assert x.long_name == u'Das Zimmer'
 
 class HolidayTests(WebUntisTestCase):
     def test_basics(self):
         x = webuntis.objects.HolidayObject(
             data={
-                'id': 1,
-                'name': 'SOMMER',
-                'longName': 'Sommerferien',
-                'startDate': '20120303',
-                'endDate': '20120403'
+                u'id': 1,
+                u'name': u'SOMMER',
+                u'longName': u'Sommerferien',
+                u'startDate': u'20120303',
+                u'endDate': u'20120403'
             },
             session=object())
 
-        assert x.short_name == 'SOMMER'
-        assert x.name == 'Sommerferien'
+        assert x.short_name == u'SOMMER'
+        assert x.name == u'Sommerferien'
 
-        assert x.start.year == 2012
-        assert x.start.month == 03
-        assert x.start.day == 03
-
-        assert x.end.year == 2012
-        assert x.end.month == 04
-        assert x.end.day == 03
+        assert x.start.strftime('%Y-%m-%d') == '2012-03-03'
+        assert x.end.strftime('%Y-%m-%d') == '2012-04-03'
 
 
 class KlassenTests(WebUntisTestCase):
     def test_basics(self):
         x = webuntis.objects.KlassenObject(
             data={
-                'id': 1,
-                'name': '1A',
-                'longName': 'Erste A'
+                u'id': 1,
+                u'name': u'1A',
+                u'longName': u'Erste A'
             },
             session=object())
 
         assert x.name == '1A'
         assert x.long_name == 'Erste A'
+
+
+class PeriodTests(WebUntisTestCase):
+    Obj = webuntis.objects.PeriodObject
+    def test_dates(self):
+        x = self.Obj(
+            data={
+                u'id': 1,
+                u'startTime': u'0800',
+                u'endTime': u'0900',
+                u'date': u'20120303'
+            },
+            session=object()
+        )
+
+        assert x.start.strftime('%Y-%m-%d %H:%M') == '2012-03-03 08:00'
+        assert x.end.strftime('%Y-%m-%d %H:%M') == '2012-03-03 09:00'
+
+    def test_code(self):
+        x = self.Obj(data={}, session=object())
+        assert x.code is None
+
+        x = self.Obj(data={u'code': u''}, session=object())
+        assert x.code is None
+
+        x = self.Obj(data={u'code': u'hoompaloompa'}, session=object())
+        assert x.code is None
+
+        x = self.Obj(data={u'code': u'cancelled'}, session=object())
+        assert x.code == u'cancelled'
+
+        x = self.Obj(data={u'code': u'irregular'}, session=object())
+        assert x.code == u'irregular'
+
+    def test_type(self):
+        x = self.Obj(data={}, session=object())
+        assert x.type == u'ls'
+
+        for type in (u'ls', u'oh', u'sb', u'bs', u'ex'):
+            x = self.Obj(data={u'lstype':type}, session=object())
+            assert x.type == type
+
+        x = self.Obj(data={u'type': u'hoompaloompa'}, session=object())
+        assert x.type == u'ls'
+
+
+class RoomTests(WebUntisTestCase):
+    def test_basics(self):
+        x = webuntis.objects.RoomObject(
+            data={u'name': u'PHY', u'longName': 'Physics lab'},
+            session=object()
+        )
+
+        assert x.name == u'PHY'
+        assert x.long_name == u'Physics lab'
+
+
+class SchoolyearTests(WebUntisTestCase):
+    def test_object(self):
+        class parent(object):
+            _session = object()
+            current = {u'name': u'Holidayz'}
+
+        x = webuntis.objects.SchoolyearObject(
+            data={
+                u'name': u'Holidayz',
+                u'startDate': u'20120401',
+                u'endDate': u'20120901'
+            },
+            parent=parent
+        )
+
+        assert not x.is_current  # that kind of "weak typing" really shouldn't work
+        assert x.start.strftime('%Y-%m-%d') == '2012-04-01'
+        assert x.end.strftime('%Y-%m-%d') == '2012-09-01'
+        assert x.name == u'Holidayz'
+
+
+    def test_list(self):
+        class StubSession(object):
+            def _request(self, method):
+                assert method == u'getCurrentSchoolyear'
+                return {u'id': 123}
+
+        x = webuntis.objects.SchoolyearList(
+            data=[
+                {u'id': 121, u'name': u'Summer'},
+                {u'id': 122, u'name': u'Autumn'},
+                {u'id': 123, u'name': u'Winter'},
+                {u'id': 124, u'name': u'St. Florian'}
+            ],
+            session=StubSession()
+        )
+
+        assert x.current.id == 123
+        assert x.current.is_current
+        assert x.current.name == u'Winter'
+
+
+class SubjectTests(WebUntisTestCase):
+    def test_basics(self):
+        x = webuntis.objects.SubjectObject(
+            data={
+                u'name': u'Math',
+                u'longName': u'Mathematics'
+            },
+            session=object()
+        )
+
+        assert x.name ==  u'Math'
+        assert x.long_name == u'Mathematics'
+
+
+class TeacherTests(WebUntisTestCase):
+    def test_basics(self):
+        x = webuntis.objects.TeacherObject(
+            data={
+                u'foreName': u'Hans',
+                u'longName': u'Gans',
+                u'name': u'Hans Gans'
+            },
+            session=object()
+        )
+
+        assert x.fore_name == u'Hans'
+        assert x.long_name == x.surname == u'Gans'
+        assert x.name == u'Hans Gans'

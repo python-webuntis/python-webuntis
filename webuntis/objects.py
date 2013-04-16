@@ -31,12 +31,11 @@ class Result(object):
     _data = None
 
     def __init__(self, data, parent=None, session=None):
-        if not isinstance(parent, Result) and parent is not None:
-            raise TypeError('If provided, parent must be an instance of '
-                            'webuntis.objects.Result.')
-
         if bool(parent is None) == bool(session is None):
             raise TypeError('Either parent or session has to be provided.')
+
+        if parent is not None and not hasattr(parent, '_session'):
+            raise TypeError('Parent must have a _session attribute.')
 
         self._session = session or parent._session
         self._parent = parent
@@ -295,11 +294,10 @@ class PeriodObject(ListItem):
           - ``"cancelled"`` -- Cancelled
           - ``"irregular"`` -- Substitution/"Supplierung"/Not planned event
         '''
-
-        if 'code' not in self._data:
-            return None
-        else:
-            return self._data['code'] or None
+        code = self._data.get(u'code', None)
+        if code in (None, u'cancelled', u'irregular'):
+            return code
+        return None
 
     @lazyproperty
     def type(self):
