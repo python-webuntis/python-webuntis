@@ -88,6 +88,7 @@ class ListResultTests(WebUntisTestCase):
         assert list(r.filter(id=set([1,2]))) == [results[1], results[2]]
         assert list(r.filter(id=set([1,2])).filter(one='eins')) == \
                list(r.filter(one='eins', id=set([1,2]))) == [results[1]]
+        assert list(r.filter(two='zwoa')) == [results[2]]
 
 
 class DepartmentTests(WebUntisTestCase):
