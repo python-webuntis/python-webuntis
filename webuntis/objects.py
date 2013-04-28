@@ -57,7 +57,7 @@ class Result(object):
         return self.id
 
     def __hash__(self):
-        return hash('%s#%i' % (self.__class__.__name__, self.id))
+        return hash(self.__class__.__name__) * 101 + self.id
 
     def __eq__(self, other):
         return type(self) is type(other) and hash(self) == hash(other)
