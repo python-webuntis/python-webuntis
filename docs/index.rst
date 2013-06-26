@@ -9,7 +9,7 @@ Bindings for WebUntis
 
 `python-webuntis` is a package for the API of `WebUntis
 <http://www.grupet.at>`_, a timetable system used for schools all around
-Europe. It is compatible with Python >= 2.6::
+Europe. It is compatible with Python >= 2.6 and Python >= 3.3::
 
     import webuntis
 
