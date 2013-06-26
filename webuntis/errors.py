@@ -5,8 +5,6 @@
     :license: BSD, see LICENSE for more details.
 '''
 
-from __future__ import unicode_literals
-
 
 class Error(Exception):
     '''Superclass for all `python-webuntis`-specific errors, never gets raised

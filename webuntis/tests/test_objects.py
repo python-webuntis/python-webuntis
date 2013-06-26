@@ -10,24 +10,24 @@ class ResultTests(WebUntisTestCase):
         r = self.Result(data={'id': 124}, parent=r)
         assert r.id == int(r) == 124
 
-        self.assertRaises(TypeError, self.Result, data={'id': 137})
-        self.assertRaises(TypeError, self.Result, data={'id': 137},
+        self.assertRaises(TypeError, self.Result, data={u'id': 137})
+        self.assertRaises(TypeError, self.Result, data={u'id': 137},
                           session=object(), parent=r)
-        self.assertRaises(TypeError, self.Result, data={'id': 139},
+        self.assertRaises(TypeError, self.Result, data={u'id': 139},
                           parent=object())
 
     def test_hashes(self):
-        r1 = self.Result(data={'id': 124}, session=object())
+        r1 = self.Result(data={u'id': 124}, session=object())
 
         r2 = None
         assert r1 != r2
         assert hash(r1) != hash(r2)
 
-        r2 = self.Result(data={'id': 123}, session=object())
+        r2 = self.Result(data={u'id': 123}, session=object())
         assert r1 != r2
         assert hash(r1) != hash(r2)
 
-        r2 = self.Result(data={'id': 124}, session=object())
+        r2 = self.Result(data={u'id': 124}, session=object())
         assert r1 == r2
         assert hash(r1) == hash(r2)
 
@@ -40,7 +40,7 @@ class ListResultTests(WebUntisTestCase):
         class CustomItem(webuntis.objects.ListItem):
             @self.lazyproperty
             def value(self):
-                return self._data['val']
+                return self._data[u'val']
 
         class CustomListResult(self.Result):
             _itemclass = CustomItem
@@ -57,18 +57,18 @@ class ListResultTests(WebUntisTestCase):
         for res, raw in zip(r, data):
             assert type(res) is CustomItem
             assert res in r
-            assert {'id': res.id, 'value': res.value} in r
-            assert res.id == raw['id']
+            assert {u'id': res.id, u'value': res.value} in r
+            assert res.id == raw[u'id']
 
     def test_filter(self):
         class CustomItem(webuntis.objects.ListItem):
             @self.lazyproperty
             def one(self):
-                return self._data['one']
+                return self._data[u'one']
 
             @self.lazyproperty
             def two(self):
-                return self._data['two']
+                return self._data[u'two']
 
         class CustomListResult(self.Result):
             _itemclass = CustomItem

@@ -4,7 +4,6 @@
     :copyright: (c) 2013 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
 '''
-from __future__ import unicode_literals
 import re
 from .logger import log
 from .third_party import urlparse
@@ -35,14 +34,16 @@ def server(url):
                        'parameter.')
 
     return urlobj.scheme + \
-        '://' + \
+        u'://' + \
         urlobj.netloc + \
-        (urlobj.path or '/WebUntis/jsonrpc.do')
+        (urlobj.path or u'/WebUntis/jsonrpc.do')
 
 
 def string(value):
     '''Make the string unicode'''
-    return '' + value
+    if isinstance(value, unicode_string):
+        return value
+    return value.decode('ascii')
 
 config_keys = {
     'username': string,

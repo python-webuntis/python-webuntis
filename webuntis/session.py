@@ -4,7 +4,6 @@
     :copyright: (c) 2012 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
 '''
-from __future__ import unicode_literals
 from webuntis import utils, objects, errors
 from webuntis.utils import result_wrapper, log, rpc_request
 from webuntis.utils.userinput import unicode_string
