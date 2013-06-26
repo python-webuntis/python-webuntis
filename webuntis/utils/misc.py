@@ -6,7 +6,6 @@
 '''
 # Uncategorized utils go here
 
-from __future__ import unicode_literals
 from functools import wraps
 from copy import deepcopy
 from .third_party import OrderedDict
