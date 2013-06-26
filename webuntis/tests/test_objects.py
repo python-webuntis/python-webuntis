@@ -6,9 +6,9 @@ class ResultTests(WebUntisTestCase):
     Result = webuntis.objects.Result
     def test_initialization(self):
         r = self.Result(data={'id': 123}, session=object())
-        assert r.id == int(r) == 123
+        self.assert_strict_equal(r.id, int(r), 123)
         r = self.Result(data={'id': 124}, parent=r)
-        assert r.id == int(r) == 124
+        self.assert_strict_equal(r.id, int(r), 124)
 
         self.assertRaises(TypeError, self.Result, data={u'id': 137})
         self.assertRaises(TypeError, self.Result, data={u'id': 137},
@@ -53,12 +53,12 @@ class ListResultTests(WebUntisTestCase):
 
         r = CustomListResult(data=list(data), session=object())
 
-        assert len(r) == len(data)
+        self.assert_strict_equal(len(r), len(data))
         for res, raw in zip(r, data):
             assert type(res) is CustomItem
             assert res in r
             assert {u'id': res.id, u'value': res.value} in r
-            assert res.id == raw[u'id']
+            self.assert_strict_equal(res.id, raw[u'id'])
 
     def test_filter(self):
         class CustomItem(webuntis.objects.ListItem):
@@ -80,15 +80,24 @@ class ListResultTests(WebUntisTestCase):
         ]
 
         r = CustomListResult(data=list(data), session=object())
-        assert len(r) == 3
+        self.assert_strict_equal(len(r), 3)
 
         results = dict((x.id, x) for x in r)
 
-        assert list(r.filter(id=1)) == [results[1]]
-        assert list(r.filter(id=set([1,2]))) == [results[1], results[2]]
-        assert list(r.filter(id=set([1,2])).filter(one='eins')) == \
-               list(r.filter(one='eins', id=set([1,2]))) == [results[1]]
-        assert list(r.filter(two='zwoa')) == [results[2]]
+        x = list(r.filter(id=1))
+        self.assert_strict_equal(x, [results[1]])
+
+        x = list(r.filter(id=set([1,2])))
+        self.assert_strict_equal(x, [results[1], results[2]])
+
+        self.assert_strict_equal(
+            list(r.filter(id=set([1,2])).filter(one='eins')),
+            list(r.filter(one='eins', id=set([1,2]))),
+            [results[1]]
+        )
+
+        x = list(r.filter(two='zwoa'))
+        self.assert_strict_equal(x, [results[2]])
 
 
 class DepartmentTests(WebUntisTestCase):
@@ -97,8 +106,8 @@ class DepartmentTests(WebUntisTestCase):
             data={u'id': 1, u'name': u'ZIMMER', u'longName': u'Das Zimmer'},
             session=object())
 
-        assert x.name == u'ZIMMER'
-        assert x.long_name == u'Das Zimmer'
+        self.assert_strict_equal(x.name, u'ZIMMER')
+        self.assert_strict_equal(x.long_name, u'Das Zimmer')
 
 class HolidayTests(WebUntisTestCase):
     def test_basics(self):
@@ -129,8 +138,8 @@ class KlassenTests(WebUntisTestCase):
             },
             session=object())
 
-        assert x.name == '1A'
-        assert x.long_name == 'Erste A'
+        self.assert_strict_equal(x.name, u'1A')
+        self.assert_strict_equal(x.long_name, u'Erste A')
 
 
 class PeriodTests(WebUntisTestCase):
@@ -160,32 +169,32 @@ class PeriodTests(WebUntisTestCase):
         assert x.code is None
 
         x = self.Obj(data={u'code': u'cancelled'}, session=object())
-        assert x.code == u'cancelled'
+        self.assert_strict_equal(x.code, u'cancelled')
 
         x = self.Obj(data={u'code': u'irregular'}, session=object())
-        assert x.code == u'irregular'
+        self.assert_strict_equal(x.code, u'irregular')
 
     def test_type(self):
         x = self.Obj(data={}, session=object())
-        assert x.type == u'ls'
+        self.assert_strict_equal(x.type, u'ls')
 
         for type in (u'ls', u'oh', u'sb', u'bs', u'ex'):
             x = self.Obj(data={u'lstype':type}, session=object())
-            assert x.type == type
+            self.assert_strict_equal(x.type, type)
 
         x = self.Obj(data={u'type': u'hoompaloompa'}, session=object())
-        assert x.type == u'ls'
+        self.assert_strict_equal(x.type, u'ls')
 
 
 class RoomTests(WebUntisTestCase):
     def test_basics(self):
         x = webuntis.objects.RoomObject(
-            data={u'name': u'PHY', u'longName': 'Physics lab'},
+            data={u'name': u'PHY', u'longName': u'Physics lab'},
             session=object()
         )
 
-        assert x.name == u'PHY'
-        assert x.long_name == u'Physics lab'
+        self.assert_strict_equal(x.name, u'PHY')
+        self.assert_strict_equal(x.long_name, u'Physics lab')
 
 
 class SchoolyearTests(WebUntisTestCase):
@@ -211,7 +220,7 @@ class SchoolyearTests(WebUntisTestCase):
 
     def test_list(self):
         class StubSession(object):
-            def _request(self, method):
+            def _request(s, method):
                 assert method == u'getCurrentSchoolyear'
                 return {u'id': 123}
 
@@ -225,9 +234,9 @@ class SchoolyearTests(WebUntisTestCase):
             session=StubSession()
         )
 
-        assert x.current.id == 123
+        self.assert_strict_equal(x.current.id, 123)
         assert x.current.is_current
-        assert x.current.name == u'Winter'
+        self.assert_strict_equal(x.current.name, u'Winter')
 
 
 class SubjectTests(WebUntisTestCase):
@@ -240,8 +249,8 @@ class SubjectTests(WebUntisTestCase):
             session=object()
         )
 
-        assert x.name ==  u'Math'
-        assert x.long_name == u'Mathematics'
+        self.assert_strict_equal(x.name,  u'Math')
+        self.assert_strict_equal(x.long_name, u'Mathematics')
 
 
 class TeacherTests(WebUntisTestCase):
@@ -255,6 +264,6 @@ class TeacherTests(WebUntisTestCase):
             session=object()
         )
 
-        assert x.fore_name == u'Hans'
-        assert x.long_name == x.surname == u'Gans'
-        assert x.name == u'Hans Gans'
+        self.assert_strict_equal(x.fore_name, u'Hans')
+        self.assert_strict_equal(x.long_name, x.surname, u'Gans')
+        self.assert_strict_equal(x.name, u'Hans Gans')

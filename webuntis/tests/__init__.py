@@ -55,6 +55,34 @@ class WebUntisTestCase(unittest.TestCase):
 
         assert re.search(regexp, repr(excinfo.value)), excinfo.value
 
+    def assert_strict_equal(self, x, *args):
+        '''Stricter version of assert_equal that doesn't do implicit conversion
+        between unicode and strings'''
+        for y in args:
+            self._assert_strict_equal_impl(x, y)
+
+    def _assert_strict_equal_impl(self, x, y):
+        if x is y:
+            return
+        assert x == y
+        assert issubclass(type(x), type(y)) or issubclass(type(y), type(x)), \
+                '%s != %s' % (type(x), type(y))
+        if isinstance(x, (bytes, str)) or x is None:
+            return
+        elif isinstance(x, dict) or isinstance(y, dict):
+            x = sorted(x.items())
+            y = sorted(y.items())
+        elif isinstance(x, set) or isinstance(y, set):
+            x = sorted(x)
+            y = sorted(y)
+        rx, ry = repr(x), repr(y)
+        if rx != ry:
+            rx = rx[:200] + (rx[200:] and '...')
+            ry = ry[:200] + (ry[200:] and '...')
+            raise AssertionError(rx, ry)
+        assert repr(x) == repr(y), repr((x, y))[:200]
+
+
 
 stub_session_parameters = {
     'useragent': 'fooagent',
@@ -86,6 +114,7 @@ class OfflineTestCase(unittest.TestCase):
 
         self.session = None
 
+    
 
 def mock_results(methods, swallow_not_found=False):
     '''Mock API methods more easily.

@@ -408,7 +408,7 @@ class SchoolyearList(ListResult):
     def current(self):
         '''Returns the current schoolyear in form of a
         :py:class:`SchoolyearObject`'''
-        current_data = self._session._request('getCurrentSchoolyear')
+        current_data = self._session._request(u'getCurrentSchoolyear')
         current = self.filter(id=current_data[u'id'])[0]
         return current
 
