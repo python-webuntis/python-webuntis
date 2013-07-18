@@ -21,16 +21,25 @@ and its API:
     - **Different schools, different rules.** It is not neccessary that schools
       enter information about, for example, a teacher, in the correct format.
       It might happen that a school abuses the name field of a teacher to just
-      write the teacher's initials in it. The timezone of the dates and times
-      is also dependent on how your school inserted those. Testing is the only
-      sane way out of this.
+      write the teacher's initials in it. Testing is the only sane way out of
+      this.
 
-    - **Don't like something about the usage of my package?** Please, `let me
-      know! <https://github.com/untitaker/python-webuntis/issues/new>`_ I don't
-      want python-webuntis to become as inconsistent and *weird* as the API it
-      is wrapping.
+    - **All dates and times are in local time.** WebUntis' JSON API returns
+      time and date in local time, the timezones are configurable by the
+      school. As if that wasn't ridiculous enough, there is no information on
+      the timezone provided as part of the API. So this library can't make real
+      efforts to handle date and time in a more professional manner.
 
-Are you still reading? Okay, let's install the webuntis package::
+Initially i started writing this library with the goal to abstract away all the
+pain that otherwise would result in direct interaction with the API. This is
+still an unreached goal. Some things like the problem with time and date is
+unsolvable. So if you think some part of the library could be easier to use,
+`please let me know!
+<https://github.com/untitaker/python-webuntis/issues/new>`_ I don't want
+python-webuntis to become as inconsistent and *weird* as the API it is
+wrapping.
+
+Okay, let's install the webuntis package::
 
     pip install webuntis
 
