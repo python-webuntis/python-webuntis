@@ -14,7 +14,7 @@ class BasicUsage(WebUntisTestCase):
 
         a = b = {'id': 2}
         self.assertRaisesRegex(webuntis.errors.RemoteError,
-                               'JSON-RPC', x, a, b)
+                               'no information', x, a, b)
 
         a = {'id': 2}
         b = {'id': 2, 'result': 'YESSIR'}
@@ -25,11 +25,11 @@ class BasicUsage(WebUntisTestCase):
 
         a = b = {}
         self.assertRaisesRegex(webuntis.errors.RemoteError,
-                               'JSON-RPC', x, a, b)
+                               'no information', x, a, b)
 
-        b = {'error': {'code': 0, 'message': 'hello'}}
+        b = {'error': {'code': 0, 'message': 'hello world'}}
         self.assertRaisesRegex(webuntis.errors.RemoteError,
-                               'JSON-RPC', x, a, b)
+                               'hello world', x, a, b)
 
         for code, exc in webuntis.utils.remote._errorcodes.items():
             self.assertRaises(exc, x, a, {

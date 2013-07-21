@@ -108,15 +108,19 @@ def _parse_error_code(request_body, result_body):
     log('error', result_body)
     try:
         error = result_body[u'error']
-        exc = _errorcodes[error[u'code']](error[u'message'])
+        code, message = error[u'code'], error[u'message']
     except KeyError:
-        exc = errors.RemoteError(
-            ('Some JSON-RPC-ish error happened. Please report this to the '
-                'developer so he can implement a proper handling.'),
-            result_body, request_body
-        )
+        code = None  # None doesn't exist in_errorcodes
+        message = ('Some error happened and there is no information provided '
+                   'what went wrong.')
 
-    raise exc
+    cls = _errorcodes.get(code, errors.RemoteError)
+
+    raise cls(
+        message,
+        result_body,
+        request_body
+    )
 
 
 def _send_request(url, data, headers):
