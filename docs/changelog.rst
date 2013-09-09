@@ -2,6 +2,20 @@
 Changelog
 =========
 
+* 0.1.8:
+
+    * Rewrote testsuite. Should work with both py.test and nosetest.
+
+    * Removed support for Python 3.2 and 3.1. In earlier days i also was a bit
+      sloppy with unicode strings vs bytestrings. That sloppiness has been
+      partially fixed.
+
+    * Instead of showing a default error message when the error code is not
+      recognized, webuntis will now try to use the error message sent in the
+      response. See 67d6fa2_.
+
+.. _67d6fa2: https://github.com/untitaker/python-webuntis/commit/67d6fa21f7c199d89704d07dbba5219b0875b75e
+
 * 0.1.7:
 
     * Bugfixes, as always.
