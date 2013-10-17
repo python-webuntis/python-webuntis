@@ -9,7 +9,7 @@
 from setuptools import setup
 from sys import version_info
 
-dependencies = []
+dependencies = ['requests']
 
 if version_info < (2,6):
     dependencies.append('simplejson')

@@ -10,6 +10,7 @@ from webuntis.utils.userinput import unicode_string, bytestring
 from webuntis.utils.third_party import json, urlrequest
 
 import datetime
+import requests
 
 
 _errorcodes = {
@@ -128,11 +129,9 @@ def _send_request(url, data, headers):
     a dictionary with headers.
     '''
 
-    request = urlrequest.Request(url, json.dumps(data).encode(), headers)
-    # this will eventually raise errors, e.g. if there's an unexpected http
-    # status code
-    result_obj = urlrequest.urlopen(request)
-    result = result_obj.read().decode('utf-8')
+    r = requests.post(url, data=json.dumps(data), headers=headers)
+    result = r.text
+    # this will eventually raise errors, e.g. on timeout
 
     try:
         result_data = json.loads(result)
