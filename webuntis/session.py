@@ -301,20 +301,26 @@ class Session(JSONRPCSession, ResultWrapperMixin):
     :type server: str
     :param server: A host name, a URL, or a URL without path.
 
-            >>> s = webuntis.Session(..., server='thalia.webuntis.com')
-            >>> s.config['server']
-            'http://thalia.webuntis.com/WebUntis/jsonrpc.do'
-            >>> # notice that there's NO SLASH at the end!
-            >>> s.config['server'] = 'https://thalia.webuntis.com'
-            >>> s.config['server']
-            'https://thalia.webuntis.com/WebUntis/jsonrpc.do'
-            >>> s.config['server'] = 'https://thalia.webuntis.com/'
-            >>> # because a slash gets interpreted as the full path to the API
-            >>> # endpoint, which would crash during login
-            >>> s.config['server']
-            'http://thalia.webuntis.com/'
-            >>> s.config['server'] = '!"$%/WebUntis/jsonrpc.do'
-            Traceback blah blah something ValueError
+        ::
+
+            s = webuntis.Session(..., server='thalia.webuntis.com')
+            # 'https://thalia.webuntis.com/WebUntis/jsonrpc.do'
+
+            # Want to disable SSL?
+            # make sure there's NO SLASH at the end!
+            s.config['server'] = 'http://thalia.webuntis.com'
+            # 'http://thalia.webuntis.com/WebUntis/jsonrpc.do'
+
+            # or maybe use a completely different API endpoint?
+            s.config['server'] = 'http://thalia.webuntis.com/WebUntis/jsonrpc2.do'
+            # 'http://thalia.webuntis.com/WebUntis/jsonrpc2.do'
+
+            # or just change the path?
+            s.config['server'] = 'thalia.webuntis.com/WebUntis/jsonrpc2.do'
+            # 'https://thalia.webuntis.com/WebUntis/jsonrpc2.do'
+
+            s.config['server'] = '!"$%/WebUntis/jsonrpc.do'
+            # ValueError: Not a valid hostname
 
     :type school: str
     :param school: A valid school name.

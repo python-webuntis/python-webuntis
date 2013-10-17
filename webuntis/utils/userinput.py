@@ -12,10 +12,10 @@ from .third_party import urlparse
 def server(url):
     if not re.match(r'^http(s?)\:\/\/', url):  # if we just have the hostname
         log('debug', 'The URL given doesn\'t seem to be a valid URL, just '
-                     'gonna prepend "http://"')
+                     'gonna prepend "https://"')
 
         # append the http prefix and hope for the best
-        url = 'http://' + url
+        url = 'https://' + url
 
     urlobj = urlparse.urlparse(url)
 
