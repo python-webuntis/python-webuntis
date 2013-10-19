@@ -17,11 +17,7 @@ except ImportError:
 
 try:
     # Python 3
-    import urllib.request as urlrequest
-    import urllib.error as urlerrors  # pragma: no cover
     import urllib.parse as urlparse  # pragma: no cover
 except ImportError:
     # Python 2
-    import urllib2
     import urlparse
-    urlrequest = urlerrors = urllib2

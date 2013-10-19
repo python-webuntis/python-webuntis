@@ -7,7 +7,7 @@
 from webuntis import errors
 from webuntis.utils import log
 from webuntis.utils.userinput import unicode_string, bytestring
-from webuntis.utils.third_party import json, urlrequest
+from webuntis.utils.third_party import json
 
 import datetime
 import requests
