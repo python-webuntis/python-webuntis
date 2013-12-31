@@ -48,7 +48,7 @@ Unittests
 
 ::
 
-    $ python run-tests.py
+    $ pytest
 
 For the single testsuites and their descriptions, look at the docstrings of the
 modules in ``webuntis.tests``.
