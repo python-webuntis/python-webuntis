@@ -2,7 +2,9 @@
 python-webuntis
 ===============
 
-[![Build Status](https://travis-ci.org/untitaker/python-webuntis.png?branch=master)](https://travis-ci.org/untitaker/python-webuntis)
+.. image:: https://travis-ci.org/untitaker/python-webuntis.png?branch=master
+   :target: https://travis-ci.org/untitaker/python-webuntis
+
 
 Bindings for WebUntis API
 =========================
