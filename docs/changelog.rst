@@ -2,6 +2,11 @@
 Changelog
 =========
 
+* 0.1.9:
+
+    * Add requests as a dependency and use it instead of urllib. Big security
+      improvement due to certificate validation.
+
 * 0.1.8:
 
     * Rewrote testsuite. Should work with both py.test and nosetest.
