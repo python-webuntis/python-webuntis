@@ -52,7 +52,7 @@ Unittests
 
 ::
 
-    $ pytest
+    $ py.test
 
 For the single testsuites and their descriptions, look at the docstrings of the
 modules in ``webuntis.tests``.
