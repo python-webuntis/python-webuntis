@@ -377,12 +377,6 @@ class Session(JSONRPCSession, ResultWrapperMixin):
     initialization.'''
 
     def __init__(self, **config):
-        try:
-            cachelen = config['cachelen']
-            del config['cachelen']
-        except KeyError:
-            cachelen = 20
-
+        cachelen = config.pop('cachelen', 20)
         self.cache = utils.SessionCache(maxlen=cachelen)
-
         JSONRPCSession.__init__(self, **config)

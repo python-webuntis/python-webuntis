@@ -46,7 +46,7 @@ class SessionCache(LruDict):
         if method is None:
             LruDict.clear(self)
         else:
-            for k in list(self):
+            for k in self:
                 if k[0] == method:
                     del self[k]
 
