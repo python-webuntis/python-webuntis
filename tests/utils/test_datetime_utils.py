@@ -1,4 +1,4 @@
-from webuntis.tests import WebUntisTestCase
+from .. import WebUntisTestCase
 import webuntis.utils.datetime_utils as dtutils
 import datetime
 
