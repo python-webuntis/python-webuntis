@@ -24,7 +24,8 @@ class JSONRPCSession(object):
             'username': None,
             'password': None,
             'jsessionid': None,
-            'login_repeat': 0
+            'login_repeat': 0,
+            '_http_session': None
         }
         config.update(kwargs)
         self.config.update(config)

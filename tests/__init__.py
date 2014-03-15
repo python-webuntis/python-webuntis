@@ -124,7 +124,7 @@ def mock_results(methods, swallow_not_found=False):
     :param swallow_not_found: Whether to return {'result': {}} on unmocked API
         methods.
     '''
-    def new(url, jsondata, headers):
+    def new(url, jsondata, headers, http_session):
         method = jsondata['method']
         try:
             method_mock = methods[method]

@@ -52,7 +52,8 @@ config_keys = {
     'school': string,
     'server': server,
     'useragent': string,
-    'login_repeat': int
+    'login_repeat': int,
+    '_http_session': None
 }
 
 try:
