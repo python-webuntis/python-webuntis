@@ -3,7 +3,10 @@ python-webuntis
 ===============
 
 .. image:: https://travis-ci.org/untitaker/python-webuntis.png?branch=master
-   :target: https://travis-ci.org/untitaker/python-webuntis
+    :target: https://travis-ci.org/untitaker/python-webuntis
+
+.. image:: https://coveralls.io/repos/untitaker/python-webuntis/badge.png
+    :target: https://coveralls.io/r/untitaker/python-webuntis 
 
 
 Bindings for WebUntis API
