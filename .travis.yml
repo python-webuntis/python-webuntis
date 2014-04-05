@@ -14,7 +14,7 @@ install:
 script:
     # install python 3.4
     - "[[ ${TOX_ENV} == py34 ]] || [[ ${TOX_ENV} == docs-code-python34 ]] && sudo add-apt-repository -y ppa:fkrull/deadsnakes || true"
-    - "[[ ${TOX_ENV} == py34 ]] || [[ ${TOX_ENV} == docs-code-python34 ]] && sudo apt-get -y update && sudo apt-get -y install python3.4 || true
+    - "[[ ${TOX_ENV} == py34 ]] || [[ ${TOX_ENV} == docs-code-python34 ]] && sudo apt-get -y update && sudo apt-get -y install python3.4 || true"
     - tox -e $TOX_ENV
 
 after_success:
