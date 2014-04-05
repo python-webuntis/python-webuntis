@@ -34,25 +34,3 @@ Latest version (this is the normal way)
 ::
 
     pip install webuntis
-
-
-Development
-===========
-
-Installing Development Dependencies
-+++++++++++++++++++++++++++++++++++
-
-A `virtualenv <http://www.virtualenv.org/>`_ is recommended::
-
-    $ pip install -r dev_requirements.txt
-
-
-Unittests
-+++++++++
-
-::
-
-    $ py.test
-
-For the single testsuites and their descriptions, look at the docstrings of the
-modules in ``webuntis.tests``.
