@@ -76,10 +76,15 @@ def rpc_request(config, method, params):
     log('debug', 'URL: ' + url)
     log('debug', 'DATA: ' + str(request_body))
 
+    if '_http_session' not in config:
+        config['_http_session'] = requests.session
+    http_session = config['_http_session']
+
     result_body = _send_request(
         url,
         request_body,
-        headers
+        headers,
+        http_session
     )
     return _parse_result(request_body, result_body)
 
@@ -124,12 +129,15 @@ def _parse_error_code(request_body, result_body):
     )
 
 
-def _send_request(url, data, headers):
-    '''Sends a POST request given the endpoint URL, JSON-encodable data and
-    a dictionary with headers.
+def _send_request(url, data, headers, http_session=None):
+    '''Sends a POST request given the endpoint URL, JSON-encodable data,
+    a dictionary with headers and, optionally, a session object for requests.
     '''
 
-    r = requests.post(url, data=json.dumps(data), headers=headers)
+    if http_session is None:
+        http_session = requests.session()
+
+    r = http_session.post(url, data=json.dumps(data), headers=headers)
     result = r.text
     # this will eventually raise errors, e.g. on timeout
 

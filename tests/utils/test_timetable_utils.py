@@ -1,6 +1,6 @@
 import datetime
 from webuntis.utils.timetable_utils import table
-from webuntis.tests import WebUntisTestCase
+from .. import WebUntisTestCase
 
 class StubPeriod(object):
     def __init__(self, start, end):

@@ -1,5 +1,5 @@
 import webuntis
-from webuntis.tests import WebUntisTestCase
+from .. import WebUntisTestCase
 
 
 class Functions(WebUntisTestCase):

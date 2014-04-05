@@ -1,7 +1,7 @@
 import webuntis
 import mock
 from webuntis.utils.third_party import json
-from webuntis.tests import WebUntisTestCase, BytesIO
+from .. import WebUntisTestCase, BytesIO
 
 class BasicUsage(WebUntisTestCase):
     def test_parse_result(self):

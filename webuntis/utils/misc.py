@@ -90,13 +90,15 @@ class FilterDict(object):
             self._contents.pop(key, None)
             return
 
-        new_value = self.filters[key](value)
+        filter = self.filters[key]
+        if filter is not None:
+            value = filter(value)
 
-        if new_value is None:
+        if value is None:
             self._contents.pop(key, None)
             return
 
-        self._contents[key] = new_value
+        self._contents[key] = value
 
     def __delitem__(self, key):
         del self._contents[key]

@@ -1,6 +1,6 @@
 import mock
 import webuntis
-from webuntis.tests import WebUntisTestCase, stub_session_parameters, \
+from . import WebUntisTestCase, stub_session_parameters, \
         mock_results
 
 class BasicUsage(WebUntisTestCase):

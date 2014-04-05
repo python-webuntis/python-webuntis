@@ -6,7 +6,7 @@
     :license: BSD, see LICENSE for more details.
 '''
 
-from setuptools import setup
+from setuptools import setup, find_packages
 from sys import version_info
 
 dependencies = ['requests']
@@ -22,7 +22,7 @@ setup(
     version='0.1.9',
     author='Markus Unterwaditzer',
     author_email='markus@unterwaditzer.net',
-    packages=['webuntis', 'webuntis.utils', 'webuntis.tests'],
+    packages=find_packages(),
     include_package_data=True,
     url='http://dev.unterwaditzer.net/python-webuntis/',
     license='new-style BSD',
@@ -40,6 +40,5 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: Implementation :: PyPy'
-    ],
-    test_suite='webuntis.tests'
+    ]
 )
