@@ -286,7 +286,7 @@ class ResultWrapperMixin(object):
 
 class Session(JSONRPCSession, ResultWrapperMixin):
     '''The origin of everything you want to do with the WebUntis API. Can be
-    used as a context-handler.
+    used as a context-manager to provide automatic log-out.
 
     Configuration can be set with keyword arguments when initializing
     :py:class:`Session`. Unless noted otherwise, they get saved in a dictionary
