@@ -236,13 +236,6 @@ class WrapperMethodTests(WebUntisTestCase):
             assert type(te) is webuntis.objects.TeacherList
             assert not te
 
-    def test_timegrid(self):
-        s = webuntis.Session(**stub_session_parameters)
-        with self.noop_result_mock('getTimegridUnits'):
-            grid = s.timegrid()
-            assert type(grid) is webuntis.objects.TimeunitList
-            assert not grid
-
     def test_statusdata(self):
         s = webuntis.Session(**stub_session_parameters)
         with self.noop_result_mock('getStatusData'):

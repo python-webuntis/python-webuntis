@@ -457,58 +457,6 @@ class TeacherList(ListResult):
     _itemclass = TeacherObject
 
 
-class TimeunitObject(ListItem):
-    '''A bunch of timeunits for a specific day.'''
-
-    @lazyproperty
-    def times(self):
-        '''A list of tuples containing the start and the end of each timeunit
-        as datetime '''
-
-        return [
-            (
-                datetime_utils.parse_time(unit[u'startTime']),
-                datetime_utils.parse_time(unit[u'endTime'])
-            ) for unit in self._data[u'timeUnits']
-        ]
-
-    @lazyproperty
-    def day(self):
-        '''The day the timeunit list is for'''
-        return self._data[u'day']
-
-    @lazyproperty
-    def id(self):
-        return int(self.day)
-
-
-class TimeunitList(ListResult):
-    '''A list of times and dates for the current week, in form of
-    :py:class:`TimeunitObject` instances. Doesn't contain actual data, but is
-    useful when you want to generate a timetable::
-
-        >>> grid = s.timegrid()
-        >>>
-        >>> # 1 = Sunday
-        >>> # 2 = Monday
-        >>> # ...
-        >>> # 7 = Saturday
-        >>> grid[0].day
-        2
-        >>> grid[0].times
-        [
-            (datetime.datetime(...), datetime.datetime(...)),
-            ...
-        ]
-
-    .. note::
-        The date-specific properties of the datetime objects are invalid, since
-        these are not provided by the official API.
-    '''
-
-    _itemclass = TimeunitObject
-
-
 class ColorInfo(Result):
     '''
     An object containing information about a lesson type or a period code::

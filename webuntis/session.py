@@ -264,17 +264,6 @@ class ResultWrapperMixin(object):
         return objects.TeacherList, 'getTeachers', {}
 
     @result_wrapper
-    def timegrid(self):
-        '''Get a "timegrid", whatever the hell that is. According to the
-        official API docs, it is supposed to be useful when generating your own
-        timetable. Maybe :py:meth:`webuntis.objects.PeriodList.to_table` could
-        make use of this one day.
-
-        :rtype: :py:class:`webuntis.objects.TimeunitList`
-        '''
-        return objects.TimeunitList, 'getTimegridUnits', {}
-
-    @result_wrapper
     def statusdata(self):
         '''Information about lesson types and period codes, specifically about
         the colors used to highlight them in the web-interface of WebUntis.

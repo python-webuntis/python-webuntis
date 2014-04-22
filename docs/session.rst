@@ -29,4 +29,3 @@ Things you can do with the API
     .. automethod:: statusdata
     .. automethod:: subjects
     .. automethod:: teachers
-    .. automethod:: timegrid
