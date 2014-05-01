@@ -9,7 +9,7 @@ install:
     - pip install --use-mirrors tox coveralls
 
 script:
-    - tox -e py${TRAVIS_PYTHON_VERSION//./}
+    - tox -e $(echo py$TRAVIS_PYTHON_VERSION | tr -d . | sed -e 's/pypypy/pypy/')
 
 after_success:
     - coveralls
