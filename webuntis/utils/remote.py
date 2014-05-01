@@ -77,7 +77,7 @@ def rpc_request(config, method, params):
     log('debug', 'DATA: ' + str(request_body))
 
     if '_http_session' not in config:
-        config['_http_session'] = requests.session
+        config['_http_session'] = requests.session()
     http_session = config['_http_session']
 
     result_body = _send_request(
