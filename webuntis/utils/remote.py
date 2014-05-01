@@ -120,14 +120,11 @@ def _parse_error_code(request_body, result_body):
         message = ('Some error happened and there is no information provided '
                    'what went wrong.')
 
-    cls = _errorcodes.get(code, errors.RemoteError)
-
-    raise cls(
-        message,
-        result_body,
-        request_body
-    )
-
+    exc = _errorcodes.get(code, errors.RemoteError)(message)
+    exc.request = request_body
+    exc.result = result_body
+    exc.code = code
+    raise exc
 
 def _send_request(url, data, headers, http_session=None):
     '''Sends a POST request given the endpoint URL, JSON-encodable data,

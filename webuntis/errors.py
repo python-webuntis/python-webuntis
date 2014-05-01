@@ -13,7 +13,15 @@ class Error(Exception):
 
 class RemoteError(Error, IOError):
     '''There was some kind of error while interacting with the server.'''
-    pass
+
+    #: The decoded JSON request which lead to this error, if available.
+    request = None
+
+    #: The decoded JSON response/result which lead to this error, if available.
+    result = None
+
+    #: The error code, if available.
+    code = None
 
 
 class MethodNotFoundError(RemoteError):
