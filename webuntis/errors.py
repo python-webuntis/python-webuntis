@@ -41,3 +41,7 @@ class BadCredentialsError(AuthError, ValueError):
 
 class NotLoggedInError(AuthError):
     '''The session expired or we never logged in.'''
+
+
+class DateNotAllowed(RemoteError):
+    '''The selected date range (for timetable) is not allowed.'''
