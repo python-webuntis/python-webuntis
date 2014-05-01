@@ -53,9 +53,11 @@ class Result(object):
         '''This is useful if the users pass a ListItem when a numerical ID
         is expected, so we just can put the thing through int(), regardless of
         what type it is.'''
+        assert self.id is not None
         return self.id
 
     def __hash__(self):
+        assert self.id is not None
         return hash(self.__class__.__name__) * 101 + self.id
 
     def __eq__(self, other):
@@ -154,6 +156,11 @@ class ListResult(Result):
         '''Return the length of the items'''
         return len(self._data)
 
+    def __hash__(self):
+        raise NotImplementedError()
+
+    def __eq__(self, other):
+        return type(other) is type(self) and other._data == self._data
 
 class DepartmentObject(ListItem):
     '''Represents a department'''
