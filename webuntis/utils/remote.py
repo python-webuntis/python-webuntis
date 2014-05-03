@@ -16,7 +16,8 @@ import requests
 _errorcodes = {
     -32601: errors.MethodNotFoundError,
     -8504: errors.BadCredentialsError,
-    -8520: errors.NotLoggedInError
+    -8520: errors.NotLoggedInError,
+    -7004: errors.DateNotAllowed
 }
 '''The API-errorcodes python-webuntis is able to interpret, together with the
 exception that will be thrown.'''
