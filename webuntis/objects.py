@@ -63,6 +63,13 @@ class Result(object):
     def __eq__(self, other):
         return type(self) is type(other) and hash(self) == hash(other)
 
+    def __getstate__(self):
+        return self._data
+
+    def __setstate__(self, data):
+        self._data.clear()
+        self._data = data
+
 
 class ListItem(Result):
     '''ListItems represent an item in a
