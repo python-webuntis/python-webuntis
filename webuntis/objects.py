@@ -67,7 +67,6 @@ class Result(object):
         return self._data
 
     def __setstate__(self, data):
-        self._data.clear()
         self._data = data
 
 
