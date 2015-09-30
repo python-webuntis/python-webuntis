@@ -1,3 +1,17 @@
+=====================================
+This project is no longer maintained.
+=====================================
+
+I moved on and do no longer use it. See `the relevant ticket
+<https://github.com/untitaker/python-webuntis/issues/3>`_.
+
+|
+|
+|
+|
+|
+|
+
 ===============
 python-webuntis
 ===============
