@@ -45,9 +45,12 @@ Bindings for WebUntis API
 Installation
 ============
 
-Latest version (this is the normal way)
-+++++++++++++++++++++++++++++++++++++++
-
 ::
 
     pip install webuntis
+
+License
+=======
+
+``python-webuntis`` is released under the 3-clause BSD license, see ``LICENSE``
+for details.
