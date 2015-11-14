@@ -316,7 +316,7 @@ class PeriodObject(ListItem):
         ''' Support for original teacher '''        
         try: 
             return self._session.teachers(from_cache=True).filter(id=set([te[u'orgid'] for te in self._data[u'te']]))
-        except: 
+        except KeyError: 
             pass
         return self._session.teachers(from_cache=True).filter(id=set([te[u'id'] for te in self._data[u'te']]))
 
@@ -325,7 +325,7 @@ class PeriodObject(ListItem):
         ''' Support for original room '''        
         try: 
             return self._session.rooms(from_cache=True).filter(id=set([te[u'orgid'] for te in self._data[u'ro']]))
-        except: 
+        except KeyError: 
             pass
         return self._session.rooms(from_cache=True).filter(id=set([te[u'id'] for te in self._data[u'ro']]))
 
