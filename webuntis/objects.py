@@ -4,7 +4,7 @@
     :copyright: (c) 2013 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
 '''
-
+import datetime
 from webuntis.utils import datetime_utils, lazyproperty, \
     timetable_utils
 
@@ -534,3 +534,17 @@ class StatusData(Result):
             ColorInfo(parent=self, data=data)
             for data in self._data[u'codes']
         ]
+
+class TimeStamp(Result):
+    '''Information about last change of data -- timestamp (given in milliseconds)'''
+
+    def get_date(self):
+        '''
+        get timestamp as python datetime object
+        TODO:  @lazyproperty
+        :return: timestamp
+        '''
+        return datetime.datetime.fromtimestamp(self._data/1000)
+
+    def __call__(self, *args, **kwargs):
+        return self.get_date()
