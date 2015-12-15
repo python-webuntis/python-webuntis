@@ -70,6 +70,24 @@ class Result(object):
     def __setstate__(self, data):
         self._data = data
 
+    def __str__(self):
+        '''a simple to string function: just the name or the full info -- debug only'''
+        try:
+            return self._data[u'name']
+        except KeyError:
+            try:
+                return self.name
+            except AttributeError:
+                return str(self._data)
+        except TypeError:
+            return str(self._data)
+
+
+    def __repr__(self):
+        try:
+            return self.__class__.__qualname__ + "(" + str(self._data) + ")"
+        except AttributeError:
+            return self.__class__.__name__ + "(" + str(self._data) + ")"
 
 class ListItem(Result):
     '''ListItems represent an item in a
@@ -168,6 +186,17 @@ class ListResult(Result):
 
     def __eq__(self, other):
         return type(other) is type(self) and other._data == self._data
+
+    def __str__(self):
+        '''a simple to string function: a list of results -- debug only'''
+        return "[" + ", ".join(str(d) for d in self._data) + "]"
+
+    def __repr__(self):
+        '''a simple to string function: a list of results -- debug only'''
+        try:
+            return  self.__class__.__qualname__ + "[" + ", ".join(repr(d) for d in self._data) + "]"
+        except AttributeError:
+            return  self.__class__.__name__ + "[" + ", ".join(repr(d) for d in self._data) + "]"
 
 class DepartmentObject(ListItem):
     '''Represents a department'''
