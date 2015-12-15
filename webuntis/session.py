@@ -272,6 +272,42 @@ class ResultWrapperMixin(object):
         '''
         return objects.StatusData, 'getStatusData', {}
 
+    @result_wrapper
+    def lastImportTime(self):
+        return objects.TimeStampObject, 'getLatestImportTime', {}
+
+    @result_wrapper
+    def substitutions(self, start, end, departmentId=0):
+        '''Information about substitutions
+
+        :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date`
+        :param start: The beginning of the time period.
+
+        :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date`
+        :param end: The end of the time period.
+
+        TODO: departmentId=None
+
+        :rtype: :py:class:`webuntis.objects.Substitutions`
+        '''
+
+        json_start = utils.datetime_utils.format_date(start)
+        json_end =   utils.datetime_utils.format_date(end)
+
+        if json_start > json_end:
+            raise ValueError('Start can\'t be later than the end.')
+
+        parameters = {
+            'startDate': json_start,
+            'endDate': json_end,
+            'departmentId': departmentId
+        }
+
+        #if departmentId:
+        #    parameters['departmentId'] = departmentId
+
+        return objects.SubstitutionList, 'getSubstitutions', parameters
+
 
 class Session(JSONRPCSession, ResultWrapperMixin):
     '''The origin of everything you want to do with the WebUntis API. Can be

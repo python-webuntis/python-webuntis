@@ -4,6 +4,7 @@
     :copyright: (c) 2013 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
 '''
+import datetime
 
 from webuntis.utils import datetime_utils, lazyproperty, \
     timetable_utils
@@ -534,3 +535,51 @@ class StatusData(Result):
             ColorInfo(parent=self, data=data)
             for data in self._data[u'codes']
         ]
+
+
+class TimeStampObject(Result):
+    '''Information about last change of data -- timestamp (given in milliseconds)'''
+
+    @lazyproperty
+    def date(self):
+        '''
+        get timestamp as python datetime object
+        TODO:  @lazyproperty
+        :return: timestamp
+        '''
+        return datetime.datetime.fromtimestamp(self._data/1000)
+
+
+class SubstitutionObject(PeriodObject):
+
+    #@lazyproperty
+    def type(self):
+        '''type of substitution
+             cancel   cancellation
+             subst    teacher substitution
+             add      additional period
+             shift    shifted period
+             rmchg    room change
+        '''
+        return self._data[u'type']
+
+    @lazyproperty
+    def reschedule_start(self):
+        '''The start of the rescheduled substitution (or None)'''
+        try:
+            return datetime_utils.parse_datetime(self._data[u'reschedule'][u'date'], self._data[u'reschedule'][u'startTime'])
+        except KeyError:
+            return None
+
+    @lazyproperty
+    def reschedule_end(self):
+        '''The end of the rescheduled substitution (or None)'''
+        try:
+            return datetime_utils.parse_datetime(self._data[u'reschedule'][u'date'], self._data[u'reschedule'][u'endTime'])
+        except KeyError:
+            return None
+
+class SubstitutionList(ListResult):
+    '''A list of substitutions in form of :py:class:`SubstitutionObject` instances.'''
+    _itemclass = SubstitutionObject
+
