@@ -568,3 +568,36 @@ class TimeStamp(Result):
 
     def __call__(self, *args, **kwargs):
         return self.get_date()
+
+class SubstitutionObject(PeriodObject):
+
+    #@lazyproperty
+    def type(self):
+        '''type of substitution
+             cancel   cancellation
+             subst    teacher substitution
+             add      additional period
+             shift    shifted period
+             rmchg    room change
+        '''
+        return self._data[u'type']
+
+    @lazyproperty
+    def reschedule_start(self):
+        '''The start of the rescheduled substitution (or None)'''
+        try:
+            return datetime_utils.parse_datetime(self._data[u'reschedule'][u'date'], self._data[u'reschedule'][u'startTime'])
+        except KeyError:
+            return None
+
+    @lazyproperty
+    def reschedule_end(self):
+        '''The end of the rescheduled substitution (or None)'''
+        try:
+            return datetime_utils.parse_datetime(self._data[u'reschedule'][u'date'], self._data[u'reschedule'][u'endTime'])
+        except KeyError:
+            return None
+
+class SubstitutionList(ListResult):
+    '''A list of substitutions in form of :py:class:`SubstitutionObject` instances.'''
+    _itemclass = SubstitutionObject
