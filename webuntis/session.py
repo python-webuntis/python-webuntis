@@ -274,7 +274,7 @@ class ResultWrapperMixin(object):
 
     @result_wrapper
     def lastImportTime(self):
-        return objects.TimeStamp, 'getLatestImportTime', {}
+        return objects.TimeStampObject, 'getLatestImportTime', {}
 
     @result_wrapper
     def substitutions(self, start, end, departmentId=0):

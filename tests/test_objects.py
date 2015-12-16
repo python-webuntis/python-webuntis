@@ -1,3 +1,5 @@
+import datetime
+
 from . import WebUntisTestCase
 import webuntis
 
@@ -267,3 +269,11 @@ class TeacherTests(WebUntisTestCase):
         self.assert_strict_equal(x.fore_name, u'Hans')
         self.assert_strict_equal(x.long_name, x.surname, u'Gans')
         self.assert_strict_equal(x.name, u'Hans Gans')
+
+class TimeStampTests(WebUntisTestCase):
+    def test_basics(self):
+        x = webuntis.objects.TimeStampObject(
+            data=1420202020202,
+            session=object()
+        )
+        self.assertEqual(x.date, datetime.datetime(2015, 1, 2, 13, 33, 40))

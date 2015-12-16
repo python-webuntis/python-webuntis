@@ -555,10 +555,11 @@ class StatusData(Result):
             for data in self._data[u'codes']
         ]
 
-class TimeStamp(Result):
+class TimeStampObject(Result):
     '''Information about last change of data -- timestamp (given in milliseconds)'''
 
-    def get_date(self):
+    @lazyproperty
+    def date(self):
         '''
         get timestamp as python datetime object
         TODO:  @lazyproperty
@@ -566,8 +567,6 @@ class TimeStamp(Result):
         '''
         return datetime.datetime.fromtimestamp(self._data/1000)
 
-    def __call__(self, *args, **kwargs):
-        return self.get_date()
 
 class SubstitutionObject(PeriodObject):
 
