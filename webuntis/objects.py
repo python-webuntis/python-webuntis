@@ -80,7 +80,10 @@ class Result(object):
                 return str(self._data)
 
     def __repr__(self):
-        return self.__class__.__qualname__ + "(" + str(self._data) + ")"
+        try:
+            return self.__class__.__qualname__ + "(" + str(self._data) + ")"
+        except AttributeError:
+            return self.__class__.__name__ + "(" + str(self._data) + ")"
 
 class ListItem(Result):
     '''ListItems represent an item in a
@@ -186,7 +189,10 @@ class ListResult(Result):
 
     def __repr__(self):
         '''a simple to string function: a list of results -- debug only'''
-        return  self.__class__.__qualname__ + "[" + ", ".join(repr(d) for d in self._data) + "]"
+        try:
+            return  self.__class__.__qualname__ + "[" + ", ".join(repr(d) for d in self._data) + "]"
+        except AttributeError:
+            return  self.__class__.__name__ + "[" + ", ".join(repr(d) for d in self._data) + "]"
 
 class DepartmentObject(ListItem):
     '''Represents a department'''
