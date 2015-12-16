@@ -124,6 +124,7 @@ class JSONRPCSession(object):
                         'Tried to login several times, failed. Original method'
                         ' was ' + method)
             else:
+                log('debug', "RETURN:" + str(data))
                 return data
 
             attempts_left -= 1  # new round!
