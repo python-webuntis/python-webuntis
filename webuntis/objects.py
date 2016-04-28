@@ -342,6 +342,24 @@ class PeriodObject(ListItem):
         return None
 
     @lazyproperty
+    def original_teachers(self):
+        ''' Support for original teachers '''
+        try:
+            return self._session.teachers(from_cache=True).filter(id=set([te[u'orgid'] for te in self._data[u'te']]))
+        except:
+            pass
+        return []
+
+    @lazyproperty
+    def original_rooms(self):
+        ''' Support for original rooms '''
+        try:
+            return self._session.rooms(from_cache=True).filter(id=set([te[u'orgid'] for te in self._data[u'ro']]))
+        except:
+            pass
+        return []
+
+    @lazyproperty
     def type(self):
         '''May be:
 
@@ -607,6 +625,7 @@ class SubstitutionObject(PeriodObject):
             return datetime_utils.parse_datetime(self._data[u'reschedule'][u'date'], self._data[u'reschedule'][u'endTime'])
         except KeyError:
             return None
+
 
 class SubstitutionList(ListResult):
     '''A list of substitutions in form of :py:class:`SubstitutionObject` instances.'''
