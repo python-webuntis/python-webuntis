@@ -338,6 +338,24 @@ class PeriodObject(ListItem):
         return None
 
     @lazyproperty
+    def get_original_teacher(self):
+        ''' Support for original teacher '''
+        try:
+            return self._session.teachers(from_cache=True).filter(id=set([te[u'orgid'] for te in self._data[u'te']]))
+        except:
+            pass
+        return self._session.teachers(from_cache=True).filter(id=set([te[u'id'] for te in self._data[u'te']]))
+
+    @lazyproperty
+    def get_original_room(self):
+        ''' Support for original room '''
+        try:
+            return self._session.rooms(from_cache=True).filter(id=set([te[u'orgid'] for te in self._data[u'ro']]))
+        except:
+            pass
+        return self._session.rooms(from_cache=True).filter(id=set([te[u'id'] for te in self._data[u'ro']]))
+
+    @lazyproperty
     def type(self):
         '''May be:
 
