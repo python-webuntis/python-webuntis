@@ -603,6 +603,17 @@ class SubstitutionObject(PeriodObject):
         except KeyError:
             return None
 
+    @lazyproperty
+    def org_teachers(self):
+        '''A list of :py:class:`TeacherObject` instances,
+        which were originally attending this period.'''
+        try:
+            return self._session.teachers(from_cache=True).filter(
+                id=set([te[u'orgid'] for te in self._data[u'te']])
+            )
+        except KeyError:
+            return []
+
 class SubstitutionList(ListResult):
     '''A list of substitutions in form of :py:class:`SubstitutionObject` instances.'''
     _itemclass = SubstitutionObject
