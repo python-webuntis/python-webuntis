@@ -338,22 +338,22 @@ class PeriodObject(ListItem):
         return None
 
     @lazyproperty
-    def get_original_teacher(self):
-        ''' Support for original teacher '''
+    def original_teachers(self):
+        ''' Support for original teachers '''
         try:
             return self._session.teachers(from_cache=True).filter(id=set([te[u'orgid'] for te in self._data[u'te']]))
         except:
             pass
-        return self._session.teachers(from_cache=True).filter(id=set([te[u'id'] for te in self._data[u'te']]))
+        return []
 
     @lazyproperty
-    def get_original_room(self):
-        ''' Support for original room '''
+    def original_rooms(self):
+        ''' Support for original rooms '''
         try:
             return self._session.rooms(from_cache=True).filter(id=set([te[u'orgid'] for te in self._data[u'ro']]))
         except:
             pass
-        return self._session.rooms(from_cache=True).filter(id=set([te[u'id'] for te in self._data[u'ro']]))
+        return []
 
     @lazyproperty
     def type(self):
@@ -621,16 +621,6 @@ class SubstitutionObject(PeriodObject):
         except KeyError:
             return None
 
-    @lazyproperty
-    def org_teachers(self):
-        '''A list of :py:class:`TeacherObject` instances,
-        which were originally attending this period.'''
-        try:
-            return self._session.teachers(from_cache=True).filter(
-                id=set([te[u'orgid'] for te in self._data[u'te']])
-            )
-        except KeyError:
-            return []
 
 class SubstitutionList(ListResult):
     '''A list of substitutions in form of :py:class:`SubstitutionObject` instances.'''
