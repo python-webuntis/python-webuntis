@@ -78,6 +78,9 @@ class Result(object):
                 return self.name
             except AttributeError:
                 return str(self._data)
+        except TypeError:
+            return str(self._data)
+
 
     def __repr__(self):
         try:
