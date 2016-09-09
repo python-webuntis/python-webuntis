@@ -19,7 +19,7 @@ if version_info < (2,7):
 
 setup(
     name='webuntis',
-    version='0.1.9',
+    version='0.1.9-2',
     author='Markus Unterwaditzer',
     author_email='markus@unterwaditzer.net',
     packages=find_packages(),

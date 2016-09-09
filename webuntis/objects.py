@@ -628,3 +628,42 @@ class SubstitutionObject(PeriodObject):
 class SubstitutionList(ListResult):
     '''A list of substitutions in form of :py:class:`SubstitutionObject` instances.'''
     _itemclass = SubstitutionObject
+
+
+class TimeUnitObject(Result):
+    @lazyproperty
+    def name(self):
+        '''Name of Timeunit'''
+        return self._data[u'name']
+
+    @lazyproperty
+    def start(self):
+        return datetime_utils.parse_time(
+            self._data[u'startTime']
+        ).time()
+
+    @lazyproperty
+    def end(self):
+        return datetime_utils.parse_time(
+            self._data[u'endTime']
+        ).time()
+
+class TimegridDayObject(Result):
+    @lazyproperty
+    def day(self):
+        return self._data[u'day']
+
+    @lazyproperty
+    def dayname(self):
+        names = { 1:"sunday", 2:"monday", 3:"tuesday", 4:"wednesday", 5:"thursday", 6: "friday", 7:"saturday" }
+        return names[self._data[u'day']]
+
+    @lazyproperty
+    def timeUnits(self):
+        return [
+            TimeUnitObject(parent=self, data=data)
+            for data in self._data[u'timeUnits']
+        ]
+
+class TimegridObject(ListResult):
+    _itemclass = TimegridDayObject
