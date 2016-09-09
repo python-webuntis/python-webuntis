@@ -309,6 +309,11 @@ class ResultWrapperMixin(object):
         return objects.SubstitutionList, 'getSubstitutions', parameters
 
 
+    @result_wrapper
+    def TimegridUnits(self):
+        return objects.TimegridObject, 'getTimegridUnits', {}
+
+
 class Session(JSONRPCSession, ResultWrapperMixin):
     '''The origin of everything you want to do with the WebUntis API. Can be
     used as a context-manager to provide automatic log-out.
