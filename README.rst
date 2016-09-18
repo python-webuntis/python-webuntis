@@ -1,13 +1,6 @@
 =====================================
-This project is no longer maintained.
+This project is now maintained again. It was originally written by untitaker <https://github.com/untitaker>
 =====================================
-
-I moved on and do no longer use it. See `the relevant ticket
-<https://github.com/untitaker/python-webuntis/issues/3>`_.
-
-|
-|
-|
 |
 |
 |
@@ -16,11 +9,10 @@ I moved on and do no longer use it. See `the relevant ticket
 python-webuntis
 ===============
 
-.. image:: https://travis-ci.org/untitaker/python-webuntis.png?branch=master
-    :target: https://travis-ci.org/untitaker/python-webuntis
+.. image:: https://travis-ci.org/maphy-psd/python-webuntis.png?branch=master
+    :target: https://travis-ci.org/maphy-psd/python-webuntis
 
-.. image:: https://coveralls.io/repos/untitaker/python-webuntis/badge.png
-    :target: https://coveralls.io/r/untitaker/python-webuntis 
+[![Coverage Status](https://coveralls.io/repos/github/maphy-psd/python-webuntis/badge.svg?branch=master)](https://coveralls.io/github/maphy-psd/python-webuntis?branch=master)
 
 
 Bindings for WebUntis API
