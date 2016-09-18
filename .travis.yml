@@ -1,16 +1,23 @@
 language: python
 python:
-    - "2.6"
-    - "2.7"
-    - "pypy"
-    - "3.3"
-    - "3.4"
-
+- '2.6'
+- '2.7'
+- 'pypy'
+- 'pypy3'
+- '3.2'
+- '3.3'
+- '3.4'
+- '3.5'
 install:
-    - pip install tox coveralls
-
+- pip install tox coveralls
 script:
-    - tox -e $(echo py$TRAVIS_PYTHON_VERSION | tr -d . | sed -e 's/pypypy/pypy/')
-
+- tox -e $(echo py$TRAVIS_PYTHON_VERSION | tr -d . | sed -e 's/pypypy/pypy/')
 after_success:
-    - coveralls
+- coveralls
+notifications:
+  pushover:
+    api_key:
+      secure: BTUEEqEM+w20UtpZ4mT7Jnre2HNub2aY2kfgVWfHNdP70/IvtwBIrxhtH3NaFeYh6xcojRgJvAEcxCeUzFbSNnuKZz5+RzJ633q4GqhdxbXoZPaa/7nPn8cKDqV+yJwTZBfiXM9VPnBFVszIudMuwD/PzLYSA27VFkY7viwmOC8=
+    users:
+      secure: CZ5Q3BLaoy6g3XpKWCGHrFKtWHGVUbVslzUzsktCT/bLWdujoAkNwUbkK2Wcanmgtll9pGTWNwEgYV4FbCDJYeibXBEXd9P1QsW0B3mbpEPJrvL51ErJxBIpamy0B7oNhUk6AVHMreCRupQcgl5r7/OncSR/nKLJ9RZlHREh7l8=
+    template: "%{repository} (%{commit}) : %{message} %{foo} - Build details: %{build_url}"
