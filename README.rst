@@ -12,7 +12,8 @@ python-webuntis
 .. image:: https://travis-ci.org/maphy-psd/python-webuntis.png?branch=master
     :target: https://travis-ci.org/maphy-psd/python-webuntis
 
-[![Coverage Status](https://coveralls.io/repos/github/maphy-psd/python-webuntis/badge.svg?branch=master)](https://coveralls.io/github/maphy-psd/python-webuntis?branch=master)
+.. image:: https://coveralls.io/repos/maphy-psd/python-webuntis/badge.png
+    :target: https://coveralls.io/r/maphy-psd/python-webuntis 
 
 
 Bindings for WebUntis API
