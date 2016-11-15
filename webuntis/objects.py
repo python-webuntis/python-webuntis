@@ -512,6 +512,16 @@ class TeacherObject(ListItem):
         return self._data[u'name']
 
 
+    @lazyproperty
+    def title(self):
+        '''title of the teacher'''
+        return self._data[u'title']
+
+    @lazyproperty
+    def full_name(self):
+        '''full name of teacher (title, forname, longname'''
+        return " ".join((self.title, self.fore_name, self.long_name)).strip()
+
 class TeacherList(ListResult):
     '''A list of teachers, in form of :py:class:`TeacherObject` instances.'''
     _itemclass = TeacherObject
