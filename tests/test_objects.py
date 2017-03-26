@@ -1,9 +1,12 @@
+import datetime
+
 from . import WebUntisTestCase
 import webuntis
 
 
 class ResultTests(WebUntisTestCase):
     Result = webuntis.objects.Result
+
     def test_initialization(self):
         r = self.Result(data={'id': 123}, session=object())
         self.assert_strict_equal(r.id, int(r), 123)
@@ -87,12 +90,12 @@ class ListResultTests(WebUntisTestCase):
         x = list(r.filter(id=1))
         self.assert_strict_equal(x, [results[1]])
 
-        x = list(r.filter(id=set([1,2])))
+        x = list(r.filter(id=set([1, 2])))
         self.assert_strict_equal(x, [results[1], results[2]])
 
         self.assert_strict_equal(
-            list(r.filter(id=set([1,2])).filter(one='eins')),
-            list(r.filter(one='eins', id=set([1,2]))),
+            list(r.filter(id=set([1, 2])).filter(one='eins')),
+            list(r.filter(one='eins', id=set([1, 2]))),
             [results[1]]
         )
 
@@ -108,6 +111,7 @@ class DepartmentTests(WebUntisTestCase):
 
         self.assert_strict_equal(x.name, u'ZIMMER')
         self.assert_strict_equal(x.long_name, u'Das Zimmer')
+
 
 class HolidayTests(WebUntisTestCase):
     def test_basics(self):
@@ -144,6 +148,7 @@ class KlassenTests(WebUntisTestCase):
 
 class PeriodTests(WebUntisTestCase):
     Obj = webuntis.objects.PeriodObject
+
     def test_dates(self):
         x = self.Obj(
             data={
@@ -179,7 +184,7 @@ class PeriodTests(WebUntisTestCase):
         self.assert_strict_equal(x.type, u'ls')
 
         for type in (u'ls', u'oh', u'sb', u'bs', u'ex'):
-            x = self.Obj(data={u'lstype':type}, session=object())
+            x = self.Obj(data={u'lstype': type}, session=object())
             self.assert_strict_equal(x.type, type)
 
         x = self.Obj(data={u'type': u'hoompaloompa'}, session=object())
@@ -217,7 +222,6 @@ class SchoolyearTests(WebUntisTestCase):
         assert x.end.strftime('%Y-%m-%d') == '2012-09-01'
         assert x.name == u'Holidayz'
 
-
     def test_list(self):
         class StubSession(object):
             def _request(s, method):
@@ -249,7 +253,7 @@ class SubjectTests(WebUntisTestCase):
             session=object()
         )
 
-        self.assert_strict_equal(x.name,  u'Math')
+        self.assert_strict_equal(x.name, u'Math')
         self.assert_strict_equal(x.long_name, u'Mathematics')
 
 
@@ -267,3 +271,37 @@ class TeacherTests(WebUntisTestCase):
         self.assert_strict_equal(x.fore_name, u'Hans')
         self.assert_strict_equal(x.long_name, x.surname, u'Gans')
         self.assert_strict_equal(x.name, u'Hans Gans')
+
+
+class TimeStampTests(WebUntisTestCase):
+    def test_basics(self):
+        x = webuntis.objects.TimeStampObject(
+            data=1420202020202,
+            session=object()
+        )
+        exp = datetime.datetime(2015, 1, 2, 13, 33, 40)
+        
+        
+        self.assertEqual(x.date.date(), exp.date())
+        # some differences py2 vs. py3:
+        # self.assertEqual(x.date.time(), exp.time())
+        self.assertEqual(x.date.time().hour, exp.time().hour)
+        self.assertEqual(x.date.time().minute, exp.time().minute)
+        self.assertEqual(x.date.time().second, exp.time().second)
+
+
+class TimegridTests(WebUntisTestCase):
+    def test_basics(self):
+        x = webuntis.objects.TimegridObject(
+            data=[{'day': 2, 'timeUnits': [{'startTime': 710, 'name': '0', 'endTime': 800},
+                                           {'startTime': 800, 'name': '1', 'endTime': 850},
+                                           {'startTime': 850, 'name': '2', 'endTime': 940}]}],
+                  session = object())
+
+        self.assertEqual(x[0].day, 2)
+        self.assertEqual(x[0].dayname, "monday")
+        self.assertEqual(x[0].timeUnits[0].name, "0")
+        self.assertEqual(x[0].timeUnits[1].start, datetime.time(8, 0))
+        self.assertEqual(x[0].timeUnits[2].end, datetime.time(9, 40))
+
+
