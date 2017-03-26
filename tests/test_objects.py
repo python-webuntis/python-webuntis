@@ -279,7 +279,15 @@ class TimeStampTests(WebUntisTestCase):
             data=1420202020202,
             session=object()
         )
-        self.assertEqual(x.date, datetime.datetime(2015, 1, 2, 13, 33, 40))
+        exp = datetime.datetime(2015, 1, 2, 13, 33, 40)
+        
+        
+        self.assertEqual(x.date.date(), exp.date())
+        # some differences py2 vs. py3:
+        # self.assertEqual(x.date.time(), exp.time())
+        self.assertEqual(x.date.time().hour, exp.time().hour)
+        self.assertEqual(x.date.time().minute, exp.time().minute)
+        self.assertEqual(x.date.time().second, exp.time().second)
 
 
 class TimegridTests(WebUntisTestCase):
