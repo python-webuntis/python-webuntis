@@ -1,3 +1,4 @@
+import datetime
 import mock
 import webuntis
 from . import WebUntisTestCase, stub_session_parameters, \
@@ -241,3 +242,16 @@ class WrapperMethodTests(WebUntisTestCase):
         with self.noop_result_mock('getStatusData'):
             st = s.statusdata()
             assert type(st) is webuntis.objects.StatusData
+
+    def test_lastImportTime(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.noop_result_mock('getLatestImportTime'):
+            li = s.lastImportTime()
+            assert type(li) is webuntis.objects.TimeStampObject
+
+    #def test_substitutions(self):
+    #    s = webuntis.Session(**stub_session_parameters)
+    #    with self.noop_result_mock('getSubstitutions'):
+    #        sl = s.substitutions(datetime.datetime(), datetime.datetime())
+    #        assert type(sl) is webuntis.objects.SubstitutionList
+

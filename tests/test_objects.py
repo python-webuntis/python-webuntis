@@ -263,7 +263,8 @@ class TeacherTests(WebUntisTestCase):
             data={
                 u'foreName': u'Hans',
                 u'longName': u'Gans',
-                u'name': u'Hans Gans'
+                u'name': u'Hans Gans',
+                u'title': u'Dr',
             },
             session=object()
         )
@@ -271,6 +272,9 @@ class TeacherTests(WebUntisTestCase):
         self.assert_strict_equal(x.fore_name, u'Hans')
         self.assert_strict_equal(x.long_name, x.surname, u'Gans')
         self.assert_strict_equal(x.name, u'Hans Gans')
+
+        self.assert_strict_equal(x.title, u'Dr')
+        self.assert_strict_equal(x.full_name, u'Dr Hans Gans')
 
 
 class TimeStampTests(WebUntisTestCase):
@@ -280,8 +284,8 @@ class TimeStampTests(WebUntisTestCase):
             session=object()
         )
         exp = datetime.datetime(2015, 1, 2, 13, 33, 40,tzinfo=None)
-        
-        
+
+
         self.assertEqual(x.date.date(), exp.date())
         # some differences py2 vs. py3:
         # self.assertEqual(x.date.time(), exp.time())
