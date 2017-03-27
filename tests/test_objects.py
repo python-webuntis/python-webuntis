@@ -279,7 +279,7 @@ class TimeStampTests(WebUntisTestCase):
             data=1420202020202,
             session=object()
         )
-        exp = datetime.datetime(2015, 1, 2, 13, 33, 40)
+        exp = datetime.datetime(2015, 1, 2, 13, 33, 40,tzinfo=None)
         
         
         self.assertEqual(x.date.date(), exp.date())
