@@ -249,9 +249,20 @@ class WrapperMethodTests(WebUntisTestCase):
             li = s.lastImportTime()
             assert type(li) is webuntis.objects.TimeStampObject
 
-    #def test_substitutions(self):
-    #    s = webuntis.Session(**stub_session_parameters)
-    #    with self.noop_result_mock('getSubstitutions'):
-    #        sl = s.substitutions(datetime.datetime(), datetime.datetime())
-    #        assert type(sl) is webuntis.objects.SubstitutionList
+    def test_substitutions(self):
+        s = webuntis.Session(**stub_session_parameters)
 
+        def getSubstitutions(url, jsondata, headers):
+            return {'result': []}
+
+        with mock_results({'getSubstitutions': getSubstitutions }):
+            start = 20120303
+            end   = 20120304
+            st = s.substitutions(start=start, end=end)
+            assert type(st) is webuntis.objects.SubstitutionList
+
+    def test_timegridUnits(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.noop_result_mock('getTimegridUnits'):
+            st = s.timegridUnits()
+            assert type(st) is webuntis.objects.TimegridObject

@@ -5,7 +5,6 @@
     :license: BSD, see LICENSE for more details.
 '''
 import datetime
-
 from webuntis.utils import datetime_utils, lazyproperty, \
     timetable_utils
 
@@ -354,7 +353,7 @@ class PeriodObject(ListItem):
     def original_rooms(self):
         ''' Support for original rooms '''
         try:
-            return self._session.rooms(from_cache=True).filter(id=set([te[u'orgid'] for te in self._data[u'ro']]))
+            return self._session.rooms(from_cache=True).filter(id=set([ro[u'orgid'] for ro in self._data[u'ro']]))
         except:
             pass
         return []
@@ -593,7 +592,6 @@ class StatusData(Result):
             for data in self._data[u'codes']
         ]
 
-
 class TimeStampObject(Result):
     '''Information about last change of data -- timestamp (given in milliseconds)'''
 
@@ -609,7 +607,7 @@ class TimeStampObject(Result):
 
 class SubstitutionObject(PeriodObject):
 
-    #@lazyproperty
+    @lazyproperty
     def type(self):
         '''type of substitution
              cancel   cancellation
@@ -679,4 +677,3 @@ class TimegridDayObject(Result):
 
 class TimegridObject(ListResult):
     _itemclass = TimegridDayObject
-

@@ -310,7 +310,7 @@ class ResultWrapperMixin(object):
 
 
     @result_wrapper
-    def TimegridUnits(self):
+    def timegridUnits(self):
         return objects.TimegridObject, 'getTimegridUnits', {}
 
 
