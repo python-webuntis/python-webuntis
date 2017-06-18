@@ -23,7 +23,7 @@ def server(url):
         # urlparse failed
         raise ValueError('Not a valid URL or hostname')
 
-    if not re.match(r'^[a-zA-Z0-9\.\:-_]+$', urlobj.netloc):
+    if not re.match(r'^[a-zA-Z0-9\.\:\-_]+$', urlobj.netloc):
         # That's not even a valid hostname
         raise ValueError('Not a valid hostname')
 
