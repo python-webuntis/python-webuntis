@@ -26,7 +26,8 @@ Bindings for WebUntis API
         username='api',
         password='api',
         server='webuntis.grupet.at:8080',
-        school='demo_inf'
+        school='demo_inf',
+        useragent='WebUntis Test'
     ).login()
 
     for klasse in s.klassen():
