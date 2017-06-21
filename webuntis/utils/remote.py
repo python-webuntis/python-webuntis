@@ -75,7 +75,9 @@ def rpc_request(config, method, params):
 
     log('debug', 'Making new request:')
     log('debug', 'URL: ' + url)
-    log('debug', 'DATA: ' + str(request_body))
+    if method != u'authenticate':
+        # user credentials will not be logged - fixing #14
+        log('debug', 'DATA: ' + str(request_body))
 
     if '_http_session' not in config:
         config['_http_session'] = requests.session()
