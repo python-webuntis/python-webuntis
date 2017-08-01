@@ -1,5 +1,5 @@
 =====================================
-This project is now maintained again. It was originally written by untitaker <https://github.com/untitaker>
+This project is now maintained again. It was originally written by `untitaker <https://github.com/untitaker>`_
 =====================================
 |
 |
