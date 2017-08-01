@@ -8,6 +8,8 @@ build
 dist
 docs/_build/
 env
+venv
 env*
 fabfile*
 htmlcov
+
