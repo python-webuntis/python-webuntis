@@ -458,7 +458,7 @@ class SchoolyearObject(ListItem):
             True
 
         """
-        return (self == self._parent.current)
+        return self == self._parent.current
 
 
 class SchoolyearList(ListResult):

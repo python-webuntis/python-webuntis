@@ -27,7 +27,7 @@ class Functions(WebUntisTestCase):
                 self.cache = {}
 
             def _request(self, method, args):
-                return (method, args)  # "data"
+                return method, args  # "data"
 
             @wrapper
             def some_stuff(self):
