@@ -1,16 +1,16 @@
-'''
+"""
     This file is part of python-webuntis
 
     :copyright: (c) 2013 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
-'''
+"""
 
 from __future__ import unicode_literals
 from datetime import datetime
 
 
 def table(periods, dates=None, times=None):
-    '''The backend of :py:meth:`webuntis.objects.PeriodList.to_table`.'''
+    """The backend of :py:meth:`webuntis.objects.PeriodList.to_table`."""
 
     if not len(periods):
         return []

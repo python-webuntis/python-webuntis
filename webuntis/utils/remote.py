@@ -1,9 +1,9 @@
-'''
+"""
     This file is part of python-webuntis
 
     :copyright: (c) 2012 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
-'''
+"""
 from webuntis import errors
 from webuntis.utils import log
 from webuntis.utils.userinput import unicode_string, bytestring
@@ -23,7 +23,7 @@ exception that will be thrown.'''
 
 
 def rpc_request(config, method, params):
-    '''
+    """
     A method for sending a JSON-RPC request.
 
     :param config: A dictionary containing ``useragent``, ``server``,
@@ -36,7 +36,7 @@ def rpc_request(config, method, params):
     :param params: JSON-RPC parameters to the method (should be JSON
         serializable)
     :type params: dict
-    '''
+    """
     server = config['server']
     school = config['school']
     useragent = config['useragent']
@@ -91,7 +91,7 @@ def rpc_request(config, method, params):
 
 
 def _request_getid():
-    '''
+    """
     calculate the id field for the request -- use current date
 
     If you want to get a fixed id for tests:
@@ -100,19 +100,19 @@ def _request_getid():
 
     :return: id field for request
     :rtype: str
-    '''
+    """
     return str(datetime.datetime.today())
 
 
 def _parse_result(request_body, result_body):
-    '''A subfunction of rpc_request, that, given the decoded JSON result,
+    """A subfunction of rpc_request, that, given the decoded JSON result,
     handles the error codes or, if everything went well, returns the result
     attribute of it. The request data has to be given too for logging and
     ID validation.
 
     :param request_body: The not-yet-encoded body of the request sent.
     :param result_body: The decoded body of the result recieved.
-    '''
+    """
 
     if request_body[u'id'] != result_body[u'id']:
         raise errors.RemoteError(
@@ -125,7 +125,7 @@ def _parse_result(request_body, result_body):
 
 
 def _parse_error_code(request_body, result_body):
-    '''A helper function for handling JSON error codes.'''
+    """A helper function for handling JSON error codes."""
     log('error', result_body)
     try:
         error = result_body[u'error']
@@ -143,9 +143,9 @@ def _parse_error_code(request_body, result_body):
 
 
 def _send_request(url, data, headers, http_session=None):
-    '''Sends a POST request given the endpoint URL, JSON-encodable data,
+    """Sends a POST request given the endpoint URL, JSON-encodable data,
     a dictionary with headers and, optionally, a session object for requests.
-    '''
+    """
 
     if http_session is None:
         http_session = requests.session()

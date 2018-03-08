@@ -1,9 +1,9 @@
-'''
+"""
     This file is part of python-webuntis
 
     :copyright: (c) 2013 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
-'''
+"""
 # Uncategorized utils go here
 
 from functools import wraps
@@ -12,11 +12,11 @@ from .third_party import OrderedDict
 
 
 class lazyproperty(object):
-    '''A read-only @property that is only evaluated once. Only usable on class
+    """A read-only @property that is only evaluated once. Only usable on class
     instances' methods.
 
     Stolen from http://www.reddit.com/r/Python/comments/ejp25/cached_property_decorator_that_is_memory_friendly/
-    '''
+    """
     def __init__(self, fget, doc=None):
         self.fget = fget
         self.__doc__ = doc or fget.__doc__
@@ -52,7 +52,7 @@ class SessionCache(LruDict):
 
 
 class FilterDict(object):
-    '''A dictionary which passes new values to a function found at the
+    """A dictionary which passes new values to a function found at the
     corresponding key in self.filters
 
     :param filters: A dictionary containing functions. If a new key is set into
@@ -67,7 +67,7 @@ class FilterDict(object):
     >>> config['foo']
     'whoopdeedoo'
 
-    '''
+    """
     filters = None
     _contents = None
 
@@ -122,13 +122,13 @@ class FilterDict(object):
 
 
 def result_wrapper(func):
-    '''A decorator for the session methods that return result objects. The
+    """A decorator for the session methods that return result objects. The
     decorated function has to return a tuple with the result class to
     instantiate, a JSON-RPC method and its parameters.  This decorator fetches
     the data with the JSON-RPC method and parameters and returns an instance of
     the result class the inner function returned (and saves it in the session
     cache).
-    '''
+    """
     @wraps(func)
     def inner(self, **kwargs):
         from_cache = False
@@ -150,7 +150,7 @@ def result_wrapper(func):
 
 
 def cache_key(method, args=None):
-    '''Get a hashable object given a string and a dictionary.'''
+    """Get a hashable object given a string and a dictionary."""
     if args is None:
         args = {}
     hash_args = frozenset(deepcopy(args).items())

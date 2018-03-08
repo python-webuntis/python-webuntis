@@ -1,9 +1,9 @@
-'''
+"""
     This file is part of python-webuntis
 
     :copyright: (c) 2012 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
-'''
+"""
 
 
 import re
@@ -54,8 +54,8 @@ class WebUntisTestCase(unittest.TestCase):
         assert re.search(regexp, repr(excinfo.value)), excinfo.value
 
     def assert_strict_equal(self, x, *args):
-        '''Stricter version of assert_equal that doesn't do implicit conversion
-        between unicode and strings'''
+        """Stricter version of assert_equal that doesn't do implicit conversion
+        between unicode and strings"""
         for y in args:
             self._assert_strict_equal_impl(x, y)
 
@@ -115,7 +115,7 @@ class OfflineTestCase(unittest.TestCase):
     
 
 def mock_results(methods, swallow_not_found=False):
-    '''Mock API methods more easily.
+    """Mock API methods more easily.
 
     :type methods: dict
     :param methods: A dictionary containing one callable for each API method.
@@ -123,7 +123,7 @@ def mock_results(methods, swallow_not_found=False):
     :type swallow_not_found: bool
     :param swallow_not_found: Whether to return {'result': {}} on unmocked API
         methods.
-    '''
+    """
     def new(url, jsondata, headers, http_session):
         method = jsondata['method']
         try:
@@ -148,8 +148,8 @@ def mock_results(methods, swallow_not_found=False):
 
 
 def raw_vs_object(jsondata, result):
-    '''zip json data and results, but grouped by id instead of order. Also runs
-    some checks that hashes are unique.'''
+    """zip json data and results, but grouped by id instead of order. Also runs
+    some checks that hashes are unique."""
     raw_lookup = dict((x['id'], x) for x in jsondata)
     known_hashes = set()
 

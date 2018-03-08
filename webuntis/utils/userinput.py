@@ -1,9 +1,9 @@
-'''
+"""
     This file is part of python-webuntis
 
     :copyright: (c) 2013 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
-'''
+"""
 import re
 from .logger import log
 from .third_party import urlparse
@@ -40,7 +40,7 @@ def server(url):
 
 
 def string(value):
-    '''Make the string unicode'''
+    """Make the string unicode"""
     if isinstance(value, unicode_string):
         return value
     return value.decode('ascii')

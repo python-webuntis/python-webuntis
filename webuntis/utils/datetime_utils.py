@@ -1,12 +1,11 @@
-'''
+"""
     This file is part of python-webuntis
 
     :copyright: (c) 2013 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
-'''
+"""
 
 import datetime
-
 
 forms = {
     'date': ('%Y%m%d', 6),
@@ -51,8 +50,9 @@ def _format(obj, form):
     else:
         return int(obj)
 
+
 def _satinize(raw_date, form):
-    '''Convert a raw date/time integer or string to a string with fixed length.'''
+    """Convert a raw date/time integer or string to a string with fixed length."""
     form_string, formlen = forms[form]
     raw_date = str(raw_date)
 
