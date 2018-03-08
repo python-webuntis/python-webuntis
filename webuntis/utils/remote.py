@@ -12,7 +12,6 @@ from webuntis.utils.third_party import json
 import datetime
 import requests
 
-
 _errorcodes = {
     -32601: errors.MethodNotFoundError,
     -8504: errors.BadCredentialsError,
@@ -49,7 +48,6 @@ def rpc_request(config, method, params):
 
     for v in params.values():
         assert not isinstance(v, bytestring)
-
 
     url = server + u'?school=' + school
 
@@ -118,7 +116,7 @@ def _parse_result(request_body, result_body):
 
     if request_body[u'id'] != result_body[u'id']:
         raise errors.RemoteError(
-            'Request ID was not the same one as returned. %s -- %s' % (request_body[u'id'], result_body[u'id']) )
+            'Request ID was not the same one as returned. %s -- %s' % (request_body[u'id'], result_body[u'id']))
 
     try:
         return result_body[u'result']
@@ -142,6 +140,7 @@ def _parse_error_code(request_body, result_body):
     exc.result = result_body
     exc.code = code
     raise exc
+
 
 def _send_request(url, data, headers, http_session=None):
     '''Sends a POST request given the endpoint URL, JSON-encodable data,

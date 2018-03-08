@@ -34,9 +34,9 @@ def server(url):
                        'parameter.')
 
     return urlobj.scheme + \
-        u'://' + \
-        urlobj.netloc + \
-        (urlobj.path or u'/WebUntis/jsonrpc.do')
+           u'://' + \
+           urlobj.netloc + \
+           (urlobj.path or u'/WebUntis/jsonrpc.do')
 
 
 def string(value):
@@ -44,6 +44,7 @@ def string(value):
     if isinstance(value, unicode_string):
         return value
     return value.decode('ascii')
+
 
 config_keys = {
     'username': string,
