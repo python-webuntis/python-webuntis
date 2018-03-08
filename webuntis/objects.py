@@ -346,7 +346,7 @@ class PeriodObject(ListItem):
         """ Support for original teachers """
         try:
             return self._session.teachers(from_cache=True).filter(id=set([te[u'orgid'] for te in self._data[u'te']]))
-        except:
+        except KeyError:
             pass
         return []
 
@@ -355,7 +355,7 @@ class PeriodObject(ListItem):
         """ Support for original rooms """
         try:
             return self._session.rooms(from_cache=True).filter(id=set([ro[u'orgid'] for ro in self._data[u'ro']]))
-        except:
+        except KeyError:
             pass
         return []
 
