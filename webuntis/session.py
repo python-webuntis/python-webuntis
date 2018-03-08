@@ -168,10 +168,10 @@ class ResultWrapperMixin(object):
     def timetable(self, start, end, **type_and_id):
         """Get the timetable for a specific school class and time period.
 
-        :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date`
+        :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
         :param start: The beginning of the time period.
 
-        :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date`
+        :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
         :param end: The end of the time period.
 
         :rtype: :py:class:`webuntis.objects.PeriodList`
@@ -281,14 +281,16 @@ class ResultWrapperMixin(object):
     def substitutions(self, start, end, departmentId=0):
         """Information about substitutions
 
-        :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date`
+
+        :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
         :param start: The beginning of the time period.
 
-        :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date`
+        :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
         :param end: The end of the time period.
 
         TODO: departmentId=None
-
+        :param departmentId:  int
+        :return:
         :rtype: :py:class:`webuntis.objects.Substitutions`
         """
 

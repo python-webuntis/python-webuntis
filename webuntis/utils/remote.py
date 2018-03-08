@@ -28,7 +28,7 @@ def rpc_request(config, method, params):
 
     :param config: A dictionary containing ``useragent``, ``server``,
         ``school``, ``username`` and ``password``
-    :type config: dict
+    :type config: dict or FilterDict
 
     :param method: The JSON-RPC method to be executed
     :type method: str

@@ -17,6 +17,7 @@ import logging
 from copy import deepcopy
 
 try:
+    # noinspection PyCompatibility
     from StringIO import StringIO as BytesIO  # Python 2
 except ImportError:
     from io import BytesIO  # Python 3
@@ -46,6 +47,7 @@ class WebUntisTestCase(unittest.TestCase):
             logging.warning(
                 'Failed to tear the request_patcher down properly.')
 
+    # noinspection PyMethodOverriding
     def assertRaisesRegex(self, exc, regexp, callback, *a, **kw):
         with pytest.raises(exc) as excinfo:
             callback(*a, **kw)
