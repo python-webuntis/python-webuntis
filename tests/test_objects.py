@@ -73,10 +73,10 @@ class ListResultTests(WebUntisTestCase):
             assert {u'id': res.id, u'value': res.value} in r
             self.assert_strict_equal(res.id, raw[u'id'])
 
-        s = str(r);
+        s = str(r)
         assert "'val': 3" in s
         assert "'id': 2" in s
-        s = repr(r);
+        s = repr(r)
         assert "'val': 3" in s
         assert "'id': 2" in s
         assert 'CustomListResult' in s
@@ -307,8 +307,8 @@ class TimeStampTests(WebUntisTestCase):
         self.assertEqual(x.date.date(), exp.date())
         # some differences py2 vs. py3:
         # self.assertEqual(x.date.time(), exp.time())
-        ## TODO: hour: fails for travis, but is ok here ;-(( removed for now
-        ## self.assertEqual(x.date.time().hour, exp.time().hour)
+        # # TODO: hour: fails for travis, but is ok here ;-(( removed for now
+        # # self.assertEqual(x.date.time().hour, exp.time().hour)
         self.assertEqual(x.date.time().minute, exp.time().minute)
         self.assertEqual(x.date.time().second, exp.time().second)
 
