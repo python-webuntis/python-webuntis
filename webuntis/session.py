@@ -50,6 +50,7 @@ class JSONRPCSession(object):
             because not logged in. Raised unless ``suppress_errors`` is
             ``True``.
         """
+
         def throw_errors():
             if not suppress_errors:
                 raise errors.NotLoggedInError('We already were logged out.')
@@ -190,10 +191,10 @@ class ResultWrapperMixin(object):
         :raises: :exc:`ValueError`, :exc:`TypeError`
         """
         element_type_table = {
-            'klasse':  1,
+            'klasse': 1,
             'teacher': 2,
             'subject': 3,
-            'room':    4,
+            'room': 4,
             'student': 5
         }
 
@@ -217,7 +218,7 @@ class ResultWrapperMixin(object):
         # its id gets placed here anyway
 
         json_start = utils.datetime_utils.format_date(start)
-        json_end =   utils.datetime_utils.format_date(end)
+        json_end = utils.datetime_utils.format_date(end)
 
         if json_start > json_end:
             raise ValueError('Start can\'t be later than the end.')
@@ -292,7 +293,7 @@ class ResultWrapperMixin(object):
         """
 
         json_start = utils.datetime_utils.format_date(start)
-        json_end =   utils.datetime_utils.format_date(end)
+        json_end = utils.datetime_utils.format_date(end)
 
         if json_start > json_end:
             raise ValueError('Start can\'t be later than the end.')
@@ -303,11 +304,10 @@ class ResultWrapperMixin(object):
             'departmentId': departmentId
         }
 
-        #if departmentId:
+        # if departmentId:
         #    parameters['departmentId'] = departmentId
 
         return objects.SubstitutionList, 'getSubstitutions', parameters
-
 
     @result_wrapper
     def timegridUnits(self):

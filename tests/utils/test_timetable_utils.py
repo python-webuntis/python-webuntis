@@ -2,10 +2,12 @@ import datetime
 from webuntis.utils.timetable_utils import table
 from .. import WebUntisTestCase
 
+
 class StubPeriod(object):
     def __init__(self, start, end):
         self.start = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M')
         self.end = datetime.datetime.strptime(end, '%Y-%m-%d %H:%M')
+
 
 class BasicUsage(WebUntisTestCase):
     def test_empty(self):

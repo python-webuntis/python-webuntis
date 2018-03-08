@@ -5,7 +5,6 @@
     :license: BSD, see LICENSE for more details.
 """
 
-
 import re
 import unittest
 import mock
@@ -27,8 +26,8 @@ data_path = tests_path + '/static'
 
 
 def get_json_resource(name):
-        with open(os.path.join(data_path, name)) as f:
-            return json.load(f)
+    with open(os.path.join(data_path, name)) as f:
+        return json.load(f)
 
 
 class WebUntisTestCase(unittest.TestCase):
@@ -37,7 +36,7 @@ class WebUntisTestCase(unittest.TestCase):
             raise Exception('These are offline tests.')
 
         self.request_patcher = patcher = \
-                mock.patch('webuntis.utils.remote._send_request', new=cb)
+            mock.patch('webuntis.utils.remote._send_request', new=cb)
         patcher.start()
 
     def tearDown(self):
@@ -64,7 +63,7 @@ class WebUntisTestCase(unittest.TestCase):
             return
         assert x == y
         assert issubclass(type(x), type(y)) or issubclass(type(y), type(x)), \
-                '%s != %s' % (type(x), type(y))
+            '%s != %s' % (type(x), type(y))
         if isinstance(x, (bytes, str)) or x is None:
             return
         elif isinstance(x, dict) or isinstance(y, dict):
@@ -79,7 +78,6 @@ class WebUntisTestCase(unittest.TestCase):
             ry = ry[:200] + (ry[200:] and '...')
             raise AssertionError(rx, ry)
         assert repr(x) == repr(y), repr((x, y))[:200]
-
 
 
 stub_session_parameters = {
@@ -98,7 +96,7 @@ class OfflineTestCase(unittest.TestCase):
             raise Exception('These are offline tests.')
 
         self.request_patcher = patcher = \
-                mock.patch('webuntis.utils.remote._send_request', new=cb)
+            mock.patch('webuntis.utils.remote._send_request', new=cb)
         patcher.start()
 
         self.session = webuntis.Session(**stub_session_parameters)
@@ -112,7 +110,6 @@ class OfflineTestCase(unittest.TestCase):
 
         self.session = None
 
-    
 
 def mock_results(methods, swallow_not_found=False):
     """Mock API methods more easily.
@@ -124,6 +121,7 @@ def mock_results(methods, swallow_not_found=False):
     :param swallow_not_found: Whether to return {'result': {}} on unmocked API
         methods.
     """
+
     def new(url, jsondata, headers, http_session):
         method = jsondata['method']
         try:

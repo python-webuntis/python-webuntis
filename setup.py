@@ -11,10 +11,10 @@ from sys import version_info
 
 dependencies = ['requests']
 
-if version_info < (2,6):
+if version_info < (2, 6):
     dependencies.append('simplejson')
 
-if version_info < (2,7):
+if version_info < (2, 7):
     dependencies.append('ordereddict')
 
 setup(

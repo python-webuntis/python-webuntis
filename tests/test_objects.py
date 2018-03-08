@@ -44,6 +44,7 @@ class ResultTests(WebUntisTestCase):
         r1 = self.Result(data={u'id': 124}, session=object())
         assert repr(r1) == u"Result({u'id': 124})" or repr(r1) == u"Result({'id': 124})"
 
+
 class ListResultTests(WebUntisTestCase):
     Result = webuntis.objects.ListResult
     lazyproperty = webuntis.utils.misc.lazyproperty
@@ -80,7 +81,6 @@ class ListResultTests(WebUntisTestCase):
         assert "'id': 2" in s
         assert 'CustomListResult' in s
         assert 'CustomItem' in s
-
 
     def test_filter(self):
         class CustomItem(webuntis.objects.ListItem):
@@ -302,8 +302,7 @@ class TimeStampTests(WebUntisTestCase):
             data=1420202020202,
             session=object()
         )
-        exp = datetime.datetime(2015, 1, 2, 13, 33, 40,tzinfo=None)
-
+        exp = datetime.datetime(2015, 1, 2, 13, 33, 40, tzinfo=None)
 
         self.assertEqual(x.date.date(), exp.date())
         # some differences py2 vs. py3:
@@ -320,7 +319,7 @@ class TimegridTests(WebUntisTestCase):
             data=[{'day': 2, 'timeUnits': [{'startTime': 710, 'name': '0', 'endTime': 800},
                                            {'startTime': 800, 'name': '1', 'endTime': 850},
                                            {'startTime': 850, 'name': '2', 'endTime': 940}]}],
-                  session = object())
+            session=object())
 
         self.assertEqual(x[0].day, 2)
         self.assertEqual(x[0].dayname, "monday")

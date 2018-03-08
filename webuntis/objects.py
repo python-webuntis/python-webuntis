@@ -81,12 +81,12 @@ class Result(object):
         except TypeError:
             return str(self._data)
 
-
     def __repr__(self):
         try:
             return self.__class__.__qualname__ + "(" + str(self._data) + ")"
         except AttributeError:
             return self.__class__.__name__ + "(" + str(self._data) + ")"
+
 
 class ListItem(Result):
     """ListItems represent an item in a
@@ -193,9 +193,10 @@ class ListResult(Result):
     def __repr__(self):
         """a simple to string function: a list of results -- debug only"""
         try:
-            return  self.__class__.__qualname__ + "[" + ", ".join(repr(d) for d in self._data) + "]"
+            return self.__class__.__qualname__ + "[" + ", ".join(repr(d) for d in self._data) + "]"
         except AttributeError:
-            return  self.__class__.__name__ + "[" + ", ".join(repr(d) for d in self._data) + "]"
+            return self.__class__.__name__ + "[" + ", ".join(repr(d) for d in self._data) + "]"
+
 
 class DepartmentObject(ListItem):
     """Represents a department"""
@@ -407,6 +408,7 @@ class RoomObject(ListItem):
     """Represents a physical room. Such as a classroom, but also the physics
     lab or whatever.
     """
+
     @lazyproperty
     def name(self):
         """The short name of the room. Such as PHY."""
@@ -494,6 +496,7 @@ class SubjectList(ListResult):
 
 class TeacherObject(ListItem):
     """Represents a teacher."""
+
     @lazyproperty
     def fore_name(self):
         """fore name of the teacher"""
@@ -511,7 +514,6 @@ class TeacherObject(ListItem):
         """full name of the teacher"""
         return self._data[u'name']
 
-
     @lazyproperty
     def title(self):
         """title of the teacher"""
@@ -521,6 +523,7 @@ class TeacherObject(ListItem):
     def full_name(self):
         """full name of teacher (title, forname, longname"""
         return " ".join((self.title, self.fore_name, self.long_name)).strip()
+
 
 class TeacherList(ListResult):
     """A list of teachers, in form of :py:class:`TeacherObject` instances."""
@@ -592,6 +595,7 @@ class StatusData(Result):
             for data in self._data[u'codes']
         ]
 
+
 class TimeStampObject(Result):
     """Information about last change of data -- timestamp (given in milliseconds)"""
 
@@ -602,7 +606,7 @@ class TimeStampObject(Result):
         TODO:  @lazyproperty
         :return: timestamp
         """
-        return datetime.datetime.fromtimestamp(self._data/1000)
+        return datetime.datetime.fromtimestamp(self._data / 1000)
 
 
 class SubstitutionObject(PeriodObject):
@@ -622,7 +626,8 @@ class SubstitutionObject(PeriodObject):
     def reschedule_start(self):
         """The start of the rescheduled substitution (or None)"""
         try:
-            return datetime_utils.parse_datetime(self._data[u'reschedule'][u'date'], self._data[u'reschedule'][u'startTime'])
+            return datetime_utils.parse_datetime(self._data[u'reschedule'][u'date'],
+                                                 self._data[u'reschedule'][u'startTime'])
         except KeyError:
             return None
 
@@ -630,7 +635,8 @@ class SubstitutionObject(PeriodObject):
     def reschedule_end(self):
         """The end of the rescheduled substitution (or None)"""
         try:
-            return datetime_utils.parse_datetime(self._data[u'reschedule'][u'date'], self._data[u'reschedule'][u'endTime'])
+            return datetime_utils.parse_datetime(self._data[u'reschedule'][u'date'],
+                                                 self._data[u'reschedule'][u'endTime'])
         except KeyError:
             return None
 
@@ -658,6 +664,7 @@ class TimeUnitObject(Result):
             self._data[u'endTime']
         ).time()
 
+
 class TimegridDayObject(Result):
     @lazyproperty
     def day(self):
@@ -665,7 +672,7 @@ class TimegridDayObject(Result):
 
     @lazyproperty
     def dayname(self):
-        names = { 1:"sunday", 2:"monday", 3:"tuesday", 4:"wednesday", 5:"thursday", 6: "friday", 7:"saturday" }
+        names = {1: "sunday", 2: "monday", 3: "tuesday", 4: "wednesday", 5: "thursday", 6: "friday", 7: "saturday"}
         return names[self._data[u'day']]
 
     @lazyproperty
@@ -674,6 +681,7 @@ class TimegridDayObject(Result):
             TimeUnitObject(parent=self, data=data)
             for data in self._data[u'timeUnits']
         ]
+
 
 class TimegridObject(ListResult):
     _itemclass = TimegridDayObject

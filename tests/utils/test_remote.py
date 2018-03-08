@@ -3,6 +3,7 @@ import mock
 from webuntis.utils.third_party import json
 from .. import WebUntisTestCase, BytesIO
 
+
 class BasicUsage(WebUntisTestCase):
     def test_parse_result(self):
         x = webuntis.utils.remote._parse_result
