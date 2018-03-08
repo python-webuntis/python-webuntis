@@ -109,12 +109,12 @@ class ListResultTests(WebUntisTestCase):
         x = list(r.filter(id=1))
         self.assert_strict_equal(x, [results[1]])
 
-        x = list(r.filter(id=set([1, 2])))
+        x = list(r.filter(id={1, 2}))
         self.assert_strict_equal(x, [results[1], results[2]])
 
         self.assert_strict_equal(
-            list(r.filter(id=set([1, 2])).filter(one='eins')),
-            list(r.filter(one='eins', id=set([1, 2]))),
+            list(r.filter(id={1, 2}).filter(one='eins')),
+            list(r.filter(one='eins', id={1, 2})),
             [results[1]]
         )
 

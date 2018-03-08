@@ -155,4 +155,4 @@ def cache_key(method, args=None):
         args = {}
     hash_args = frozenset(deepcopy(args).items())
 
-    return (method, hash_args)
+    return method, hash_args

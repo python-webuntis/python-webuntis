@@ -162,4 +162,4 @@ class FilterDictTests(WebUntisTestCase):
 
         assert list(d) == []
         d.update({'foo': 'bar', 'alwaysnone': True})
-        assert set(d) == set(['foo'])
+        assert set(d) == {'foo'}

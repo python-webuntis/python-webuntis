@@ -27,7 +27,7 @@ def table(periods, dates=None, times=None):
     # periods may be added twice if they are longer than one hour
     for period in periods:
         for dt in datetimes:
-            if period.start <= dt and period.end > dt:
+            if period.start <= dt < period.end:
                 table[dt.time()][dt.date()].add(period)
 
     # Convert the hashtable to the output format by sorting each dictionary's
