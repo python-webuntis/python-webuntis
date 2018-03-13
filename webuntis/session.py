@@ -275,6 +275,10 @@ class ResultWrapperMixin(object):
 
     @result_wrapper
     def lastImportTime(self):
+        """
+
+        :rtype: py:class:`webuntis.objects.TimeStampObject`
+        """
         return objects.TimeStampObject, 'getLatestImportTime', {}
 
     @result_wrapper
@@ -288,7 +292,6 @@ class ResultWrapperMixin(object):
         :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
         :param end: The end of the time period.
 
-        TODO: departmentId=None
         :param departmentId:  int
         :return:
         :rtype: :py:class:`webuntis.objects.Substitutions`
@@ -313,6 +316,10 @@ class ResultWrapperMixin(object):
 
     @result_wrapper
     def timegridUnits(self):
+        """
+
+        :rtype: :py:class:`webuntis.objects.TimegridObject`
+        """
         return objects.TimegridObject, 'getTimegridUnits', {}
 
 
