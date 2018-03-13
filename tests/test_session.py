@@ -1,5 +1,5 @@
-import datetime
 import mock
+
 import webuntis
 from . import WebUntisTestCase, stub_session_parameters, \
     mock_results
@@ -303,3 +303,26 @@ class WrapperMethodTests(WebUntisTestCase):
         with self.noop_result_mock('getTimegridUnits'):
             st = s.timegridUnits()
             assert type(st) is webuntis.objects.TimegridObject
+
+    @staticmethod
+    def student_result_mock(methodname):
+        def inner(url, jsondata, headers):
+            return {
+                "result": [
+                    {"id": 1, "key": "1234567", "name": u"MuellerAle", "foreName": "Alexander", "longName": u"Mueller",
+                     "gender": "male"},
+                ]}
+
+        return mock_results({methodname: inner})
+
+    def test_students(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.student_result_mock('getStudents'):
+            st = s.students()
+            assert st
+            assert len(st) == 1
+            assert st == st
+            assert type(st) is webuntis.objects.StudentsList
+            student = st[0]
+            assert type(student) == webuntis.objects.StudentObject
+            assert student.full_name == "Alexander Mueller"

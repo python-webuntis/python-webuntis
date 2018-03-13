@@ -322,7 +322,6 @@ class ResultWrapperMixin(object):
         """
         return objects.TimegridObject, 'getTimegridUnits', {}
 
-
     @result_wrapper
     def students(self):
         """
@@ -330,6 +329,7 @@ class ResultWrapperMixin(object):
         :rtype:  :py:class:`webuntis.objects.StudentsList`
         """
         return objects.StudentsList, 'getStudents', {}
+
 
 class Session(JSONRPCSession, ResultWrapperMixin):
     """The origin of everything you want to do with the WebUntis API. Can be
