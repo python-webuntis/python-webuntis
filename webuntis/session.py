@@ -294,7 +294,7 @@ class ResultWrapperMixin(object):
 
         :param departmentId:  int
         :return:
-        :rtype: :py:class:`webuntis.objects.Substitutions`
+        :rtype: :py:class:`webuntis.objects.SubstitutionList`
         """
 
         json_start = utils.datetime_utils.format_date(start)
