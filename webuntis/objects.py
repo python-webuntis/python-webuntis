@@ -490,26 +490,29 @@ class SubjectList(ListResult):
     _itemclass = SubjectObject
 
 
-class TeacherObject(ListItem):
-    """Represents a teacher."""
+class PersonObject(ListItem):
+    """Represents a person (teacher or student)."""
 
     @lazyproperty
     def fore_name(self):
-        """fore name of the teacher"""
+        """fore name of the person"""
         return self._data[u'foreName']
 
     @lazyproperty
     def long_name(self):
-        """surname of teacher"""
+        """surname of person"""
         return self._data[u'longName']
 
     surname = long_name
 
     @lazyproperty
     def name(self):
-        """full name of the teacher"""
+        """full name of the person"""
         return self._data[u'name']
 
+
+class TeacherObject(PersonObject):
+    """Represents a teacher."""
     @lazyproperty
     def title(self):
         """title of the teacher"""
@@ -681,3 +684,15 @@ class TimegridDayObject(Result):
 
 class TimegridObject(ListResult):
     _itemclass = TimegridDayObject
+
+
+class StudentObject(PersonObject):
+    """Represents a student."""
+
+    @lazyproperty
+    def full_name(self):
+        """full name of student (forname, longname)"""
+        return " ".join((self.fore_name, self.long_name)).strip()
+
+class StudentsList(ListResult):
+    _itemclass = StudentObject

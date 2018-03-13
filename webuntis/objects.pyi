@@ -184,6 +184,29 @@ class PeriodObject(ListItem):
         ...
 
 
+class PersonObject(ListItem):
+
+    @property
+    def fore_name(self) -> str:
+        ...
+
+    @property
+    def full_name(self) -> str:
+        ...
+
+    @property
+    def long_name(self) -> str:
+        ...
+
+    @property
+    def name(self) -> str:
+        ...
+
+    @property
+    def surname(self) -> str:
+        ...
+
+
 class RoomList(ListResult):
 
     def filter(self, **criterions) -> RoomList:
@@ -267,6 +290,20 @@ class SubjectObject(ListItem):
         ...
 
 
+class StudentsList(ListResult):
+    def filter(self, **criterions) -> StudentsList:
+        ...
+
+    def __getitem__(self, i: int) -> StudentObject:
+        ...
+
+
+class StudentObject(PersonObject):
+    @property
+    def full_name(self) -> str:
+        ...
+
+
 class SubstitutionList(ListResult):
 
     def filter(self, **criterions) -> SubstitutionList:
@@ -300,30 +337,13 @@ class TeacherList(ListResult):
         ...
 
 
-class TeacherObject(ListItem):
-
-    @property
-    def fore_name(self) -> str:
-        ...
-
-    @property
-    def full_name(self) -> str:
-        ...
-
-    @property
-    def long_name(self) -> str:
-        ...
-
-    @property
-    def name(self) -> str:
-        ...
-
-    @property
-    def surname(self) -> str:
-        ...
-
+class TeacherObject(PersonObject):
     @property
     def title(self) -> str:
+        ...
+
+    @property
+    def full_name(self):
         ...
 
 
