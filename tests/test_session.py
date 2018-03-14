@@ -328,8 +328,10 @@ class WrapperMethodTests(WebUntisTestCase):
             assert student.full_name == "Alexander Mueller"
             assert student.gender == "male"
 
-
-
-
     def test_examtype(self):
+        """@TODO"""
+        pass
+
+    def test_exam(self):
+        """@TODO"""
         pass

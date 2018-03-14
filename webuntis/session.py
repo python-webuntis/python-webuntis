@@ -335,12 +335,43 @@ class ResultWrapperMixin(object):
     @TODO: need additional rights
     @result_wrapper
     def examTypes(self):
-        """Information about the Exams.
+        """Information about the Exam types.
 
         :rtype:  :py:class:`webuntis.objects.ExamTypeList`
         """
         return objects.ExamTypeList, 'getExamTypes', {}
+
+    
+    @result_wrapper
+    def exams(self, start, end, examTypeId=0):
+        """Information about the Exams.
+
+        :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
+        :param start: The beginning of the time period.
+
+        :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
+        :param end: The end of the time period.
+
+        :param examTypeId:  int, ??
+
+        :rtype: :py:class:`webuntis.objects.ExamList`
+        """
+
+        json_start = utils.datetime_utils.format_date(start)
+        json_end = utils.datetime_utils.format_date(end)
+
+        if json_start > json_end:
+            raise ValueError('Start can\'t be later than the end.')
+
+        parameters = {
+            'startDate': json_start,
+            'endDate': json_end,
+            'examTypeId': examTypeId
+        }
+
+        return objects.ExamList, 'getExams', parameters
     '''
+
 
 class Session(JSONRPCSession, ResultWrapperMixin):
     """The origin of everything you want to do with the WebUntis API. Can be

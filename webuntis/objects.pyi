@@ -312,6 +312,7 @@ class StudentObject(PersonObject):
     def gender(self) -> str:
         ...
 
+
 class StudentsList(ListResult):
     _itemclass = StudentObject
 
@@ -413,6 +414,7 @@ class TimegridObject(ListResult):
     def __getitem__(self, i: int) -> TimegridDayObject:
         ...
 
+
 """
 @TODO: need additional rights
 
@@ -426,5 +428,17 @@ class ExamTypeList(ListResult):
         ...
 
     def __getitem__(self, i: int) -> ExamTypeObject:
+        ...
+
+class ExamObject(Result):
+    ...
+
+class ExamList(ListResult):
+    _itemclass = ExamObject
+
+    def filter(self, **criterions) -> ExamObject:
+        ...
+
+    def __getitem__(self, i: int) -> ExamObject:
         ...
 """

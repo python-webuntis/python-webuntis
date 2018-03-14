@@ -693,6 +693,7 @@ class TimeUnitObject(Result):
 
 class TimegridDayObject(Result):
     """Information about one day in the time grid"""
+
     @lazyproperty
     def day(self):
         return self._data[u'day']
@@ -727,9 +728,11 @@ class StudentObject(PersonObject):
     def gender(self):
         return self._data[u'gender']
 
+
 class StudentsList(ListResult):
     """A list of students"""
     _itemclass = StudentObject
+
 
 '''
 @TODO: need additional rights
@@ -739,4 +742,11 @@ class ExamTypeObject(Result):
 class ExamTypeList(ListResult):
     """A list of exam types"""
     _itemclass = ExamTypeObject
+
+class ExamObject(Result):
+    """Represents an Exam."""
+
+class ExamList(ListResult):
+    """A list of exams."""
+    _itemclass = ExamObject
 '''
