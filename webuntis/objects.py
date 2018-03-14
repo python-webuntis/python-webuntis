@@ -734,8 +734,10 @@ class StudentsList(ListResult):
     _itemclass = StudentObject
 
 
-'''
+"""
 @TODO: need additional rights
+"""
+
 class ExamTypeObject(Result):
     """Represents an Exam Type."""
 
@@ -756,4 +758,4 @@ class AbsenceObject(Result):
 class AbsencesList(ListResult):
     """A list of absences."""
     _itemclass = AbsenceObject
-'''
+

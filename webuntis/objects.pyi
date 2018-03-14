@@ -417,6 +417,7 @@ class TimegridObject(ListResult):
 
 """
 @TODO: need additional rights
+"""
 
 class ExamTypeObject(Result):
     ...
@@ -454,4 +455,3 @@ class AbsencesList(ListResult):
     def __getitem__(self, i: int) -> AbsenceObject:
         ...
         
-"""

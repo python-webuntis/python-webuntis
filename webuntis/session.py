@@ -333,6 +333,8 @@ class ResultWrapperMixin(object):
 
     '''
     @TODO: need additional rights
+    '''
+
     @result_wrapper
     def examTypes(self):
         """Information about the Exam types.
@@ -369,8 +371,8 @@ class ResultWrapperMixin(object):
             'examTypeId': examTypeId
         }
 
-        return objects.ExamList, 'getExams', parameters
-    '''
+        return objects.ExamsList, 'getExams', parameters
+
 
     @result_wrapper
     def timetableWithAbsences(self, start, end):
