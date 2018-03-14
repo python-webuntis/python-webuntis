@@ -25,10 +25,6 @@ class Result(object):
 
     """
 
-    _parent = None
-    _session = None
-    _data = None
-
     def __init__(self, data, parent=None, session=None):
         if bool(parent is None) == bool(session is None):
             raise TypeError('Either parent or session has to be provided.')
@@ -603,7 +599,7 @@ class TimeStampObject(Result):
     def date(self):
         """
         get timestamp as python datetime object
-        TODO:  @lazyproperty
+
         :return: timestamp
         """
         return datetime.datetime.fromtimestamp(self._data / 1000)
