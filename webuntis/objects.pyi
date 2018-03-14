@@ -267,7 +267,7 @@ class SchoolyearList(ListResult):
         ...
 
     @property
-    def current(self) -> str:
+    def current(self) -> SchoolyearObject:
         ...
 
 

@@ -5,6 +5,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import datetime
+
 from webuntis.utils import datetime_utils, lazyproperty, \
     timetable_utils
 
@@ -243,8 +244,10 @@ class HolidayList(ListResult):
     instances."""
     _itemclass = HolidayObject
 
+
 class ColorMixin:
     """Interface support fore/back color"""
+
     @lazyproperty
     def forecolor(self):
         """The foreground color used in the web interface and elsewhere"""
@@ -254,6 +257,7 @@ class ColorMixin:
     def backcolor(self):
         """The background color used in the web interface and elsewhere"""
         return self._data[self.name][u'backColor']
+
 
 class KlassenObject(ListItem, ColorMixin):
     """Represents a school class."""
@@ -456,6 +460,8 @@ class SchoolyearObject(ListItem):
         """
         Boolean, check if this is the current schoolyear::
 
+            >>> import webuntis
+            >>> s = webuntis.Session()
             >>> y = s.schoolyears()
             >>> y.current.id
             7
@@ -524,6 +530,7 @@ class PersonObject(ListItem):
 
 class TeacherObject(PersonObject):
     """Represents a teacher."""
+
     @lazyproperty
     def title(self):
         """title of the teacher"""
@@ -544,6 +551,8 @@ class ColorInfo(Result, ColorMixin):
     """
     An object containing information about a lesson type or a period code::
 
+        >>> import webuntis
+        >>> s = webuntis.Session()
         >>> lstype = s.statusdata().lesson_types[0]
         >>> lstype.name
         'ls'
@@ -694,6 +703,7 @@ class StudentObject(PersonObject):
     def full_name(self):
         """full name of student (forname, longname)"""
         return " ".join((self.fore_name, self.long_name)).strip()
+
 
 class StudentsList(ListResult):
     _itemclass = StudentObject
