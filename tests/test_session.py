@@ -327,3 +327,9 @@ class WrapperMethodTests(WebUntisTestCase):
             assert type(student) == webuntis.objects.StudentObject
             assert student.full_name == "Alexander Mueller"
             assert student.gender == "male"
+
+
+
+
+    def test_examtype(self):
+        pass

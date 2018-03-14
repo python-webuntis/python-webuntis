@@ -412,3 +412,19 @@ class TimegridObject(ListResult):
 
     def __getitem__(self, i: int) -> TimegridDayObject:
         ...
+
+"""
+@TODO: need additional rights
+
+class ExamTypeObject(Result):
+    ...
+
+class ExamTypeList(ListResult):
+    _itemclass = ExamTypeObject
+
+    def filter(self, **criterions) -> ExamTypeObject:
+        ...
+
+    def __getitem__(self, i: int) -> ExamTypeObject:
+        ...
+"""

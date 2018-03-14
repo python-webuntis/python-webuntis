@@ -331,6 +331,16 @@ class ResultWrapperMixin(object):
         """
         return objects.StudentsList, 'getStudents', {}
 
+    '''
+    @TODO: need additional rights
+    @result_wrapper
+    def examTypes(self):
+        """Information about the Exams.
+
+        :rtype:  :py:class:`webuntis.objects.ExamTypeList`
+        """
+        return objects.ExamTypeList, 'getExamTypes', {}
+    '''
 
 class Session(JSONRPCSession, ResultWrapperMixin):
     """The origin of everything you want to do with the WebUntis API. Can be

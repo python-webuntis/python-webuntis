@@ -625,6 +625,7 @@ class TimeStampObject(Result):
 
 
 class SubstitutionObject(PeriodObject):
+    """Information about substitution."""
 
     @lazyproperty
     def type(self):
@@ -670,6 +671,8 @@ class SubstitutionList(ListResult):
 
 
 class TimeUnitObject(Result):
+    """Information about the time grid"""
+
     @lazyproperty
     def name(self):
         """Name of Timeunit"""
@@ -689,6 +692,7 @@ class TimeUnitObject(Result):
 
 
 class TimegridDayObject(Result):
+    """Information about one day in the time grid"""
     @lazyproperty
     def day(self):
         return self._data[u'day']
@@ -707,6 +711,7 @@ class TimegridDayObject(Result):
 
 
 class TimegridObject(ListResult):
+    """A list of TimegridDayObjects"""
     _itemclass = TimegridDayObject
 
 
@@ -723,4 +728,15 @@ class StudentObject(PersonObject):
         return self._data[u'gender']
 
 class StudentsList(ListResult):
+    """A list of students"""
     _itemclass = StudentObject
+
+'''
+@TODO: need additional rights
+class ExamTypeObject(Result):
+    """Represents an Exam Type."""
+
+class ExamTypeList(ListResult):
+    """A list of exam types"""
+    _itemclass = ExamTypeObject
+'''
