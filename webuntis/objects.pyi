@@ -51,8 +51,7 @@ class ListResult(Result):
         ...
 
 
-class ColorInfo(Result):
-
+class ColorMixin:
     @property
     def backcolor(self) -> str:
         ...
@@ -61,11 +60,12 @@ class ColorInfo(Result):
     def forecolor(self) -> str:
         ...
 
+
+class ColorInfo(Result):
+
     @property
     def name(self) -> str:
         ...
-
-
 
 
 class DepartmentObject(ListItem):
@@ -77,6 +77,7 @@ class DepartmentObject(ListItem):
     @property
     def name(self) -> str:
         ...
+
 
 class DepartmentList(ListResult):
     _itemclass = DepartmentObject
@@ -106,6 +107,7 @@ class HolidayObject(ListItem):
     def start(self) -> datetime.datetime:
         ...
 
+
 class HolidayList(ListResult):
     _itemclass = HolidayObject
 
@@ -116,7 +118,7 @@ class HolidayList(ListResult):
         ...
 
 
-class KlassenObject(ListItem):
+class KlassenObject(ListItem, ColorMixin):
     @property
     def long_name(self) -> str:
         ...
@@ -124,6 +126,7 @@ class KlassenObject(ListItem):
     @property
     def name(self) -> str:
         ...
+
 
 class KlassenList(ListResult):
     _itemclass = KlassenObject
@@ -133,8 +136,6 @@ class KlassenList(ListResult):
 
     def __getitem__(self, i: int) -> KlassenObject:
         ...
-
-
 
 
 class PeriodObject(ListItem):
@@ -179,6 +180,7 @@ class PeriodObject(ListItem):
     def type(self) -> str:
         ...
 
+
 class PeriodList(ListResult):
     _itemclass = PeriodObject
 
@@ -215,8 +217,7 @@ class PersonObject(ListItem):
         ...
 
 
-
-class RoomObject(ListItem):
+class RoomObject(ListItem, ColorMixin):
 
     @property
     def long_name(self) -> str:
@@ -226,6 +227,7 @@ class RoomObject(ListItem):
     def name(self) -> str:
         ...
 
+
 class RoomList(ListResult):
     _itemclass = RoomObject
 
@@ -234,9 +236,6 @@ class RoomList(ListResult):
 
     def __getitem__(self, i: int) -> RoomObject:
         ...
-
-
-
 
 
 class SchoolyearObject(ListItem):
@@ -257,6 +256,7 @@ class SchoolyearObject(ListItem):
     def start(self) -> datetime.datetime:
         ...
 
+
 class SchoolyearList(ListResult):
     _itemclass = SchoolyearObject
 
@@ -270,6 +270,7 @@ class SchoolyearList(ListResult):
     def current(self) -> str:
         ...
 
+
 class StatusData(Result):
 
     @property
@@ -281,8 +282,7 @@ class StatusData(Result):
         ...
 
 
-
-class SubjectObject(ListItem):
+class SubjectObject(ListItem, ColorMixin):
 
     @property
     def long_name(self) -> str:
@@ -292,6 +292,7 @@ class SubjectObject(ListItem):
     def name(self) -> str:
         ...
 
+
 class SubjectList(ListResult):
     _itemclass = SubjectObject
 
@@ -300,8 +301,6 @@ class SubjectList(ListResult):
 
     def __getitem__(self, i: int) -> SubjectObject:
         ...
-
-
 
 
 class StudentObject(PersonObject):
@@ -334,6 +333,7 @@ class SubstitutionObject(PeriodObject):
     def type(self) -> str:
         ...
 
+
 class SubstitutionList(ListResult):
     _itemclass = SubstitutionObject
 
@@ -342,7 +342,6 @@ class SubstitutionList(ListResult):
 
     def __getitem__(self, i: int) -> SubstitutionObject:
         ...
-
 
 
 class TeacherObject(PersonObject):
@@ -354,6 +353,7 @@ class TeacherObject(PersonObject):
     def full_name(self):
         ...
 
+
 class TeacherList(ListResult):
     _itemclass = TeacherObject
 
@@ -362,6 +362,7 @@ class TeacherList(ListResult):
 
     def __getitem__(self, i: int) -> TeacherObject:
         ...
+
 
 class TimeStampObject(Result):
 

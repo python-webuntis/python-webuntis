@@ -243,8 +243,19 @@ class HolidayList(ListResult):
     instances."""
     _itemclass = HolidayObject
 
+class ColorMixin:
+    """Interface support fore/back color"""
+    @lazyproperty
+    def forecolor(self):
+        """The foreground color used in the web interface and elsewhere"""
+        return self._data[self.name][u'foreColor']
 
-class KlassenObject(ListItem):
+    @lazyproperty
+    def backcolor(self):
+        """The background color used in the web interface and elsewhere"""
+        return self._data[self.name][u'backColor']
+
+class KlassenObject(ListItem, ColorMixin):
     """Represents a school class."""
 
     @lazyproperty
@@ -400,7 +411,7 @@ class PeriodList(ListResult):
         return timetable_utils.table(self, dates=dates, times=times)
 
 
-class RoomObject(ListItem):
+class RoomObject(ListItem, ColorMixin):
     """Represents a physical room. Such as a classroom, but also the physics
     lab or whatever.
     """
@@ -471,7 +482,7 @@ class SchoolyearList(ListResult):
         return current
 
 
-class SubjectObject(ListItem):
+class SubjectObject(ListItem, ColorMixin):
     """Represents a subject."""
 
     @lazyproperty
@@ -529,7 +540,7 @@ class TeacherList(ListResult):
     _itemclass = TeacherObject
 
 
-class ColorInfo(Result):
+class ColorInfo(Result, ColorMixin):
     """
     An object containing information about a lesson type or a period code::
 
@@ -561,16 +572,6 @@ class ColorInfo(Result):
     def name(self):
         """The name of the LessonType or PeriodCode"""
         return list(self._data.items())[0][0]
-
-    @lazyproperty
-    def forecolor(self):
-        """The foreground color used in the web interface and elsewhere"""
-        return self._data[self.name][u'foreColor']
-
-    @lazyproperty
-    def backcolor(self):
-        """The background color used in the web interface and elsewhere"""
-        return self._data[self.name][u'backColor']
 
 
 class StatusData(Result):
