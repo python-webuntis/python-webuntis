@@ -372,6 +372,34 @@ class ResultWrapperMixin(object):
         return objects.ExamList, 'getExams', parameters
     '''
 
+    @result_wrapper
+    def timetableWithAbsences(self, start, end):
+        """Information about the Exams.
+
+        :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
+        :param start: The beginning of the time period.
+
+        :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
+        :param end: The end of the time period.
+
+        :rtype: :py:class:`webuntis.objects.AbsencesList`
+        """
+
+        json_start = utils.datetime_utils.format_date(start)
+        json_end = utils.datetime_utils.format_date(end)
+
+        if json_start > json_end:
+            raise ValueError('Start can\'t be later than the end.')
+
+        parameters = {
+            "options": {
+                'startDate': json_start,
+                'endDate': json_end,
+            }
+        }
+
+        return objects.AbsencesList, 'getTimetableWithAbsences', parameters
+
 
 class Session(JSONRPCSession, ResultWrapperMixin):
     """The origin of everything you want to do with the WebUntis API. Can be

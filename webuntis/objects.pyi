@@ -433,7 +433,7 @@ class ExamTypeList(ListResult):
 class ExamObject(Result):
     ...
 
-class ExamList(ListResult):
+class ExamsList(ListResult):
     _itemclass = ExamObject
 
     def filter(self, **criterions) -> ExamObject:
@@ -441,4 +441,17 @@ class ExamList(ListResult):
 
     def __getitem__(self, i: int) -> ExamObject:
         ...
+        
+class AbsenceObject(Result):
+    ...
+
+class AbsencesList(ListResult):
+    _itemclass = AbsenceObject
+
+    def filter(self, **criterions) -> AbsenceObject:
+        ...
+
+    def __getitem__(self, i: int) -> AbsenceObject:
+        ...
+        
 """

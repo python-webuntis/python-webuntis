@@ -746,7 +746,14 @@ class ExamTypeList(ListResult):
 class ExamObject(Result):
     """Represents an Exam."""
 
-class ExamList(ListResult):
+class ExamsList(ListResult):
     """A list of exams."""
     _itemclass = ExamObject
+
+class AbsenceObject(Result):
+    """Represents an absence."""
+
+class AbsencesList(ListResult):
+    """A list of absences."""
+    _itemclass = AbsenceObject
 '''
