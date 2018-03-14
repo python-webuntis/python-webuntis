@@ -6,8 +6,9 @@
 """
 # Uncategorized utils go here
 
-from functools import wraps
 from copy import deepcopy
+from functools import wraps
+
 from .third_party import OrderedDict
 
 
@@ -17,6 +18,7 @@ class lazyproperty(object):
 
     Stolen from http://www.reddit.com/r/Python/comments/ejp25/cached_property_decorator_that_is_memory_friendly/
     """
+
     def __init__(self, fget, doc=None):
         self.fget = fget
         self.__doc__ = doc or fget.__doc__
@@ -129,6 +131,7 @@ def result_wrapper(func):
     the result class the inner function returned (and saves it in the session
     cache).
     """
+
     @wraps(func)
     def inner(self, **kwargs):
         from_cache = False
@@ -137,7 +140,11 @@ def result_wrapper(func):
             del kwargs['from_cache']
 
         result_class, jsonrpc_method, jsonrpc_args = func(self, **kwargs)
-        key = cache_key(func.__name__, jsonrpc_args)
+
+        try:
+            key = cache_key(func.__name__, jsonrpc_args)
+        except TypeError:
+            key = cache_key(func.__name__, {"cache": str(jsonrpc_args)})
 
         if from_cache and key in self.cache:
             return self.cache[key]
