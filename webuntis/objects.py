@@ -718,6 +718,9 @@ class StudentObject(PersonObject):
         """full name of student (forname, longname)"""
         return " ".join((self.fore_name, self.long_name)).strip()
 
+    @lazyproperty
+    def gender(self):
+        return self._data[u'gender']
 
 class StudentsList(ListResult):
     _itemclass = StudentObject

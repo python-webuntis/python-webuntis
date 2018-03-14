@@ -308,6 +308,9 @@ class StudentObject(PersonObject):
     def full_name(self) -> str:
         ...
 
+    @property
+    def gender(self) -> str:
+        ...
 
 class StudentsList(ListResult):
     _itemclass = StudentObject
