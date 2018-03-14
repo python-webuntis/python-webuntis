@@ -7,7 +7,9 @@ from webuntis import Session
 class Result(object):
 
     def __init__(self, data, parent: Result = None, session: Session = None):
-        ...
+        self._session = session or parent._session
+        self._parent = parent
+        self._data = data
 
     @property
     def id(self) -> int:
@@ -34,7 +36,9 @@ class ListItem(Result):
 
 
 class ListResult(Result):
-    def filter(self, **criterions):
+    _itemclass = ListItem
+
+    def filter(self, **criterions) -> ListItem:
         ...
 
     def __contains__(self, criterion) -> bool:
@@ -62,13 +66,6 @@ class ColorInfo(Result):
         ...
 
 
-class DepartmentList(ListResult):
-
-    def filter(self, **criterions) -> DepartmentList:
-        ...
-
-    def __getitem__(self, i: int) -> DepartmentObject:
-        ...
 
 
 class DepartmentObject(ListItem):
@@ -81,13 +78,13 @@ class DepartmentObject(ListItem):
     def name(self) -> str:
         ...
 
+class DepartmentList(ListResult):
+    _itemclass = DepartmentObject
 
-class HolidayList(ListResult):
-
-    def filter(self, **criterions) -> HolidayList:
+    def filter(self, **criterions) -> DepartmentList:
         ...
 
-    def __getitem__(self, i: int) -> HolidayObject:
+    def __getitem__(self, i: int) -> DepartmentObject:
         ...
 
 
@@ -109,13 +106,13 @@ class HolidayObject(ListItem):
     def start(self) -> datetime.datetime:
         ...
 
+class HolidayList(ListResult):
+    _itemclass = HolidayObject
 
-class KlassenList(ListResult):
-
-    def filter(self, **criterions) -> KlassenList:
+    def filter(self, **criterions) -> HolidayList:
         ...
 
-    def __getitem__(self, i: int) -> KlassenObject:
+    def __getitem__(self, i: int) -> HolidayObject:
         ...
 
 
@@ -128,17 +125,16 @@ class KlassenObject(ListItem):
     def name(self) -> str:
         ...
 
+class KlassenList(ListResult):
+    _itemclass = KlassenObject
 
-class PeriodList(ListResult):
-
-    def filter(self, **criterions) -> PeriodList:
+    def filter(self, **criterions) -> KlassenList:
         ...
 
-    def __getitem__(self, i: int) -> PeriodObject:
+    def __getitem__(self, i: int) -> KlassenObject:
         ...
 
-    def to_table(self) -> List[Tuple[datetime.time, List[Tuple[datetime.date, PeriodList]]]]:
-        ...
+
 
 
 class PeriodObject(ListItem):
@@ -183,6 +179,18 @@ class PeriodObject(ListItem):
     def type(self) -> str:
         ...
 
+class PeriodList(ListResult):
+    _itemclass = PeriodObject
+
+    def filter(self, **criterions) -> PeriodList:
+        ...
+
+    def __getitem__(self, i: int) -> PeriodObject:
+        ...
+
+    def to_table(self) -> List[Tuple[datetime.time, List[Tuple[datetime.date, PeriodList]]]]:
+        ...
+
 
 class PersonObject(ListItem):
 
@@ -207,14 +215,6 @@ class PersonObject(ListItem):
         ...
 
 
-class RoomList(ListResult):
-
-    def filter(self, **criterions) -> RoomList:
-        ...
-
-    def __getitem__(self, i: int) -> RoomObject:
-        ...
-
 
 class RoomObject(ListItem):
 
@@ -226,18 +226,17 @@ class RoomObject(ListItem):
     def name(self) -> str:
         ...
 
+class RoomList(ListResult):
+    _itemclass = RoomObject
 
-class SchoolyearList(ListResult):
-
-    def filter(self, **criterions) -> SchoolyearList:
+    def filter(self, **criterions) -> RoomList:
         ...
 
-    def __getitem__(self, i: int) -> SchoolyearObject:
+    def __getitem__(self, i: int) -> RoomObject:
         ...
 
-    @property
-    def current(self) -> str:
-        ...
+
+
 
 
 class SchoolyearObject(ListItem):
@@ -258,6 +257,18 @@ class SchoolyearObject(ListItem):
     def start(self) -> datetime.datetime:
         ...
 
+class SchoolyearList(ListResult):
+    _itemclass = SchoolyearObject
+
+    def filter(self, **criterions) -> SchoolyearList:
+        ...
+
+    def __getitem__(self, i: int) -> SchoolyearObject:
+        ...
+
+    @property
+    def current(self) -> str:
+        ...
 
 class StatusData(Result):
 
@@ -270,14 +281,6 @@ class StatusData(Result):
         ...
 
 
-class SubjectList(ListResult):
-
-    def filter(self, **criterions) -> SubjectList:
-        ...
-
-    def __getitem__(self, i: int) -> SubjectObject:
-        ...
-
 
 class SubjectObject(ListItem):
 
@@ -289,13 +292,16 @@ class SubjectObject(ListItem):
     def name(self) -> str:
         ...
 
+class SubjectList(ListResult):
+    _itemclass = SubjectObject
 
-class StudentsList(ListResult):
-    def filter(self, **criterions) -> StudentsList:
+    def filter(self, **criterions) -> SubjectList:
         ...
 
-    def __getitem__(self, i: int) -> StudentObject:
+    def __getitem__(self, i: int) -> SubjectObject:
         ...
+
+
 
 
 class StudentObject(PersonObject):
@@ -304,12 +310,13 @@ class StudentObject(PersonObject):
         ...
 
 
-class SubstitutionList(ListResult):
+class StudentsList(ListResult):
+    _itemclass = StudentObject
 
-    def filter(self, **criterions) -> SubstitutionList:
+    def filter(self, **criterions) -> StudentsList:
         ...
 
-    def __getitem__(self, i: int) -> SubstitutionObject:
+    def __getitem__(self, i: int) -> StudentObject:
         ...
 
 
@@ -327,14 +334,15 @@ class SubstitutionObject(PeriodObject):
     def type(self) -> str:
         ...
 
+class SubstitutionList(ListResult):
+    _itemclass = SubstitutionObject
 
-class TeacherList(ListResult):
-
-    def filter(self, **criterions) -> TeacherList:
+    def filter(self, **criterions) -> SubstitutionList:
         ...
 
-    def __getitem__(self, i: int) -> TeacherObject:
+    def __getitem__(self, i: int) -> SubstitutionObject:
         ...
+
 
 
 class TeacherObject(PersonObject):
@@ -346,6 +354,14 @@ class TeacherObject(PersonObject):
     def full_name(self):
         ...
 
+class TeacherList(ListResult):
+    _itemclass = TeacherObject
+
+    def filter(self, **criterions) -> TeacherList:
+        ...
+
+    def __getitem__(self, i: int) -> TeacherObject:
+        ...
 
 class TimeStampObject(Result):
 
@@ -385,6 +401,7 @@ class TimegridDayObject(Result):
 
 
 class TimegridObject(ListResult):
+    _itemclass = TimegridDayObject
 
     def filter(self, **criterions) -> TimegridObject:
         ...
