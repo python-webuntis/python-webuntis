@@ -195,6 +195,7 @@ class WrapperMethodTests(WebUntisTestCase):
                 tt = s.timetable(start=start, end=end, **{name: id})
                 assert type(tt) is webuntis.objects.PeriodList
                 assert not tt
+                assert type(tt.to_table()) is list
 
     def test_timetable_start_later_than_end(self):
         s = webuntis.Session(**stub_session_parameters)
@@ -244,11 +245,40 @@ class WrapperMethodTests(WebUntisTestCase):
             assert type(te) is webuntis.objects.TeacherList
             assert not te
 
+    @staticmethod
+    def status_result_mock(methodname):
+        def inner(url, jsondata, headers):
+            return {
+                "result": {
+                    "lstypes": [
+                        {"ls": {"foreColor": "000000", "backColor": "ee7f00"}},
+                        {"oh": {"foreColor": "e6e3e1", "backColor": "250eee"}},
+                    ],
+                    "codes": [
+                        {"cancelled": {"foreColor": "000000", "backColor": "b1b3b4"}},
+                    ]}}
+
+        return mock_results({methodname: inner})
+
     def test_statusdata(self):
         s = webuntis.Session(**stub_session_parameters)
-        with self.noop_result_mock('getStatusData'):
+        with self.status_result_mock('getStatusData'):
             st = s.statusdata()
             assert type(st) is webuntis.objects.StatusData
+
+            lstype = st.lesson_types[0]
+            assert type(lstype) is webuntis.objects.ColorInfo
+
+            assert type(lstype.id) == int
+            assert type(lstype.name) == str
+            assert type(lstype.forecolor) == str
+            assert type(lstype.backcolor) == str
+            assert lstype.forecolor == "000000"
+            assert lstype.backcolor == "ee7f00"
+            assert lstype.name == "ls"
+
+            pcode = st.period_codes[0]
+            assert type(pcode) is webuntis.objects.ColorInfo
 
     def test_lastImportTime(self):
         s = webuntis.Session(**stub_session_parameters)
