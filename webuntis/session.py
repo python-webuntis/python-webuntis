@@ -275,7 +275,7 @@ class ResultWrapperMixin(object):
 
     @result_wrapper
     def lastImportTime(self):
-        """
+        """Information about the last change made.
 
         :rtype: py:class:`webuntis.objects.TimeStampObject`
         """
@@ -283,7 +283,7 @@ class ResultWrapperMixin(object):
 
     @result_wrapper
     def substitutions(self, start, end, departmentId=0):
-        """Information about substitutions
+        """Get all substitutions.
 
 
         :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
@@ -292,8 +292,8 @@ class ResultWrapperMixin(object):
         :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
         :param end: The end of the time period.
 
-        :param departmentId:  int
-        :return:
+        :param departmentId:  int, set to 0 for all departments or  if not applicable
+
         :rtype: :py:class:`webuntis.objects.SubstitutionList`
         """
 
@@ -316,15 +316,16 @@ class ResultWrapperMixin(object):
 
     @result_wrapper
     def timegridUnits(self):
-        """
+        """Information about the Timegrid.
 
+        :return:
         :rtype: :py:class:`webuntis.objects.TimegridObject`
         """
         return objects.TimegridObject, 'getTimegridUnits', {}
 
     @result_wrapper
     def students(self):
-        """
+        """Get all students
 
         :rtype:  :py:class:`webuntis.objects.StudentsList`
         """

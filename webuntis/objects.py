@@ -461,7 +461,7 @@ class SchoolyearObject(ListItem):
         Boolean, check if this is the current schoolyear::
 
             >>> import webuntis
-            >>> s = webuntis.Session()
+            >>> s = webuntis.Session(...).login()
             >>> y = s.schoolyears()
             >>> y.current.id
             7
@@ -552,7 +552,7 @@ class ColorInfo(Result, ColorMixin):
     An object containing information about a lesson type or a period code::
 
         >>> import webuntis
-        >>> s = webuntis.Session()
+        >>> s = webuntis.Session(...).login()
         >>> lstype = s.statusdata().lesson_types[0]
         >>> lstype.name
         'ls'
@@ -589,7 +589,10 @@ class StatusData(Result):
     @lazyproperty
     def lesson_types(self):
         """A list of :py:class:`ColorInfo` objects, containing
-        information about all lesson types defined"""
+        information about all lesson types defined
+
+        :rtype: List[ColorInfo]
+        """
         return [
             ColorInfo(parent=self, data=data)
             for data in self._data[u'lstypes']
@@ -598,7 +601,10 @@ class StatusData(Result):
     @lazyproperty
     def period_codes(self):
         """A list of :py:class:`ColorInfo` objects, containing
-        information about all period codes defined"""
+        information about all period codes defined
+
+        :rtype: List[ColorInfo]
+        """
         return [
             ColorInfo(parent=self, data=data)
             for data in self._data[u'codes']
@@ -613,7 +619,7 @@ class TimeStampObject(Result):
         """
         get timestamp as python datetime object
 
-        :return: timestamp
+        :return: datetime.datetime
         """
         return datetime.datetime.fromtimestamp(self._data / 1000)
 
@@ -628,12 +634,17 @@ class SubstitutionObject(PeriodObject):
              add      additional period
              shift    shifted period
              rmchg    room change
+
+        :rtype: str
         """
         return self._data[u'type']
 
     @lazyproperty
     def reschedule_start(self):
-        """The start of the rescheduled substitution (or None)"""
+        """The start of the rescheduled substitution (or None)
+
+        :return: datetime.datetime
+        """
         try:
             return datetime_utils.parse_datetime(self._data[u'reschedule'][u'date'],
                                                  self._data[u'reschedule'][u'startTime'])
@@ -642,7 +653,10 @@ class SubstitutionObject(PeriodObject):
 
     @lazyproperty
     def reschedule_end(self):
-        """The end of the rescheduled substitution (or None)"""
+        """The end of the rescheduled substitution (or None)
+
+        :return: datetime.datetime
+        """
         try:
             return datetime_utils.parse_datetime(self._data[u'reschedule'][u'date'],
                                                  self._data[u'reschedule'][u'endTime'])

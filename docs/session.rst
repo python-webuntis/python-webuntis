@@ -29,3 +29,9 @@ Things you can do with the API
     .. automethod:: statusdata
     .. automethod:: subjects
     .. automethod:: teachers
+    .. automethod:: statusdata
+    .. automethod:: lastImportTime
+    .. automethod:: substitutions
+    .. automethod:: timegridUnits
+    .. automethod:: students
+
