@@ -6,3 +6,5 @@
 """
 __version__ = '0.1.9'
 from webuntis.session import Session
+
+from webuntis import errors
