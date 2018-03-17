@@ -343,7 +343,6 @@ class ResultWrapperMixin(object):
         """
         return objects.ExamTypeList, 'getExamTypes', {}
 
-    
     @result_wrapper
     def exams(self, start, end, examTypeId=0):
         """Information about the Exams.
@@ -372,7 +371,6 @@ class ResultWrapperMixin(object):
         }
 
         return objects.ExamsList, 'getExams', parameters
-
 
     @result_wrapper
     def timetableWithAbsences(self, start, end):
@@ -485,6 +483,8 @@ class Session(JSONRPCSession, ResultWrapperMixin):
         login when finding no or an expired session. Default to ``0``, meaning
         it won't do that.
 
+    :type use_cache: bool
+    :param use_cache: always use the cache
     """
 
     cache = None
@@ -497,6 +497,9 @@ class Session(JSONRPCSession, ResultWrapperMixin):
     initialization.'''
 
     def __init__(self, **config):
+        if 'use_cache' in config:
+            result_wrapper.session_use_cache = bool(config['use_cache'])
+            del config['use_cache']
         cachelen = config.pop('cachelen', 20)
         self.cache = utils.SessionCache(maxlen=cachelen)
         JSONRPCSession.__init__(self, **config)

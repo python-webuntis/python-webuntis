@@ -44,6 +44,7 @@ class LruDict(OrderedDict):
 
 
 class SessionCache(LruDict):
+
     def clear(self, method=None):
         if method is None:
             LruDict.clear(self)
@@ -135,9 +136,12 @@ def result_wrapper(func):
     @wraps(func)
     def inner(self, **kwargs):
         from_cache = False
-        if 'from_cache' in kwargs and kwargs['from_cache']:
-            from_cache = True
+
+        if 'from_cache' in kwargs:
+            from_cache = bool(kwargs['from_cache'])
             del kwargs['from_cache']
+        elif result_wrapper.session_use_cache:
+            from_cache = True
 
         result_class, jsonrpc_method, jsonrpc_args = func(self, **kwargs)
 
@@ -154,6 +158,10 @@ def result_wrapper(func):
         return result
 
     return inner
+
+
+result_wrapper.session_use_cache = False
+'''use cache - global'''
 
 
 def cache_key(method, args=None):
