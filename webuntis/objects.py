@@ -728,6 +728,10 @@ class StudentObject(PersonObject):
     def gender(self):
         return self._data[u'gender']
 
+    @lazyproperty
+    def key(self):
+        return self._data[u'key']
+
 
 class StudentsList(ListResult):
     """A list of students"""
@@ -738,24 +742,87 @@ class StudentsList(ListResult):
 @TODO: need additional rights
 """
 
+
 class ExamTypeObject(Result):
     """Represents an Exam Type."""
+
 
 class ExamTypeList(ListResult):
     """A list of exam types"""
     _itemclass = ExamTypeObject
 
+
 class ExamObject(Result):
     """Represents an Exam."""
+
 
 class ExamsList(ListResult):
     """A list of exams."""
     _itemclass = ExamObject
 
+
 class AbsenceObject(Result):
     """Represents an absence."""
+
+    @lazyproperty
+    def student(self):
+        return self._session.students(from_cache=True).filter(key=self._data[u'studentId'])[0]
+
+    @lazyproperty
+    def subject(self):
+        """@TODO: untested - always empty"""
+        sid = self._data[u'subjectId']
+        if sid:
+            return self._session.subjects(from_cache=True).filter(key=sid)[0]
+        else:
+            return ""
+
+    @lazyproperty
+    def teachers(self):
+        """@TODO: untested - always empty"""
+        tes = set(te[u'id'] for te in self._data[u'teacherIds'] if te)
+        if tes:
+            return self._session.teachers(from_cache=True).filter(id=tes)
+        else:
+            return []
+
+    @lazyproperty
+    def studentGroup(self):
+        return self._data[u'studentGroup']
+
+    @lazyproperty
+    def checked(self):
+        return self._data[u'checked']
+
+    @lazyproperty
+    def name(self):
+        """Name of absent student"""
+        return self.student.full_name
+
+    @lazyproperty
+    def start(self):
+        """The start date/time of the period, as datetime object."""
+
+        return datetime_utils.parse_datetime(
+            self._data[u'date'],
+            self._data[u'startTime']
+        )
+
+    @lazyproperty
+    def end(self):
+        """The end date/time of the period."""
+
+        return datetime_utils.parse_datetime(
+            self._data[u'date'],
+            self._data[u'endTime']
+        )
+
 
 class AbsencesList(ListResult):
     """A list of absences."""
     _itemclass = AbsenceObject
 
+    def __init__(self, data, parent=None, session=None):
+        # the data is a dict() with just one key
+        data = data['periodsWithAbsences']
+        super().__init__(data, parent, session)

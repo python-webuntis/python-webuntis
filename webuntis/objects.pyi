@@ -419,8 +419,10 @@ class TimegridObject(ListResult):
 @TODO: need additional rights
 """
 
+
 class ExamTypeObject(Result):
     ...
+
 
 class ExamTypeList(ListResult):
     _itemclass = ExamTypeObject
@@ -431,8 +433,10 @@ class ExamTypeList(ListResult):
     def __getitem__(self, i: int) -> ExamTypeObject:
         ...
 
+
 class ExamObject(Result):
     ...
+
 
 class ExamsList(ListResult):
     _itemclass = ExamObject
@@ -442,9 +446,29 @@ class ExamsList(ListResult):
 
     def __getitem__(self, i: int) -> ExamObject:
         ...
-        
+
+
 class AbsenceObject(Result):
-    ...
+    @property
+    def student(self) -> SubjectObject:
+        ...
+
+    @property
+    def subject(self) -> SubjectObject:
+        ...
+
+    @property
+    def teachers(self) -> TeacherList:
+        ...
+
+    @property
+    def studentGroup(self) -> str:
+        ...
+
+    @property
+    def checked(self) -> bool:
+        ...
+
 
 class AbsencesList(ListResult):
     _itemclass = AbsenceObject
@@ -454,4 +478,3 @@ class AbsencesList(ListResult):
 
     def __getitem__(self, i: int) -> AbsenceObject:
         ...
-        
