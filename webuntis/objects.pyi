@@ -38,7 +38,7 @@ class ListItem(Result):
 class ListResult(Result):
     _itemclass = ListItem
 
-    def filter(self, **criterions) -> ListItem:
+    def filter(self, **criterions) -> ListResult:
         ...
 
     def __contains__(self, criterion) -> bool:
@@ -415,19 +415,20 @@ class TimegridObject(ListResult):
         ...
 
 
-"""
-@TODO: need additional rights
-"""
-
-
 class ExamTypeObject(Result):
-    ...
+    @property
+    def long_name(self) -> str:
+        ...
+
+    @property
+    def show_in_timetable(self) -> bool:
+        ...
 
 
 class ExamTypeList(ListResult):
     _itemclass = ExamTypeObject
 
-    def filter(self, **criterions) -> ExamTypeObject:
+    def filter(self, **criterions) -> ExamTypeList:
         ...
 
     def __getitem__(self, i: int) -> ExamTypeObject:
@@ -435,13 +436,34 @@ class ExamTypeList(ListResult):
 
 
 class ExamObject(Result):
-    ...
+    @property
+    def start(self) -> datetime.datetime:
+        ...
 
+    @property
+    def end(self) -> datetime.datetime:
+        ...
+
+    @property
+    def klassen(self) -> KlassenList:
+        ...
+
+    @property
+    def subject(self) -> SubjectObject:
+        ...
+
+    @property
+    def teachers(self) -> TeacherList:
+        ...
+
+    @property
+    def students(self) -> StudentsList:
+        ...
 
 class ExamsList(ListResult):
     _itemclass = ExamObject
 
-    def filter(self, **criterions) -> ExamObject:
+    def filter(self, **criterions) -> ExamsList:
         ...
 
     def __getitem__(self, i: int) -> ExamObject:
@@ -473,7 +495,7 @@ class AbsenceObject(Result):
 class AbsencesList(ListResult):
     _itemclass = AbsenceObject
 
-    def filter(self, **criterions) -> AbsenceObject:
+    def filter(self, **criterions) -> AbsencesList:
         ...
 
     def __getitem__(self, i: int) -> AbsenceObject:

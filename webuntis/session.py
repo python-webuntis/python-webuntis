@@ -332,12 +332,13 @@ class ResultWrapperMixin(object):
         return objects.StudentsList, 'getStudents', {}
 
     '''
-    @TODO: need additional rights
+    @TODO: need additional rights Master/Stammdaten Exam Types/Pruefungsart
     '''
 
     @result_wrapper
     def examTypes(self):
         """Information about the Exam types.
+        needs additional rights Master/Exam Types -- Stammdaten /Pruefungsart
 
         :rtype:  :py:class:`webuntis.objects.ExamTypeList`
         """
@@ -355,7 +356,7 @@ class ResultWrapperMixin(object):
 
         :param examTypeId:  int, ??
 
-        :rtype: :py:class:`webuntis.objects.ExamList`
+        :rtype: :py:class:`webuntis.objects.ExamsList`
         """
 
         json_start = utils.datetime_utils.format_date(start)

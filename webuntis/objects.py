@@ -738,13 +738,18 @@ class StudentsList(ListResult):
     _itemclass = StudentObject
 
 
-"""
-@TODO: need additional rights
-"""
-
-
 class ExamTypeObject(Result):
     """Represents an Exam Type."""
+
+    @lazyproperty
+    def long_name(self):
+        """Long name"""
+        return self._data[u'longName']
+
+    @lazyproperty
+    def show_in_timetable(self):
+        """show this exam type in the timetable"""
+        return self._data[u'showInTimetable']
 
 
 class ExamTypeList(ListResult):
@@ -754,6 +759,62 @@ class ExamTypeList(ListResult):
 
 class ExamObject(Result):
     """Represents an Exam."""
+
+    # classes  list of classes
+    # teachers list of teachers
+    # students lsit of students
+    # subject
+
+    @lazyproperty
+    def start(self):
+        """The start date/time of the period, as datetime object."""
+
+        return datetime_utils.parse_datetime(
+            self._data[u'date'],
+            self._data[u'startTime']
+        )
+
+    @lazyproperty
+    def end(self):
+        """The end date/time of the period."""
+
+        return datetime_utils.parse_datetime(
+            self._data[u'date'],
+            self._data[u'endTime']
+        )
+
+    @lazyproperty
+    def klassen(self):
+        """A :py:class:`KlassenList` containing the classes which are attending
+        this period."""
+
+        return self._session.klassen(from_cache=True).filter(
+            id=set(self._data[u'classes'])
+        )
+
+    @lazyproperty
+    def teachers(self):
+        """A list of :py:class:`TeacherObject` instances,
+        which are attending this period."""
+
+        return self._session.teachers(from_cache=True).filter(
+            id=set(self._data[u'teachers'])
+        )
+
+    @lazyproperty
+    def subject(self):
+        """A :py:class:`SubjectOject` with the subject which are topic of
+        this period."""
+        return self._session.subjects(from_cache=True).filter(id=self._data[u'subject'])[0]
+
+    @lazyproperty
+    def students(self):
+        """A list of :py:class:`StudentObject` instances,
+        which are attending this period."""
+
+        return self._session.students(from_cache=True).filter(
+            id=set(self._data[u'students'])
+        )
 
 
 class ExamsList(ListResult):
