@@ -414,6 +414,9 @@ class PeriodList(ListResult):
 
         return timetable_utils.table(self, dates=dates, times=times)
 
+    def combine(self):
+        return timetable_utils.combine(self)
+
 
 class RoomObject(ListItem, ColorMixin):
     """Represents a physical room. Such as a classroom, but also the physics
@@ -668,6 +671,9 @@ class SubstitutionObject(PeriodObject):
 class SubstitutionList(ListResult):
     """A list of substitutions in form of :py:class:`SubstitutionObject` instances."""
     _itemclass = SubstitutionObject
+
+    def combine(self):
+        return timetable_utils.combine(self)
 
 
 class TimeUnitObject(Result):

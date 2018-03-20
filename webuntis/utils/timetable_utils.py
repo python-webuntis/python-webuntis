@@ -6,6 +6,8 @@
 """
 
 from __future__ import unicode_literals
+
+from copy import deepcopy
 from datetime import datetime
 
 
@@ -33,3 +35,60 @@ def table(periods, dates=None, times=None):
     # Convert the hashtable to the output format by sorting each dictionary's
     # .items() by key.
     return sorted((time, sorted(row.items())) for time, row in table.items())
+
+
+def combine(periods, combine_breaks=True):
+    """
+    shorten a list of periods (or substitutions) by combining consecutive Elements
+
+    :type combine_breaks: bool
+    :param combine_breaks: combine breaks
+    :type periods: webuntis.objects.PeriodList
+    :param periods: Periodlist do combine/shorten
+
+    :return:
+    """
+
+    if len(periods) < 2:
+        return periods
+
+    result_type = type(periods)
+
+    olddata = [deepcopy(p._data) for p in periods]
+
+    if u'lsid' in olddata[0]:
+        olddata.sort(key=lambda p: (p[u'lsid'], p[u'date'], p[u'startTime']))
+    else:
+        olddata.sort(key=lambda p: (p[u'date'], p[u'startTime']))
+
+    data = []
+    last = olddata[0]
+
+    # fields to compare
+    fields = set(k for k in last.keys() if not isinstance(last[k], list)) - {u'id', u'key', u'startTime', u'endTime'}
+    if u'su' in last.keys():
+        fields |= {u'su'}  # don't combine different subjects
+    # fields to combine
+    fields_list = set(k for k in last.keys() if isinstance(last[k], list)) - {u'id', u'key'}
+
+    for current in olddata[1:]:
+        try:
+            same = (all(current[field] == last[field] for field in fields) and
+                    (combine_breaks or (last[u'endTime'] in [current[u'startTime', current[u'endTime']]])))
+        except KeyError:
+            same = False
+        if same:
+            last[u'endTime'] = current[u'endTime']
+            for f in fields_list:
+                for c in current[f]:
+                    if not c in last[f]:
+                        last[f].append(c)
+        else:
+            data.append(last)
+            last = current
+
+    data.append(last)
+
+    data.sort(key=lambda p: (p[u'date'], p[u'startTime']))
+    res = result_type(parent=periods._parent, session=periods._session, data=data)
+    return res

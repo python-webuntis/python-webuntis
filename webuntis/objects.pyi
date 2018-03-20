@@ -193,6 +193,8 @@ class PeriodList(ListResult):
     def to_table(self) -> List[Tuple[datetime.time, List[Tuple[datetime.date, PeriodList]]]]:
         ...
 
+    def combine(self) -> PeriodList:
+        ...
 
 class PersonObject(ListItem):
 
@@ -347,6 +349,8 @@ class SubstitutionList(ListResult):
     def __getitem__(self, i: int) -> SubstitutionObject:
         ...
 
+    def combine(self) -> SubstitutionList:
+        ...
 
 class TeacherObject(PersonObject):
     @property
