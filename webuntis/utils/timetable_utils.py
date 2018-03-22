@@ -67,7 +67,7 @@ def combine(periods, combine_breaks=True):
     # fields to compare
     fields = set(k for k in last.keys() if not isinstance(last[k], list)) - {u'id', u'key', u'startTime', u'endTime'}
     if u'su' in last.keys():
-        fields |= {u'su'}  # don't combine different subjects
+        fields |= {u'su', u'kl'}  # don't combine different subjects or klassen
     # fields to combine
     fields_list = set(k for k in last.keys() if isinstance(last[k], list)) - {u'id', u'key'}
 

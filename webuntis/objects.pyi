@@ -425,6 +425,10 @@ class ExamTypeObject(Result):
         ...
 
     @property
+    def name(self) -> str:
+        ...
+
+    @property
     def show_in_timetable(self) -> bool:
         ...
 
@@ -475,6 +479,14 @@ class ExamsList(ListResult):
 
 
 class AbsenceObject(Result):
+    @property
+    def start(self) -> datetime.datetime:
+        ...
+
+    @property
+    def end(self) -> datetime.datetime:
+        ...
+
     @property
     def student(self) -> SubjectObject:
         ...

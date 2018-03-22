@@ -753,6 +753,11 @@ class ExamTypeObject(Result):
         return self._data[u'longName']
 
     @lazyproperty
+    def name(self):
+        """name"""
+        return self._data[u'name']
+
+    @lazyproperty
     def show_in_timetable(self):
         """show this exam type in the timetable"""
         return self._data[u'showInTimetable']
@@ -833,21 +838,21 @@ class AbsenceObject(Result):
 
     @lazyproperty
     def student(self):
-        return self._session.students(from_cache=True).filter(key=self._data[u'studentId'])[0]
+        return self._session.students(from_cache=True).filter(id=int(self._data[u'studentId']))[0]
 
     @lazyproperty
     def subject(self):
         """@TODO: untested - always empty"""
-        sid = self._data[u'subjectId']
+        sid = int(self._data[u'subjectId'])
         if sid:
-            return self._session.subjects(from_cache=True).filter(key=sid)[0]
+            return self._session.subjects(from_cache=True).filter(id=sid)[0]
         else:
             return ""
 
     @lazyproperty
     def teachers(self):
         """@TODO: untested - always empty"""
-        tes = set(te[u'id'] for te in self._data[u'teacherIds'] if te)
+        tes = set(int(te) for te in self._data[u'teacherIds'] if te)
         if tes:
             return self._session.teachers(from_cache=True).filter(id=tes)
         else:
@@ -891,5 +896,5 @@ class AbsencesList(ListResult):
 
     def __init__(self, data, parent=None, session=None):
         # the data is a dict() with just one key
-        data = data['periodsWithAbsences']
-        super().__init__(data, parent, session)
+        data = data[u'periodsWithAbsences']
+        Result.__init__(self, data, parent, session)

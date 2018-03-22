@@ -219,14 +219,14 @@ class WrapperMethodTests(WebUntisTestCase):
 
     def test_rooms(self):
         s = webuntis.Session(**stub_session_parameters)
-        with self.noop_result_mock('getRooms'):
+        with self.noop_result_mock(u'getRooms'):
             ro = s.rooms()
             assert type(ro) is webuntis.objects.RoomList
             assert not ro
 
     def test_schoolyears(self):
         s = webuntis.Session(**stub_session_parameters)
-        with self.noop_result_mock('getSchoolyears'):
+        with self.noop_result_mock(u'getSchoolyears'):
             sch = s.schoolyears()
             assert type(sch) is webuntis.objects.SchoolyearList
             assert not sch
@@ -245,44 +245,15 @@ class WrapperMethodTests(WebUntisTestCase):
             assert type(te) is webuntis.objects.TeacherList
             assert not te
 
-    @staticmethod
-    def status_result_mock(methodname):
-        def inner(url, jsondata, headers):
-            return {
-                "result": {
-                    "lstypes": [
-                        {"ls": {"foreColor": "000000", "backColor": "ee7f00"}},
-                        {"oh": {"foreColor": "e6e3e1", "backColor": "250eee"}},
-                    ],
-                    "codes": [
-                        {"cancelled": {"foreColor": "000000", "backColor": "b1b3b4"}},
-                    ]}}
-
-        return mock_results({methodname: inner})
-
     def test_statusdata(self):
         s = webuntis.Session(**stub_session_parameters)
-        with self.status_result_mock('getStatusData'):
+        with self.noop_result_mock('getStatusData'):
             st = s.statusdata()
             assert type(st) is webuntis.objects.StatusData
 
-            lstype = st.lesson_types[0]
-            assert type(lstype) is webuntis.objects.ColorInfo
-
-            assert type(lstype.id) == int
-            assert type(lstype.name) == str
-            assert type(lstype.forecolor) == str
-            assert type(lstype.backcolor) == str
-            assert lstype.forecolor == "000000"
-            assert lstype.backcolor == "ee7f00"
-            assert lstype.name == "ls"
-
-            pcode = st.period_codes[0]
-            assert type(pcode) is webuntis.objects.ColorInfo
-
     def test_lastImportTime(self):
         s = webuntis.Session(**stub_session_parameters)
-        with self.noop_result_mock('getLatestImportTime'):
+        with self.noop_result_mock(u'getLatestImportTime'):
             li = s.lastImportTime()
             assert type(li) is webuntis.objects.TimeStampObject
 
@@ -304,34 +275,40 @@ class WrapperMethodTests(WebUntisTestCase):
             st = s.timegridUnits()
             assert type(st) is webuntis.objects.TimegridObject
 
+    def test_students(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.noop_result_mock('getStudents'):
+            st = s.students()
+            assert type(st) is webuntis.objects.StudentsList
+            assert len(st) == 0
+
+    def test_examtype(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.noop_result_mock(u'getExamTypes'):
+            et = s.examTypes()
+            assert type(et) is webuntis.objects.ExamTypeList
+
+    def test_exams(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.noop_result_mock(u'getExams'):
+            ex = s.exams(start=1, end=2, examTypeId=1)
+            assert type(ex) is webuntis.objects.ExamsList
+
     @staticmethod
-    def student_result_mock(methodname):
+    def absences_result_mock(methodname):
         def inner(url, jsondata, headers):
-            return {
-                "result": [
-                    {"id": 1, "key": "1234567", "name": u"MuellerAle", "foreName": "Alexander", "longName": u"Mueller",
-                     "gender": "male"},
-                ]}
+            return {"result": {u'periodsWithAbsences': []}}
 
         return mock_results({methodname: inner})
 
-    def test_students(self):
+    def test_timetableWithAbsences(self):
         s = webuntis.Session(**stub_session_parameters)
-        with self.student_result_mock('getStudents'):
-            st = s.students()
-            assert st
-            assert len(st) == 1
-            assert st == st
-            assert type(st) is webuntis.objects.StudentsList
-            student = st[0]
-            assert type(student) == webuntis.objects.StudentObject
-            assert student.full_name == "Alexander Mueller"
-            assert student.gender == "male"
+        with self.absences_result_mock('getTimetableWithAbsences'):
+            ex = s.timetableWithAbsences(start=1, end=2)
+            assert type(ex) is webuntis.objects.AbsencesList
 
-    def test_examtype(self):
-        """@TODO"""
-        pass
-
-    def test_exam(self):
-        """@TODO"""
-        pass
+    def test_use_cache(self):
+        s = webuntis.Session(use_cache=True, **stub_session_parameters)
+        assert webuntis.utils.result_wrapper.session_use_cache
+        s = webuntis.Session(use_cache=False, **stub_session_parameters)
+        assert not webuntis.utils.result_wrapper.session_use_cache
