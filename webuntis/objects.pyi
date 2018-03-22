@@ -6,7 +6,7 @@ from webuntis import Session
 
 class Result(object):
 
-    def __init__(self, data, parent: Result = None, session: Session = None):
+    def __init__(self, data, parent: Result = None, session: Session = None) -> None:
         self._session = session or parent._session
         self._parent = parent
         self._data = data
@@ -405,7 +405,7 @@ class TimegridDayObject(Result):
         ...
 
     @property
-    def timeUnits(self) -> List[TimeUnitObject]:
+    def time_units(self) -> List[TimeUnitObject]:
         ...
 
 
@@ -500,7 +500,7 @@ class AbsenceObject(Result):
         ...
 
     @property
-    def studentGroup(self) -> str:
+    def student_group(self) -> str:
         ...
 
     @property

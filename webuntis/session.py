@@ -218,8 +218,8 @@ class ResultWrapperMixin(object):
         # its id gets placed here anyway
 
         parameters = self._create_date_param(end, start,
-                                             id=int(element_id), type = element_type_table[element_type])
-        parameters = parameters["options"] # getTimetable is without options!
+                                             id=int(element_id), type=element_type_table[element_type])
+        parameters = parameters["options"]  # getTimetable is without options!
         return objects.PeriodList, 'getTimetable', parameters
 
     @result_wrapper
@@ -264,7 +264,7 @@ class ResultWrapperMixin(object):
         return objects.StatusData, 'getStatusData', {}
 
     @result_wrapper
-    def lastImportTime(self):
+    def last_import_time(self):
         """Information about the last change made.
 
         :rtype: py:class:`webuntis.objects.TimeStampObject`
@@ -272,7 +272,7 @@ class ResultWrapperMixin(object):
         return objects.TimeStampObject, 'getLatestImportTime', {}
 
     @result_wrapper
-    def substitutions(self, start, end, departmentId=0):
+    def substitutions(self, start, end, department_id=0):
         """Get all substitutions.
 
 
@@ -282,16 +282,16 @@ class ResultWrapperMixin(object):
         :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
         :param end: The end of the time period.
 
-        :param departmentId:  int, set to 0 for all departments or  if not applicable
+        :param department_id:  int, set to 0 for all departments or  if not applicable
 
         :rtype: :py:class:`webuntis.objects.SubstitutionList`
         """
 
-        parameters = self._create_date_param(end, start, departmentId = departmentId)
+        parameters = self._create_date_param(end, start, departmentId=department_id)
         return objects.SubstitutionList, 'getSubstitutions', parameters
 
     @result_wrapper
-    def timegridUnits(self):
+    def timegrid_units(self):
         """Information about the Timegrid.
 
         :return:
@@ -307,12 +307,8 @@ class ResultWrapperMixin(object):
         """
         return objects.StudentsList, 'getStudents', {}
 
-    '''
-    @TODO: need additional rights Master/Stammdaten Exam Types/Pruefungsart
-    '''
-
     @result_wrapper
-    def examTypes(self):
+    def exam_types(self):
         """Information about the Exam types.
         needs additional rights Master/Exam Types -- Stammdaten /Pruefungsart
 
@@ -321,7 +317,7 @@ class ResultWrapperMixin(object):
         return objects.ExamTypeList, 'getExamTypes', {}
 
     @result_wrapper
-    def exams(self, start, end, examTypeId=0):
+    def exams(self, start, end, exam_type_id=0):
         """Information about the Exams.
 
         :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
@@ -330,16 +326,16 @@ class ResultWrapperMixin(object):
         :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
         :param end: The end of the time period.
 
-        :param examTypeId:  int, ??
+        :param exam_type_id:  int, ??
 
         :rtype: :py:class:`webuntis.objects.ExamsList`
         """
 
-        parameters = self._create_date_param(end, start, examTypeId = examTypeId)
+        parameters = self._create_date_param(end, start, examTypeId=exam_type_id)
         return objects.ExamsList, 'getExams', parameters
 
     @result_wrapper
-    def timetableWithAbsences(self, start, end):
+    def timetable_with_absences(self, start, end):
         """Information about the Exams.
 
         :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int

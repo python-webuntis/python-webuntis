@@ -321,9 +321,9 @@ class TimegridTests(WebUntisTestCase):
 
         self.assertEqual(x[0].day, 2)
         self.assertEqual(x[0].dayname, "monday")
-        self.assertEqual(x[0].timeUnits[0].name, "0")
-        self.assertEqual(x[0].timeUnits[1].start, datetime.time(8, 0))
-        self.assertEqual(x[0].timeUnits[2].end, datetime.time(9, 40))
+        self.assertEqual(x[0].time_units[0].name, "0")
+        self.assertEqual(x[0].time_units[1].start, datetime.time(8, 0))
+        self.assertEqual(x[0].time_units[2].end, datetime.time(9, 40))
 
 
 class StubSession(object):
@@ -374,9 +374,6 @@ class StubSession(object):
     def students(self, *args, **kw):
         return webuntis.objects.StudentsList(
             [self.student1], session=self.sess)
-
-    def student(self, *args, **kw):
-        return self.student1
 
 
 class PeriodTestsData(WebUntisTestCase):
@@ -550,7 +547,8 @@ class StatusDateTests(WebUntisTestCase):
                     {"oh": {"foreColor": "e6e3e1", "backColor": "250eee"}},
                 ],
                 "codes": [
-                    {"cancelled": {"foreColor": "000000", "backColor": "b1b3b4"}},
+                    {"cancelled": {"foreColor": "000000",
+                                   "backColor": "b1b3b4"}},
                 ]},
             session=object()
         )
@@ -569,12 +567,12 @@ class StatusDateTests(WebUntisTestCase):
         assert type(pcode) is webuntis.objects.ColorInfo
 
 
-
 class ExamTests(WebUntisTestCase):
     def testExamType(self):
         et = webuntis.objects.ExamTypeList(
             data=[
-                {'id': 8, 'name': 'Allfaelliges', 'longName': 'Allfaelliges (Wahlen, etc.)',
+                {'id': 8, 'name': 'Allfaelliges',
+                 'longName': 'Allfaelliges (Wahlen, etc.)',
                  'showInTimetable': True}
             ],
             session=object()
@@ -631,7 +629,7 @@ class AbsencesTests(WebUntisTestCase):
                   'studentId': '9',
                   'subjectId': '4',
                   'teacherIds': ['3', '7'],
-                  'studentGroup': u'MAM_1A_M',
+                  'student_group': u'MAM_1A_M',
                   'user': '',
                   'checked': True},
             session=StubSession()
@@ -644,7 +642,7 @@ class AbsencesTests(WebUntisTestCase):
         assert ab.subject.name == u'Math'
         assert ab.teachers[0].name == u'Hans Gans'
         assert ab.checked
-        assert ab.studentGroup == u'MAM_1A_M'
+        assert ab.student_group == u'MAM_1A_M'
 
     def testAbsencesList(self):
         al = webuntis.objects.AbsencesList(

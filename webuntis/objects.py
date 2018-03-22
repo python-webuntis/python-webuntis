@@ -710,7 +710,7 @@ class TimegridDayObject(Result):
         return names[self._data[u'day']]
 
     @lazyproperty
-    def timeUnits(self):
+    def time_units(self):
         return [
             TimeUnitObject(parent=self, data=data)
             for data in self._data[u'timeUnits']
@@ -859,8 +859,8 @@ class AbsenceObject(Result):
             return []
 
     @lazyproperty
-    def studentGroup(self):
-        return self._data[u'studentGroup']
+    def student_group(self):
+        return self._data[u'student_group']
 
     @lazyproperty
     def checked(self):

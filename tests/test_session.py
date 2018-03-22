@@ -254,7 +254,7 @@ class WrapperMethodTests(WebUntisTestCase):
     def test_lastImportTime(self):
         s = webuntis.Session(**stub_session_parameters)
         with self.noop_result_mock(u'getLatestImportTime'):
-            li = s.lastImportTime()
+            li = s.last_import_time()
             assert type(li) is webuntis.objects.TimeStampObject
 
     def test_substitutions(self):
@@ -272,7 +272,7 @@ class WrapperMethodTests(WebUntisTestCase):
     def test_timegridUnits(self):
         s = webuntis.Session(**stub_session_parameters)
         with self.noop_result_mock('getTimegridUnits'):
-            st = s.timegridUnits()
+            st = s.timegrid_units()
             assert type(st) is webuntis.objects.TimegridObject
 
     def test_students(self):
@@ -285,13 +285,13 @@ class WrapperMethodTests(WebUntisTestCase):
     def test_examtype(self):
         s = webuntis.Session(**stub_session_parameters)
         with self.noop_result_mock(u'getExamTypes'):
-            et = s.examTypes()
+            et = s.exam_types()
             assert type(et) is webuntis.objects.ExamTypeList
 
     def test_exams(self):
         s = webuntis.Session(**stub_session_parameters)
         with self.noop_result_mock(u'getExams'):
-            ex = s.exams(start=1, end=2, examTypeId=1)
+            ex = s.exams(start=1, end=2, exam_type_id=1)
             assert type(ex) is webuntis.objects.ExamsList
 
     @staticmethod
@@ -304,7 +304,7 @@ class WrapperMethodTests(WebUntisTestCase):
     def test_timetableWithAbsences(self):
         s = webuntis.Session(**stub_session_parameters)
         with self.absences_result_mock('getTimetableWithAbsences'):
-            ex = s.timetableWithAbsences(start=1, end=2)
+            ex = s.timetable_with_absences(start=1, end=2)
             assert type(ex) is webuntis.objects.AbsencesList
 
     def test_use_cache(self):

@@ -36,7 +36,7 @@ class LruDict(OrderedDict):
         super(LruDict, self).__init__()
         self._maxlen = maxlen
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value, **kwargs):
         self.pop(key, None)
         super(LruDict, self).__setitem__(key, value)
         while len(self.items()) > self._maxlen:

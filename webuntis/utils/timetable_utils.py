@@ -23,18 +23,18 @@ def table(periods, dates=None, times=None):
     datetimes = set(datetime.combine(d, t) for d in dates for t in times)
 
     # create an empty table from all possible combinations of dates and times
-    table = dict((t, dict((d, set()) for d in dates)) for t in times)
+    ttable = dict((t, dict((d, set()) for d in dates)) for t in times)
 
     # add the periods to the table
     # periods may be added twice if they are longer than one hour
     for period in periods:
         for dt in datetimes:
             if period.start <= dt < period.end:
-                table[dt.time()][dt.date()].add(period)
+                ttable[dt.time()][dt.date()].add(period)
 
     # Convert the hashtable to the output format by sorting each dictionary's
     # .items() by key.
-    return sorted((time, sorted(row.items())) for time, row in table.items())
+    return sorted((time, sorted(row.items())) for time, row in ttable.items())
 
 
 def combine(periods, combine_breaks=True):
@@ -43,7 +43,7 @@ def combine(periods, combine_breaks=True):
 
     :type combine_breaks: bool
     :param combine_breaks: combine breaks
-    :type periods: webuntis.objects.PeriodList
+    :type periods: webuntis.objects.PeriodList or webuntis.objects.SubstitionList
     :param periods: Periodlist do combine/shorten
 
     :return:
@@ -81,7 +81,7 @@ def combine(periods, combine_breaks=True):
             last[u'endTime'] = current[u'endTime']
             for f in fields_list:
                 for c in current[f]:
-                    if not c in last[f]:
+                    if c not in last[f]:
                         last[f].append(c)
         else:
             data.append(last)
