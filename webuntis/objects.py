@@ -4,7 +4,7 @@
     :copyright: (c) 2013 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
 '''
-
+import datetime
 from webuntis.utils import datetime_utils, lazyproperty, \
     timetable_utils
 
@@ -69,6 +69,24 @@ class Result(object):
     def __setstate__(self, data):
         self._data = data
 
+    def __str__(self):
+        '''a simple to string function: just the name or the full info -- debug only'''
+        try:
+            return self._data[u'name']
+        except KeyError:
+            try:
+                return self.name
+            except AttributeError:
+                return str(self._data)
+        except TypeError:
+            return str(self._data)
+
+
+    def __repr__(self):
+        try:
+            return self.__class__.__qualname__ + "(" + str(self._data) + ")"
+        except AttributeError:
+            return self.__class__.__name__ + "(" + str(self._data) + ")"
 
 class ListItem(Result):
     '''ListItems represent an item in a
@@ -167,6 +185,17 @@ class ListResult(Result):
 
     def __eq__(self, other):
         return type(other) is type(self) and other._data == self._data
+
+    def __str__(self):
+        '''a simple to string function: a list of results -- debug only'''
+        return "[" + ", ".join(str(d) for d in self._data) + "]"
+
+    def __repr__(self):
+        '''a simple to string function: a list of results -- debug only'''
+        try:
+            return  self.__class__.__qualname__ + "[" + ", ".join(repr(d) for d in self._data) + "]"
+        except AttributeError:
+            return  self.__class__.__name__ + "[" + ", ".join(repr(d) for d in self._data) + "]"
 
 class DepartmentObject(ListItem):
     '''Represents a department'''
@@ -310,6 +339,24 @@ class PeriodObject(ListItem):
         if code in (None, u'cancelled', u'irregular'):
             return code
         return None
+
+    @lazyproperty
+    def original_teachers(self):
+        ''' Support for original teachers '''
+        try:
+            return self._session.teachers(from_cache=True).filter(id=set([te[u'orgid'] for te in self._data[u'te']]))
+        except:
+            pass
+        return []
+
+    @lazyproperty
+    def original_rooms(self):
+        ''' Support for original rooms '''
+        try:
+            return self._session.rooms(from_cache=True).filter(id=set([ro[u'orgid'] for ro in self._data[u'ro']]))
+        except:
+            pass
+        return []
 
     @lazyproperty
     def type(self):
@@ -465,6 +512,16 @@ class TeacherObject(ListItem):
         return self._data[u'name']
 
 
+    @lazyproperty
+    def title(self):
+        '''title of the teacher'''
+        return self._data[u'title']
+
+    @lazyproperty
+    def full_name(self):
+        '''full name of teacher (title, forname, longname'''
+        return " ".join((self.title, self.fore_name, self.long_name)).strip()
+
 class TeacherList(ListResult):
     '''A list of teachers, in form of :py:class:`TeacherObject` instances.'''
     _itemclass = TeacherObject
@@ -534,3 +591,89 @@ class StatusData(Result):
             ColorInfo(parent=self, data=data)
             for data in self._data[u'codes']
         ]
+
+class TimeStampObject(Result):
+    '''Information about last change of data -- timestamp (given in milliseconds)'''
+
+    @lazyproperty
+    def date(self):
+        '''
+        get timestamp as python datetime object
+        TODO:  @lazyproperty
+        :return: timestamp
+        '''
+        return datetime.datetime.fromtimestamp(self._data/1000)
+
+
+class SubstitutionObject(PeriodObject):
+
+    @lazyproperty
+    def type(self):
+        '''type of substitution
+             cancel   cancellation
+             subst    teacher substitution
+             add      additional period
+             shift    shifted period
+             rmchg    room change
+        '''
+        return self._data[u'type']
+
+    @lazyproperty
+    def reschedule_start(self):
+        '''The start of the rescheduled substitution (or None)'''
+        try:
+            return datetime_utils.parse_datetime(self._data[u'reschedule'][u'date'], self._data[u'reschedule'][u'startTime'])
+        except KeyError:
+            return None
+
+    @lazyproperty
+    def reschedule_end(self):
+        '''The end of the rescheduled substitution (or None)'''
+        try:
+            return datetime_utils.parse_datetime(self._data[u'reschedule'][u'date'], self._data[u'reschedule'][u'endTime'])
+        except KeyError:
+            return None
+
+
+class SubstitutionList(ListResult):
+    '''A list of substitutions in form of :py:class:`SubstitutionObject` instances.'''
+    _itemclass = SubstitutionObject
+
+
+class TimeUnitObject(Result):
+    @lazyproperty
+    def name(self):
+        '''Name of Timeunit'''
+        return self._data[u'name']
+
+    @lazyproperty
+    def start(self):
+        return datetime_utils.parse_time(
+            self._data[u'startTime']
+        ).time()
+
+    @lazyproperty
+    def end(self):
+        return datetime_utils.parse_time(
+            self._data[u'endTime']
+        ).time()
+
+class TimegridDayObject(Result):
+    @lazyproperty
+    def day(self):
+        return self._data[u'day']
+
+    @lazyproperty
+    def dayname(self):
+        names = { 1:"sunday", 2:"monday", 3:"tuesday", 4:"wednesday", 5:"thursday", 6: "friday", 7:"saturday" }
+        return names[self._data[u'day']]
+
+    @lazyproperty
+    def timeUnits(self):
+        return [
+            TimeUnitObject(parent=self, data=data)
+            for data in self._data[u'timeUnits']
+        ]
+
+class TimegridObject(ListResult):
+    _itemclass = TimegridDayObject

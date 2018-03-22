@@ -59,7 +59,7 @@ def rpc_request(config, method, params):
     }
 
     request_body = {
-        u'id': str(datetime.datetime.today()),
+        u'id': _request_getid(),
         u'method': method,
         u'params': params,
         u'jsonrpc': u'2.0'
@@ -92,6 +92,20 @@ def rpc_request(config, method, params):
     return _parse_result(request_body, result_body)
 
 
+def _request_getid():
+    '''
+    calculate the id field for the request -- use current date
+
+    If you want to get a fixed id for tests:
+       import webuntis.utils.remote
+       webuntis.utils.remote._request_getid = lambda: "12345678910"
+
+    :return: id field for request
+    :rtype: str
+    '''
+    return str(datetime.datetime.today())
+
+
 def _parse_result(request_body, result_body):
     '''A subfunction of rpc_request, that, given the decoded JSON result,
     handles the error codes or, if everything went well, returns the result
@@ -104,7 +118,7 @@ def _parse_result(request_body, result_body):
 
     if request_body[u'id'] != result_body[u'id']:
         raise errors.RemoteError(
-            'Request ID was not the same one as returned.')
+            'Request ID was not the same one as returned. %s -- %s' % (request_body[u'id'], result_body[u'id']) )
 
     try:
         return result_body[u'result']
