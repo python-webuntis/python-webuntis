@@ -217,19 +217,9 @@ class ResultWrapperMixin(object):
         # if we have to deal with an object in element_id,
         # its id gets placed here anyway
 
-        json_start = utils.datetime_utils.format_date(start)
-        json_end = utils.datetime_utils.format_date(end)
-
-        if json_start > json_end:
-            raise ValueError('Start can\'t be later than the end.')
-
-        parameters = {
-            'id': int(element_id),
-            'type': element_type_table[element_type],
-            'startDate': json_start,
-            'endDate': json_end
-        }
-
+        parameters = self._create_date_param(end, start,
+                                             id=int(element_id), type = element_type_table[element_type])
+        parameters = parameters["options"] # getTimetable is without options!
         return objects.PeriodList, 'getTimetable', parameters
 
     @result_wrapper
@@ -297,21 +287,7 @@ class ResultWrapperMixin(object):
         :rtype: :py:class:`webuntis.objects.SubstitutionList`
         """
 
-        json_start = utils.datetime_utils.format_date(start)
-        json_end = utils.datetime_utils.format_date(end)
-
-        if json_start > json_end:
-            raise ValueError('Start can\'t be later than the end.')
-
-        parameters = {
-            'startDate': json_start,
-            'endDate': json_end,
-            'departmentId': departmentId
-        }
-
-        # if departmentId:
-        #    parameters['departmentId'] = departmentId
-
+        parameters = self._create_date_param(end, start, departmentId = departmentId)
         return objects.SubstitutionList, 'getSubstitutions', parameters
 
     @result_wrapper
@@ -359,18 +335,7 @@ class ResultWrapperMixin(object):
         :rtype: :py:class:`webuntis.objects.ExamsList`
         """
 
-        json_start = utils.datetime_utils.format_date(start)
-        json_end = utils.datetime_utils.format_date(end)
-
-        if json_start > json_end:
-            raise ValueError('Start can\'t be later than the end.')
-
-        parameters = {
-            'startDate': json_start,
-            'endDate': json_end,
-            'examTypeId': examTypeId
-        }
-
+        parameters = self._create_date_param(end, start, examTypeId = examTypeId)
         return objects.ExamsList, 'getExams', parameters
 
     @result_wrapper
@@ -386,20 +351,23 @@ class ResultWrapperMixin(object):
         :rtype: :py:class:`webuntis.objects.AbsencesList`
         """
 
-        json_start = utils.datetime_utils.format_date(start)
-        json_end = utils.datetime_utils.format_date(end)
-
-        if json_start > json_end:
-            raise ValueError('Start can\'t be later than the end.')
-
-        parameters = {
-            "options": {
-                'startDate': json_start,
-                'endDate': json_end,
-            }
-        }
+        parameters = self._create_date_param(end, start)
 
         return objects.AbsencesList, 'getTimetableWithAbsences', parameters
+
+    @staticmethod
+    def _create_date_param(end, start, **kwargs):
+        json_start = utils.datetime_utils.format_date(start)
+        json_end = utils.datetime_utils.format_date(end)
+        if json_start > json_end:
+            raise ValueError('Start can\'t be later than the end.')
+        parameters = {
+            "options": dict({
+                'startDate': json_start,
+                'endDate': json_end,
+            }, **kwargs)
+        }
+        return parameters
 
 
 class Session(JSONRPCSession, ResultWrapperMixin):
