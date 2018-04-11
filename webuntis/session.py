@@ -219,7 +219,6 @@ class ResultWrapperMixin(object):
 
         parameters = self._create_date_param(end, start,
                                              id=int(element_id), type=element_type_table[element_type])
-        parameters = parameters["options"]  # getTimetable is without options!
         return objects.PeriodList, 'getTimetable', parameters
 
     @result_wrapper
@@ -347,7 +346,7 @@ class ResultWrapperMixin(object):
         :rtype: :py:class:`webuntis.objects.AbsencesList`
         """
 
-        parameters = self._create_date_param(end, start)
+        parameters =  { u'options': self._create_date_param(end, start) }
 
         return objects.AbsencesList, 'getTimetableWithAbsences', parameters
 
@@ -357,12 +356,10 @@ class ResultWrapperMixin(object):
         json_end = utils.datetime_utils.format_date(end)
         if json_start > json_end:
             raise ValueError('Start can\'t be later than the end.')
-        parameters = {
-            "options": dict({
+        parameters = dict({
                 'startDate': json_start,
                 'endDate': json_end,
             }, **kwargs)
-        }
         return parameters
 
 
