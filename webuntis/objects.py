@@ -843,20 +843,21 @@ class AbsenceObject(Result):
     @lazyproperty
     def subject(self):
         """@TODO: untested - always empty"""
-        sid = int(self._data[u'subjectId'])
-        if sid:
-            return self._session.subjects(from_cache=True).filter(id=sid)[0]
-        else:
+        try:
+            sid = int(self._data[u'subjectId'])
+        except ValueError:
             return ""
+        return self._session.subjects(from_cache=True).filter(id=sid)[0]
 
     @lazyproperty
     def teachers(self):
         """@TODO: untested - always empty"""
-        tes = set(int(te) for te in self._data[u'teacherIds'] if te)
-        if tes:
-            return self._session.teachers(from_cache=True).filter(id=tes)
-        else:
+        try:
+            tes = set(int(te) for te in self._data[u'teacherIds'] if te)
+        except ValueError:
             return []
+
+        return self._session.teachers(from_cache=True).filter(id=tes)
 
     @lazyproperty
     def student_group(self):
