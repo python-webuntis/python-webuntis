@@ -24,7 +24,7 @@ setup(
     author_email='markus@unterwaditzer.net',
     packages=find_packages(),
     include_package_data=True,
-    url='http://dev.unterwaditzer.net/python-webuntis/',
+    url='https://github.com/python-webuntis/python-webuntis',
     license='new-style BSD',
     description='Bindings for WebUntis API',
     long_description=open('README.rst').read(),
