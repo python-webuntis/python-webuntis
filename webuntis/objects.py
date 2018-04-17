@@ -834,11 +834,19 @@ class ExamsList(ListResult):
 
 
 class AbsenceObject(Result):
-    """Represents an absence."""
+    """Represents an absence.
+
+    Attention: if there are multiple teachers/groups at the same time -> multiple entries for the
+    same student, but the absentTime is only set for one (the first?) entry.
+    """
 
     @lazyproperty
     def student(self):
-        return self._session.students(from_cache=True).filter(id=int(self._data[u'studentId']))[0]
+        """
+        doku says: student ID, but it is the students KEY
+        :return:
+        """
+        return self._session.students(from_cache=True).filter(key=self._data[u'studentId'])[0]
 
     @lazyproperty
     def subject(self):
@@ -861,7 +869,10 @@ class AbsenceObject(Result):
 
     @lazyproperty
     def student_group(self):
-        return self._data[u'student_group']
+        try:
+            return self._data[u'studentGroup']
+        except KeyError:
+            return ''
 
     @lazyproperty
     def checked(self):
@@ -889,6 +900,20 @@ class AbsenceObject(Result):
             self._data[u'date'],
             self._data[u'endTime']
         )
+
+    @lazyproperty
+    def reason(self):
+        try:
+            return self._data[u'absenceReason']
+        except KeyError:
+            return ''
+
+    @lazyproperty
+    def time(self):
+        try:
+            return int(self._data[u'absentTime'])
+        except KeyError:
+            return 0
 
 
 class AbsencesList(ListResult):

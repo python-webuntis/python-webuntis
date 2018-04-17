@@ -351,7 +351,7 @@ class StubSession(object):
         session=sess
     )
     student1 = webuntis.objects.StudentObject(
-        data={u'id': 9, u'name': u'Potter', u'longName': u'Potter', u'foreName': 'Harry', u'key': 42},
+        data={u'id': 9, u'name': u'Potter', u'longName': u'Potter', u'foreName': 'Harry', u'key': '42'},
         session=sess
     )
 
@@ -609,7 +609,7 @@ class ExamTests(WebUntisTestCase):
         assert ex.klassen[0].name == u'1A'
         assert len(ex.students) == 1
         assert ex.students[0].name == u'Potter'
-        assert ex.students[0].key == 42
+        assert ex.students[0].key == '42'
 
     def testExamList(selfself):
         exl = webuntis.objects.ExamsList(
@@ -626,10 +626,10 @@ class AbsencesTests(WebUntisTestCase):
     def testAbsence(self):
         ab = webuntis.objects.AbsenceObject(
             data={'date': 20180320, 'startTime': 850, 'endTime': 940,
-                  'studentId': '9',
+                  'studentId': '42',  # <- key!
                   'subjectId': '4',
                   'teacherIds': ['3', '7'],
-                  'student_group': u'MAM_1A_M',
+                  'studentGroup': u'MAM_1A_M',
                   'user': '',
                   'checked': True},
             session=StubSession()

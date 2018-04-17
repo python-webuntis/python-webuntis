@@ -196,6 +196,7 @@ class PeriodList(ListResult):
     def combine(self) -> PeriodList:
         ...
 
+
 class PersonObject(ListItem):
 
     @property
@@ -352,6 +353,7 @@ class SubstitutionList(ListResult):
     def combine(self) -> SubstitutionList:
         ...
 
+
 class TeacherObject(PersonObject):
     @property
     def title(self) -> str:
@@ -468,6 +470,7 @@ class ExamObject(Result):
     def students(self) -> StudentsList:
         ...
 
+
 class ExamsList(ListResult):
     _itemclass = ExamObject
 
@@ -505,6 +508,14 @@ class AbsenceObject(Result):
 
     @property
     def checked(self) -> bool:
+        ...
+
+    @property
+    def reason(self) -> str:
+        ...
+
+    @property
+    def time(self) -> int:
         ...
 
 
