@@ -10,7 +10,7 @@ _logger = None
 
 def log(level, message, *args, **kwargs):
     """Log a message to the logger used. Written inside a function so it can be
-    overridden if really neccessary."""
+    overridden if really necessary."""
     global _logger
     if _logger is None:
         import logging

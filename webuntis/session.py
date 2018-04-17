@@ -77,7 +77,7 @@ class JSONRPCSession(object):
 
         :raises: :py:class:`webuntis.errors.BadCredentialsError` --
             Username/Password missing or invalid.
-        :raises: :py:class:`webuntis.errors.AuthError` -- Didn't recieve a
+        :raises: :py:class:`webuntis.errors.AuthError` -- Didn't receive a
             session ID for unknown reasons.
         """
 
@@ -346,7 +346,7 @@ class ResultWrapperMixin(object):
         :rtype: :py:class:`webuntis.objects.AbsencesList`
         """
 
-        parameters =  { u'options': self._create_date_param(end, start) }
+        parameters = {u'options': self._create_date_param(end, start)}
 
         return objects.AbsencesList, 'getTimetableWithAbsences', parameters
 
@@ -357,9 +357,9 @@ class ResultWrapperMixin(object):
         if json_start > json_end:
             raise ValueError('Start can\'t be later than the end.')
         parameters = dict({
-                'startDate': json_start,
-                'endDate': json_end,
-            }, **kwargs)
+            'startDate': json_start,
+            'endDate': json_end,
+        }, **kwargs)
         return parameters
 
 

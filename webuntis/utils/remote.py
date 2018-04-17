@@ -111,7 +111,7 @@ def _parse_result(request_body, result_body):
     ID validation.
 
     :param request_body: The not-yet-encoded body of the request sent.
-    :param result_body: The decoded body of the result recieved.
+    :param result_body: The decoded body of the result received.
     """
 
     if request_body[u'id'] != result_body[u'id']:
