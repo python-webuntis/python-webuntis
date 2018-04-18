@@ -306,7 +306,7 @@ class TimeStampTests(WebUntisTestCase):
         exp = datetime.date(2015, 1, 2)
 
         self.assertEqual(x.date.date(), exp)
-        self.assert_(x.date.time().hour in [12, 13]) # travis says: 12, local test says: 13
+        self.assert_(x.date.time().hour in [12, 13])  # travis says: 12, local test says: 13
         self.assertEqual(x.date.time().minute, 33)
         self.assertEqual(x.date.time().second, 40)
 
@@ -631,7 +631,10 @@ class AbsencesTests(WebUntisTestCase):
                   'teacherIds': ['3', '7'],
                   'studentGroup': u'MAM_1A_M',
                   'user': '',
-                  'checked': True},
+                  'checked': True,
+                  'absenceReason': u'illness',
+                  'absentTime': 50,
+                  },
             session=StubSession()
         )
         assert ab.start == datetime.datetime(2018, 3, 20, 8, 50)
@@ -643,6 +646,8 @@ class AbsencesTests(WebUntisTestCase):
         assert ab.teachers[0].name == u'Hans Gans'
         assert ab.checked
         assert ab.student_group == u'MAM_1A_M'
+        assert ab.reason == u'illness'
+        assert ab.time == 50
 
     def testAbsencesList(self):
         al = webuntis.objects.AbsencesList(
