@@ -19,7 +19,7 @@ Changelog
       recognized, webuntis will now try to use the error message sent in the
       response. See 67d6fa2_.
 
-.. _67d6fa2: https://github.com/untitaker/python-webuntis/commit/67d6fa21f7c199d89704d07dbba5219b0875b75e
+.. _67d6fa2: https://github.com/python-webuntis/python-webuntis/commit/67d6fa21f7c199d89704d07dbba5219b0875b75e
 
 * 0.1.7:
 

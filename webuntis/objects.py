@@ -934,7 +934,7 @@ class ClassRegEvent(Result):
         """
         doku says: student ID, but it is the students KEY
 
-        :return: 
+        :return:
         """
         return self._session.students(from_cache=True).filter(key=self._data[u'studentid'])[0]
 
