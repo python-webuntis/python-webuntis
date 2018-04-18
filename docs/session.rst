@@ -30,8 +30,12 @@ Things you can do with the API
     .. automethod:: subjects
     .. automethod:: teachers
     .. automethod:: statusdata
-    .. automethod:: lastImportTime
+    .. automethod:: last_import_time
     .. automethod:: substitutions
-    .. automethod:: timegridUnits
+    .. automethod:: timegrid_units
     .. automethod:: students
+    .. automethod:: exam_types
+    .. automethod:: exams
+    .. automethod:: timetable_with_absences
+    .. automethod:: class_reg_events
 

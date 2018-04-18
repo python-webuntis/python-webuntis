@@ -2,6 +2,27 @@
 Changelog
 =========
 
+* work in progress:
+
+    * Dropped Python 2.6 support, added Python up to 3.7
+
+    * Code completion support for all objects
+
+    * Added str() and reps() for all objects for easier debugging
+
+    * Added new/missing API calls:
+
+        * last_import_time
+        * substitutions
+        * timegrid_units
+        * students
+        * exam_types
+        * exams
+        * timetable_with_absences
+        * class_reg_events
+
+    * Code cleanup
+
 * 0.1.9:
 
     * Add requests as a dependency and use it instead of urllib. Big security

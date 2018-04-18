@@ -594,7 +594,7 @@ class StatusData(Result):
         """A list of :py:class:`ColorInfo` objects, containing
         information about all lesson types defined
 
-        :rtype: List[ColorInfo]
+        :rtype: `list`          [ColorInfo]
         """
         return [
             ColorInfo(parent=self, data=data)
@@ -606,7 +606,7 @@ class StatusData(Result):
         """A list of :py:class:`ColorInfo` objects, containing
         information about all period codes defined
 
-        :rtype: List[ColorInfo]
+        :rtype: `list`         [ColorInfo]
         """
         return [
             ColorInfo(parent=self, data=data)
@@ -773,7 +773,7 @@ class ExamObject(Result):
 
     # classes  list of classes
     # teachers list of teachers
-    # students lsit of students
+    # students list of students
     # subject
 
     @lazyproperty
@@ -814,7 +814,7 @@ class ExamObject(Result):
 
     @lazyproperty
     def subject(self):
-        """A :py:class:`SubjectOject` with the subject which are topic of
+        """A :py:class:`SubjectObject` with the subject which are topic of
         this period."""
         return self._session.subjects(from_cache=True).filter(id=self._data[u'subject'])[0]
 
