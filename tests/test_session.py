@@ -312,3 +312,10 @@ class WrapperMethodTests(WebUntisTestCase):
         assert webuntis.utils.result_wrapper.session_use_cache
         s = webuntis.Session(use_cache=False, **stub_session_parameters)
         assert not webuntis.utils.result_wrapper.session_use_cache
+
+
+    def test_class_reg_events(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.noop_result_mock('getClassregEvents'):
+            ex = s.class_reg_events(start=1, end=2)
+            assert type(ex) is webuntis.objects.ClassRegEventList

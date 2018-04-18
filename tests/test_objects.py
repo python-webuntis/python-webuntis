@@ -657,3 +657,36 @@ class AbsencesTests(WebUntisTestCase):
         assert type(al) == webuntis.objects.AbsencesList
         assert len(al) == 2
         assert type(al[0]) is webuntis.objects.AbsenceObject
+
+
+class ClassRegEventsTests(WebUntisTestCase):
+    def testClassRegEvent(self):
+        cre = webuntis.objects.ClassRegEvent(
+            data={'studentid': '42', # <- key!
+                  'surname': 'Potter',
+                  'forname': 'Harry',
+                  'date': 20180417,
+                  'subject': 'E',
+                  'reason': 'remark',
+                  'text': 'magic in classroom'
+                  },
+            session=StubSession()
+        )
+        assert  type(cre) == webuntis.objects.ClassRegEvent
+        assert cre.student.name == u'Potter'
+        assert cre.sur_name == u'Potter'
+        assert cre.fore_name == u'Harry'
+        assert cre.name == u'Potter Harry'
+        assert cre.date == datetime.datetime(2018, 4, 17, 0, 0)
+        assert cre.reason == "remark"
+        assert cre.text == 'magic in classroom'
+        assert cre.subject == "E"
+
+    def testClassRegEventList(self):
+        crel = webuntis.objects.ClassRegEventList(
+            data=[{}, {}],
+            session=object()
+        )
+        assert type(crel) == webuntis.objects.ClassRegEventList
+        assert len(crel) == 2
+        assert type(crel[0]) is webuntis.objects.ClassRegEvent
