@@ -527,3 +527,47 @@ class AbsencesList(ListResult):
 
     def __getitem__(self, i: int) -> AbsenceObject:
         ...
+
+
+class ClassRegEvent(Result):
+    @property
+    def student(self) -> StudentObject:
+        ...
+
+    @property
+    def sur_name(self) -> str:
+        ...
+
+    @property
+    def fore_name(self) -> str:
+        ...
+
+    @property
+    def name(self) -> str:
+        ...
+
+    @property
+    def reason(self) -> str:
+        ...
+
+    @property
+    def text(self) -> str:
+        ...
+
+    @property
+    def date(self) -> date:
+        ...
+
+    @property
+    def subject(self) -> str:
+        ...
+
+
+class ClassRegEventList(ListResult):
+    _itemclass = ClassRegEvent
+
+    def filter(self, **criterions) -> ClassRegEventList:
+        ...
+
+    def __getitem__(self, i: int) -> ClassRegEvent:
+        ...

@@ -350,6 +350,20 @@ class ResultWrapperMixin(object):
 
         return objects.AbsencesList, 'getTimetableWithAbsences', parameters
 
+    @result_wrapper
+    def class_reg_events(self, start, end):
+        """Information about the ClassRegEvents
+        :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
+        :param start: The beginning of the time period.
+
+        :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
+        :param end: The end of the time period.
+
+        :rtype: :py:class:`webuntis.objects.ClassRegEventList`
+        """
+        parameters = self._create_date_param(end, start)
+        return objects.ClassRegEventList, 'getClassregEvents', parameters
+
     @staticmethod
     def _create_date_param(end, start, **kwargs):
         json_start = utils.datetime_utils.format_date(start)

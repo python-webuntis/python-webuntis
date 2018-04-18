@@ -924,3 +924,56 @@ class AbsencesList(ListResult):
         # the data is a dict() with just one key
         data = data[u'periodsWithAbsences']
         Result.__init__(self, data, parent, session)
+
+
+class ClassRegEvent(Result):
+    """Represents an ClassRegEvent."""
+
+    @lazyproperty
+    def student(self):
+        """
+        doku says: student ID, but it is the students KEY
+
+        :return: 
+        """
+        return self._session.students(from_cache=True).filter(key=self._data[u'studentid'])[0]
+
+    @lazyproperty
+    def sur_name(self):
+        """sur name of the person"""
+        return self._data[u'surname']
+
+    @lazyproperty
+    def fore_name(self):
+        """fore name of the person"""
+        return self._data[u'forname']
+
+    @lazyproperty
+    def name(self):
+        """fore name of the person"""
+        return " ".join((self.sur_name, self.fore_name))
+
+    @lazyproperty
+    def reason(self):
+        """reason of the classregevent"""
+        return self._data[u'reason']
+
+    @lazyproperty
+    def text(self):
+        """text of the classregevent"""
+        return self._data[u'text']
+
+    @lazyproperty
+    def date(self):
+        """the date of the classregevent."""
+        return datetime_utils.parse_date(self._data[u'date'])
+
+    @lazyproperty
+    def subject(self):
+        """the subject of the classregevent."""
+        return self._data[u'subject']
+
+
+class ClassRegEventList(ListResult):
+    """A list of ClassRegEvents."""
+    _itemclass = ClassRegEvent
