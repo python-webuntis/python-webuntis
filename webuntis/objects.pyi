@@ -1,5 +1,5 @@
 import datetime
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 from webuntis import Session
 
@@ -141,7 +141,7 @@ class KlassenList(ListResult):
 class PeriodObject(ListItem):
 
     @property
-    def code(self) -> str:
+    def code(self) -> Union[str, None]:
         ...
 
     @property
