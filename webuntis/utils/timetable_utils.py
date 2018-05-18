@@ -56,8 +56,10 @@ def combine(periods, combine_breaks=True):
 
     olddata = [deepcopy(p._data) for p in periods]
 
+
     if u'lsid' in olddata[0]:
-        olddata.sort(key=lambda p: (p[u'lsid'], p[u'date'], p[u'startTime']))
+        # substitutions - sort by teacher first
+        olddata.sort(key=lambda p: (p[u'te'][0][u'name'], p[u'date'], p[u'startTime']))
     else:
         olddata.sort(key=lambda p: (p[u'date'], p[u'startTime']))
 
@@ -65,11 +67,11 @@ def combine(periods, combine_breaks=True):
     last = olddata[0]
 
     # fields to compare
-    fields = set(k for k in last.keys() if not isinstance(last[k], list)) - {u'id', u'key', u'startTime', u'endTime'}
+    fields = set(k for k in last.keys() if not isinstance(last[k], list)) - {u'id', u'key', u'startTime', u'endTime', u'lsid'}
     if u'su' in last.keys():
         fields |= {u'su', u'kl'}  # don't combine different subjects or klassen
     # fields to combine
-    fields_list = set(k for k in last.keys() if isinstance(last[k], list)) - {u'id', u'key'}
+    fields_list = set(k for k in last.keys() if isinstance(last[k], list)) - {u'id', u'key', u'lsid', u'reschedule'}
 
     for current in olddata[1:]:
         try:
