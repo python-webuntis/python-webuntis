@@ -414,8 +414,13 @@ class PeriodList(ListResult):
 
         return timetable_utils.table(self, dates=dates, times=times)
 
-    def combine(self):
-        return timetable_utils.combine(self)
+    def combine(self, combine_breaks=True):
+        """
+        Combine consecutive entries
+        :param combine_breaks: combine of breaks
+        :return:
+        """
+        return timetable_utils.combine(self, {'date', 'activityType', 'su', 'kl'}, combine_breaks)
 
 
 class RoomObject(ListItem, ColorMixin):
@@ -672,8 +677,16 @@ class SubstitutionList(ListResult):
     """A list of substitutions in form of :py:class:`SubstitutionObject` instances."""
     _itemclass = SubstitutionObject
 
-    def combine(self):
-        return timetable_utils.combine(self)
+    def combine(self, combine_breaks=True):
+        """
+        Combine consecutive entries
+        :param combine_breaks: combine of breaks
+        :return:
+        """
+        return timetable_utils.combine(self,
+                                       {'date', 'type', 'kl', 'su'},
+                                       combine_breaks,
+                                       lambda p: (p[u'te'][0][u'name'], p[u'date'], p[u'startTime']))
 
 
 class TimeUnitObject(Result):

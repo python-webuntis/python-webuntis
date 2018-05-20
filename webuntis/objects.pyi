@@ -193,7 +193,7 @@ class PeriodList(ListResult):
     def to_table(self) -> List[Tuple[datetime.time, List[Tuple[datetime.date, PeriodList]]]]:
         ...
 
-    def combine(self) -> PeriodList:
+    def combine(self, combine_breaks: bool = True) -> PeriodList:
         ...
 
 
@@ -350,7 +350,7 @@ class SubstitutionList(ListResult):
     def __getitem__(self, i: int) -> SubstitutionObject:
         ...
 
-    def combine(self) -> SubstitutionList:
+    def combine(self, combine_breaks: bool = True) -> SubstitutionList:
         ...
 
 

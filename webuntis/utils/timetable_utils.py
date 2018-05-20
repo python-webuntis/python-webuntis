@@ -37,7 +37,7 @@ def table(periods, dates=None, times=None):
     return sorted((time, sorted(row.items())) for time, row in ttable.items())
 
 
-def combine(periods, combine_breaks=True):
+def combine(periods, fields, combine_breaks, sort_before = None ):
     """
     shorten a list of periods (or substitutions) by combining consecutive Elements
 
@@ -57,21 +57,18 @@ def combine(periods, combine_breaks=True):
     olddata = [deepcopy(p._data) for p in periods]
 
 
-    if u'lsid' in olddata[0]:
-        # substitutions - sort by teacher first
-        olddata.sort(key=lambda p: (p[u'te'][0][u'name'], p[u'date'], p[u'startTime']))
+    # lambda p: (p[u'te'][0][u'name'], p[u'date'], p[u'startTime'])
+
+    if sort_before:
+        olddata.sort(key=sort_before)
     else:
         olddata.sort(key=lambda p: (p[u'date'], p[u'startTime']))
 
     data = []
     last = olddata[0]
 
-    # fields to compare
-    fields = set(k for k in last.keys() if not isinstance(last[k], list)) - {u'id', u'key', u'startTime', u'endTime', u'lsid'}
-    if u'su' in last.keys():
-        fields |= {u'su', u'kl'}  # don't combine different subjects or klassen
     # fields to combine
-    fields_list = set(k for k in last.keys() if isinstance(last[k], list)) - {u'id', u'key', u'lsid', u'reschedule'}
+    fields_list = [f for f in ['ro', 'te', 'su', 'kl'] if f in last.keys()]
 
     for current in olddata[1:]:
         try:
