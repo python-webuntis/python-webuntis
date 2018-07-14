@@ -1,16 +1,16 @@
-'''
+"""
     This file is part of python-webuntis
 
     :copyright: (c) 2012 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
-'''
+"""
 from webuntis import utils, objects, errors
 from webuntis.utils import result_wrapper, log, rpc_request
 from webuntis.utils.userinput import unicode_string
 
 
 class JSONRPCSession(object):
-    '''Lower-level version of :py:class:`Session`. Do not use this.'''
+    """Lower-level version of :py:class:`Session`. Do not use this."""
 
     config = None
     '''Dictionary with configuration.'''
@@ -31,16 +31,16 @@ class JSONRPCSession(object):
         self.config.update(config)
 
     def __enter__(self):
-        '''Context-manager'''
+        """Context-manager"""
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        '''Context-manager -- the only thing we need to clean up is to log out
-        '''
+        """Context-manager -- the only thing we need to clean up is to log out
+        """
         self.logout(suppress_errors=True)
 
     def logout(self, suppress_errors=False):
-        '''
+        """
         Log out of session
 
         :type suppress_errors: bool
@@ -49,7 +49,8 @@ class JSONRPCSession(object):
         :raises: :py:class:`webuntis.errors.NotLoggedInError` -- Can't log out
             because not logged in. Raised unless ``suppress_errors`` is
             ``True``.
-        '''
+        """
+
         def throw_errors():
             if not suppress_errors:
                 raise errors.NotLoggedInError('We already were logged out.')
@@ -66,7 +67,7 @@ class JSONRPCSession(object):
             throw_errors()
 
     def login(self):
-        '''Initializes an authentication, provided we have the credentials for
+        """Initializes an authentication, provided we have the credentials for
         it.
 
         :returns: The session. This is useful for jQuery-like command
@@ -76,9 +77,9 @@ class JSONRPCSession(object):
 
         :raises: :py:class:`webuntis.errors.BadCredentialsError` --
             Username/Password missing or invalid.
-        :raises: :py:class:`webuntis.errors.AuthError` -- Didn't recieve a
+        :raises: :py:class:`webuntis.errors.AuthError` -- Didn't receive a
             session ID for unknown reasons.
-        '''
+        """
 
         try:
             username = self.config['username']
@@ -132,23 +133,23 @@ class JSONRPCSession(object):
 class ResultWrapperMixin(object):
     @result_wrapper
     def departments(self):
-        '''Get all departments.
+        """Get all departments.
 
         :rtype: :py:class:`webuntis.objects.DepartmentList`
-        '''
+        """
         return objects.DepartmentList, 'getDepartments', {}
 
     @result_wrapper
     def holidays(self):
-        '''Get all holidays.
+        """Get all holidays.
 
         :rtype: :py:class:`webuntis.objects.HolidayList`
-        '''
+        """
         return objects.HolidayList, 'getHolidays', {}
 
     @result_wrapper
     def klassen(self, schoolyear=None):
-        '''Get all school classes.
+        """Get all school classes.
 
         :param schoolyear: The schoolyear where the classes should be fetched
             from.
@@ -156,7 +157,7 @@ class ResultWrapperMixin(object):
             integer ID of it
 
         :rtype: :py:class:`webuntis.objects.KlassenList`
-        '''
+        """
         params = {}
         if schoolyear:
             params['schoolyearId'] = int(schoolyear)
@@ -165,12 +166,12 @@ class ResultWrapperMixin(object):
 
     @result_wrapper
     def timetable(self, start, end, **type_and_id):
-        '''Get the timetable for a specific school class and time period.
+        """Get the timetable for a specific school class and time period.
 
-        :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date`
+        :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
         :param start: The beginning of the time period.
 
-        :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date`
+        :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
         :param end: The end of the time period.
 
         :rtype: :py:class:`webuntis.objects.PeriodList`
@@ -188,12 +189,12 @@ class ResultWrapperMixin(object):
             tt = s.timetable(klasse=klasse, start=monday, end=friday)
 
         :raises: :exc:`ValueError`, :exc:`TypeError`
-        '''
+        """
         element_type_table = {
-            'klasse':  1,
+            'klasse': 1,
             'teacher': 2,
             'subject': 3,
-            'room':    4,
+            'room': 4,
             'student': 5
         }
 
@@ -216,65 +217,168 @@ class ResultWrapperMixin(object):
         # if we have to deal with an object in element_id,
         # its id gets placed here anyway
 
-        json_start = utils.datetime_utils.format_date(start)
-        json_end =   utils.datetime_utils.format_date(end)
-
-        if json_start > json_end:
-            raise ValueError('Start can\'t be later than the end.')
-
-        parameters = {
-            'id': int(element_id),
-            'type': element_type_table[element_type],
-            'startDate': json_start,
-            'endDate': json_end
-        }
-
+        parameters = self._create_date_param(end, start,
+                                             id=int(element_id), type=element_type_table[element_type])
         return objects.PeriodList, 'getTimetable', parameters
 
     @result_wrapper
     def rooms(self):
-        '''Get all rooms of a school.
+        """Get all rooms of a school.
 
         :rtype: :py:class:`webuntis.objects.RoomList`
-        '''
+        """
         return objects.RoomList, 'getRooms', {}
 
     @result_wrapper
     def schoolyears(self):
-        '''Get all schoolyears.
+        """Get all schoolyears.
 
         :rtype: :py:class:`webuntis.objects.SchoolyearList`
-        '''
+        """
         return objects.SchoolyearList, 'getSchoolyears', {}
 
     @result_wrapper
     def subjects(self):
-        '''Get all subjects.
+        """Get all subjects.
 
         :rtype: :py:class:`webuntis.objects.SubjectList`
-        '''
+        """
         return objects.SubjectList, 'getSubjects', {}
 
     @result_wrapper
     def teachers(self):
-        '''Get all teachers.
+        """Get all teachers.
 
         :rtype: :py:class:`webuntis.objects.TeacherList`
-        '''
+        """
         return objects.TeacherList, 'getTeachers', {}
 
     @result_wrapper
     def statusdata(self):
-        '''Information about lesson types and period codes, specifically about
+        """Information about lesson types and period codes, specifically about
         the colors used to highlight them in the web-interface of WebUntis.
 
         :rtype: :py:class:`webuntis.objects.StatusData`
-        '''
+        """
         return objects.StatusData, 'getStatusData', {}
+
+    @result_wrapper
+    def last_import_time(self):
+        """Information about the last change made.
+
+        :rtype: py:class:`webuntis.objects.TimeStampObject`
+        """
+        return objects.TimeStampObject, 'getLatestImportTime', {}
+
+    @result_wrapper
+    def substitutions(self, start, end, department_id=0):
+        """Get all substitutions.
+
+
+        :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
+        :param start: The beginning of the time period.
+
+        :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
+        :param end: The end of the time period.
+
+        :param department_id:  int, set to 0 for all departments or  if not applicable
+
+        :rtype: :py:class:`webuntis.objects.SubstitutionList`
+        """
+
+        parameters = self._create_date_param(end, start, departmentId=department_id)
+        return objects.SubstitutionList, 'getSubstitutions', parameters
+
+    @result_wrapper
+    def timegrid_units(self):
+        """Information about the Timegrid.
+
+        :return:
+        :rtype: :py:class:`webuntis.objects.TimegridObject`
+        """
+        return objects.TimegridObject, 'getTimegridUnits', {}
+
+    @result_wrapper
+    def students(self):
+        """Get all students
+
+        :rtype:  :py:class:`webuntis.objects.StudentsList`
+        """
+        return objects.StudentsList, 'getStudents', {}
+
+    @result_wrapper
+    def exam_types(self):
+        """Information about the Exam types.
+        needs additional rights Master/Exam Types -- Stammdaten /Pruefungsart
+
+        :rtype:  :py:class:`webuntis.objects.ExamTypeList`
+        """
+        return objects.ExamTypeList, 'getExamTypes', {}
+
+    @result_wrapper
+    def exams(self, start, end, exam_type_id=0):
+        """Information about the Exams.
+
+        :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
+        :param start: The beginning of the time period.
+
+        :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
+        :param end: The end of the time period.
+
+        :param exam_type_id:  int, ??
+
+        :rtype: :py:class:`webuntis.objects.ExamsList`
+        """
+
+        parameters = self._create_date_param(end, start, examTypeId=exam_type_id)
+        return objects.ExamsList, 'getExams', parameters
+
+    @result_wrapper
+    def timetable_with_absences(self, start, end):
+        """Information about the Exams.
+
+        :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
+        :param start: The beginning of the time period.
+
+        :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
+        :param end: The end of the time period.
+
+        :rtype: :py:class:`webuntis.objects.AbsencesList`
+        """
+
+        parameters = {u'options': self._create_date_param(end, start)}
+
+        return objects.AbsencesList, 'getTimetableWithAbsences', parameters
+
+    @result_wrapper
+    def class_reg_events(self, start, end):
+        """Information about the ClassRegEvents
+        :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
+        :param start: The beginning of the time period.
+
+        :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
+        :param end: The end of the time period.
+
+        :rtype: :py:class:`webuntis.objects.ClassRegEventList`
+        """
+        parameters = self._create_date_param(end, start)
+        return objects.ClassRegEventList, 'getClassregEvents', parameters
+
+    @staticmethod
+    def _create_date_param(end, start, **kwargs):
+        json_start = utils.datetime_utils.format_date(start)
+        json_end = utils.datetime_utils.format_date(end)
+        if json_start > json_end:
+            raise ValueError('Start can\'t be later than the end.')
+        parameters = dict({
+            'startDate': json_start,
+            'endDate': json_end,
+        }, **kwargs)
+        return parameters
 
 
 class Session(JSONRPCSession, ResultWrapperMixin):
-    '''The origin of everything you want to do with the WebUntis API. Can be
+    """The origin of everything you want to do with the WebUntis API. Can be
     used as a context-manager to provide automatic log-out.
 
     Configuration can be set with keyword arguments when initializing
@@ -355,7 +459,9 @@ class Session(JSONRPCSession, ResultWrapperMixin):
         login when finding no or an expired session. Default to ``0``, meaning
         it won't do that.
 
-    '''
+    :type use_cache: bool
+    :param use_cache: always use the cache
+    """
 
     cache = None
     '''Contains the caching dictionary for requests.'''
@@ -367,6 +473,9 @@ class Session(JSONRPCSession, ResultWrapperMixin):
     initialization.'''
 
     def __init__(self, **config):
+        if 'use_cache' in config:
+            result_wrapper.session_use_cache = bool(config['use_cache'])
+            del config['use_cache']
         cachelen = config.pop('cachelen', 20)
         self.cache = utils.SessionCache(maxlen=cachelen)
         JSONRPCSession.__init__(self, **config)

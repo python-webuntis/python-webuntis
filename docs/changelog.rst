@@ -2,6 +2,27 @@
 Changelog
 =========
 
+* work in progress:
+
+    * Dropped Python 2.6 support, added Python up to 3.7
+
+    * Code completion support for all objects
+
+    * Added str() and reps() for all objects for easier debugging
+
+    * Added new/missing API calls:
+
+        * last_import_time
+        * substitutions
+        * timegrid_units
+        * students
+        * exam_types
+        * exams
+        * timetable_with_absences
+        * class_reg_events
+
+    * Code cleanup
+
 * 0.1.9:
 
     * Add requests as a dependency and use it instead of urllib. Big security
@@ -19,7 +40,7 @@ Changelog
       recognized, webuntis will now try to use the error message sent in the
       response. See 67d6fa2_.
 
-.. _67d6fa2: https://github.com/untitaker/python-webuntis/commit/67d6fa21f7c199d89704d07dbba5219b0875b75e
+.. _67d6fa2: https://github.com/python-webuntis/python-webuntis/commit/67d6fa21f7c199d89704d07dbba5219b0875b75e
 
 * 0.1.7:
 

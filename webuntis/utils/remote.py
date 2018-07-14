@@ -1,9 +1,9 @@
-'''
+"""
     This file is part of python-webuntis
 
     :copyright: (c) 2012 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
-'''
+"""
 from webuntis import errors
 from webuntis.utils import log
 from webuntis.utils.userinput import unicode_string, bytestring
@@ -11,7 +11,6 @@ from webuntis.utils.third_party import json
 
 import datetime
 import requests
-
 
 _errorcodes = {
     -32601: errors.MethodNotFoundError,
@@ -24,12 +23,12 @@ exception that will be thrown.'''
 
 
 def rpc_request(config, method, params):
-    '''
+    """
     A method for sending a JSON-RPC request.
 
     :param config: A dictionary containing ``useragent``, ``server``,
         ``school``, ``username`` and ``password``
-    :type config: dict
+    :type config: dict or FilterDict
 
     :param method: The JSON-RPC method to be executed
     :type method: str
@@ -37,7 +36,7 @@ def rpc_request(config, method, params):
     :param params: JSON-RPC parameters to the method (should be JSON
         serializable)
     :type params: dict
-    '''
+    """
     server = config['server']
     school = config['school']
     useragent = config['useragent']
@@ -50,7 +49,6 @@ def rpc_request(config, method, params):
     for v in params.values():
         assert not isinstance(v, bytestring)
 
-
     url = server + u'?school=' + school
 
     headers = {
@@ -59,7 +57,7 @@ def rpc_request(config, method, params):
     }
 
     request_body = {
-        u'id': str(datetime.datetime.today()),
+        u'id': _request_getid(),
         u'method': method,
         u'params': params,
         u'jsonrpc': u'2.0'
@@ -92,19 +90,33 @@ def rpc_request(config, method, params):
     return _parse_result(request_body, result_body)
 
 
+def _request_getid():
+    """
+    calculate the id field for the request -- use current date
+
+    If you want to get a fixed id for tests:
+       import webuntis.utils.remote
+       webuntis.utils.remote._request_getid = lambda: "12345678910"
+
+    :return: id field for request
+    :rtype: str
+    """
+    return str(datetime.datetime.today())
+
+
 def _parse_result(request_body, result_body):
-    '''A subfunction of rpc_request, that, given the decoded JSON result,
+    """A subfunction of rpc_request, that, given the decoded JSON result,
     handles the error codes or, if everything went well, returns the result
     attribute of it. The request data has to be given too for logging and
     ID validation.
 
     :param request_body: The not-yet-encoded body of the request sent.
-    :param result_body: The decoded body of the result recieved.
-    '''
+    :param result_body: The decoded body of the result received.
+    """
 
     if request_body[u'id'] != result_body[u'id']:
         raise errors.RemoteError(
-            'Request ID was not the same one as returned.')
+            'Request ID was not the same one as returned. %s -- %s' % (request_body[u'id'], result_body[u'id']))
 
     try:
         return result_body[u'result']
@@ -113,7 +125,7 @@ def _parse_result(request_body, result_body):
 
 
 def _parse_error_code(request_body, result_body):
-    '''A helper function for handling JSON error codes.'''
+    """A helper function for handling JSON error codes."""
     log('error', result_body)
     try:
         error = result_body[u'error']
@@ -129,10 +141,11 @@ def _parse_error_code(request_body, result_body):
     exc.code = code
     raise exc
 
+
 def _send_request(url, data, headers, http_session=None):
-    '''Sends a POST request given the endpoint URL, JSON-encodable data,
+    """Sends a POST request given the endpoint URL, JSON-encodable data,
     a dictionary with headers and, optionally, a session object for requests.
-    '''
+    """
 
     if http_session is None:
         http_session = requests.session()

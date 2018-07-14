@@ -7,12 +7,13 @@ class Functions(WebUntisTestCase):
         class FooBar(object):
             obj = 42
             _already_called = False
+
             @webuntis.utils.misc.lazyproperty
             def yesplease(self):
                 assert not self._already_called
                 self._already_called = True
                 return self.obj
-                
+
         foobar = FooBar()
         assert foobar.yesplease == 42
         foobar.obj = 43
@@ -20,12 +21,13 @@ class Functions(WebUntisTestCase):
 
     def test_result_wrapper(self):
         wrapper = webuntis.utils.misc.result_wrapper
+
         class PseudoSession(object):
             def __init__(self):
                 self.cache = {}
 
             def _request(self, method, args):
-                return (method, args)  # "data"
+                return method, args  # "data"
 
             @wrapper
             def some_stuff(self):
@@ -66,6 +68,7 @@ class Functions(WebUntisTestCase):
         d = x('teachers', {})
         assert hash(d) != hash(a)
         assert hash(d) != hash(c)
+
 
 class LruDictTests(WebUntisTestCase):
     def test_basic_interface(self):
@@ -136,7 +139,7 @@ class FilterDictTests(WebUntisTestCase):
     def test_basics(self):
         d = webuntis.utils.misc.FilterDict({
             'foo': lambda x: 'whoopdeedoo',
-            'bar': lambda x: 1/0,
+            'bar': lambda x: 1 / 0,
             'alwaysnone': lambda x: None
         })
 
@@ -159,4 +162,4 @@ class FilterDictTests(WebUntisTestCase):
 
         assert list(d) == []
         d.update({'foo': 'bar', 'alwaysnone': True})
-        assert set(d) == set(['foo'])
+        assert set(d) == {'foo'}

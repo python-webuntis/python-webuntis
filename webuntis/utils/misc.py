@@ -1,22 +1,24 @@
-'''
+"""
     This file is part of python-webuntis
 
     :copyright: (c) 2013 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
-'''
+"""
 # Uncategorized utils go here
 
-from functools import wraps
 from copy import deepcopy
+from functools import wraps
+
 from .third_party import OrderedDict
 
 
 class lazyproperty(object):
-    '''A read-only @property that is only evaluated once. Only usable on class
+    """A read-only @property that is only evaluated once. Only usable on class
     instances' methods.
 
     Stolen from http://www.reddit.com/r/Python/comments/ejp25/cached_property_decorator_that_is_memory_friendly/
-    '''
+    """
+
     def __init__(self, fget, doc=None):
         self.fget = fget
         self.__doc__ = doc or fget.__doc__
@@ -34,7 +36,7 @@ class LruDict(OrderedDict):
         super(LruDict, self).__init__()
         self._maxlen = maxlen
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value, **kwargs):
         self.pop(key, None)
         super(LruDict, self).__setitem__(key, value)
         while len(self.items()) > self._maxlen:
@@ -42,6 +44,7 @@ class LruDict(OrderedDict):
 
 
 class SessionCache(LruDict):
+
     def clear(self, method=None):
         if method is None:
             LruDict.clear(self)
@@ -52,7 +55,7 @@ class SessionCache(LruDict):
 
 
 class FilterDict(object):
-    '''A dictionary which passes new values to a function found at the
+    """A dictionary which passes new values to a function found at the
     corresponding key in self.filters
 
     :param filters: A dictionary containing functions. If a new key is set into
@@ -67,7 +70,7 @@ class FilterDict(object):
     >>> config['foo']
     'whoopdeedoo'
 
-    '''
+    """
     filters = None
     _contents = None
 
@@ -122,22 +125,30 @@ class FilterDict(object):
 
 
 def result_wrapper(func):
-    '''A decorator for the session methods that return result objects. The
+    """A decorator for the session methods that return result objects. The
     decorated function has to return a tuple with the result class to
     instantiate, a JSON-RPC method and its parameters.  This decorator fetches
     the data with the JSON-RPC method and parameters and returns an instance of
     the result class the inner function returned (and saves it in the session
     cache).
-    '''
+    """
+
     @wraps(func)
     def inner(self, **kwargs):
         from_cache = False
-        if 'from_cache' in kwargs and kwargs['from_cache']:
-            from_cache = True
+
+        if 'from_cache' in kwargs:
+            from_cache = bool(kwargs['from_cache'])
             del kwargs['from_cache']
+        elif result_wrapper.session_use_cache:
+            from_cache = True
 
         result_class, jsonrpc_method, jsonrpc_args = func(self, **kwargs)
-        key = cache_key(func.__name__, jsonrpc_args)
+
+        try:
+            key = cache_key(func.__name__, jsonrpc_args)
+        except TypeError:
+            key = cache_key(func.__name__, {"cache": str(jsonrpc_args)})
 
         if from_cache and key in self.cache:
             return self.cache[key]
@@ -149,10 +160,14 @@ def result_wrapper(func):
     return inner
 
 
+result_wrapper.session_use_cache = False
+'''use cache - global'''
+
+
 def cache_key(method, args=None):
-    '''Get a hashable object given a string and a dictionary.'''
+    """Get a hashable object given a string and a dictionary."""
     if args is None:
         args = {}
     hash_args = frozenset(deepcopy(args).items())
 
-    return (method, hash_args)
+    return method, hash_args

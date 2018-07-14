@@ -34,8 +34,8 @@ Initially i started writing this library with the goal to abstract away all the
 pain that otherwise would result in direct interaction with the API. This is
 still an unreached goal. Some things like the problem with time and date is
 unsolvable. So if you think some part of the library could be easier to use,
-`please let me know!
-<https://github.com/untitaker/python-webuntis/issues/new>`_ I don't want
+`please let us know!
+<https://github.com/python-webuntis/python-webuntis/issues/new>`_ I don't want
 python-webuntis to become as inconsistent and *weird* as the API it is
 wrapping.
 
