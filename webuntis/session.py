@@ -376,6 +376,58 @@ class ResultWrapperMixin(object):
         }, **kwargs)
         return parameters
 
+    def get_student(self, surname, fore_name, dob=0):
+        """
+        Search for a student by name
+
+        :param surname:  family name
+        :type surname: str
+        :param fore_name: fore name
+        :type fore_name: str
+        :param dob: date of birth, use 0 if unknown -- unknown Unit!
+        :type dob: int
+        :return: a dummy StudentObject with just the id filled
+        :raises: :exc:`KeyError`
+        """
+        s = self._search(surname=surname, fore_name=fore_name, dob=dob, what=5)
+        id = s._data
+        if not id:
+            raise KeyError("Student not found")
+
+        data = {"id": id, "name": surname, "longName": surname, "foreName": fore_name}
+        return objects.StudentObject(data=data, parent=s._parent, session=s._session)
+
+    def get_teacher(self, surname, fore_name, dob=0):
+        """
+        Search for a teacher by name
+
+        :param surname:  family name
+        :type surname: str
+        :param fore_name: fore name
+        :type fore_name: str
+        :param dob: date of birth, use 0 if unknown -- unknown Unit!
+        :type dob: int
+        :return: a dummy TeacherObject with just the id and name filled
+        :raises: :exc:`KeyError`
+        """
+        t = self._search(surname=surname, fore_name=fore_name, dob=dob, what=2)
+        id = t._data
+        if not id:
+            raise KeyError("Teacher not found")
+
+        data = {"id": id, "name": surname, "longName": surname, "foreName": fore_name, "title": ""}
+        return objects.TeacherObject(data=data, parent=t._parent, session=t._session)
+
+    @result_wrapper
+    def _search(self, surname, fore_name, dob=0, what=-1):
+        """
+        search for student or teacher
+        :rtype: :py:class:`webuntis.objects._OnlyID`
+        """
+        return objects.Result, 'getPersonId', {
+            "sn": surname, "fn": fore_name, "dob": dob, "type": what
+        }
+
 
 class Session(JSONRPCSession, ResultWrapperMixin):
     """The origin of everything you want to do with the WebUntis API. Can be
