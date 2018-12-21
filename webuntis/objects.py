@@ -686,7 +686,10 @@ class SubstitutionList(ListResult):
         return timetable_utils.combine(self,
                                        {'date', 'type', 'kl', 'su'},
                                        combine_breaks,
-                                       lambda p: (p[u'te'][0][u'name'], p[u'date'], p[u'startTime']))
+                                       lambda p: (p['type'],
+                                                  str(p[u'te'] and p[u'te'][0][u'name']),
+                                                  p[u'date'],
+                                                  p[u'startTime']))
 
 
 class TimeUnitObject(Result):
