@@ -931,6 +931,13 @@ class AbsenceObject(Result):
         except KeyError:
             return 0
 
+    @lazyproperty
+    def status(self):
+        try:
+            return self._data[u'excuseStatus']
+        except KeyError:
+            return ''
+
 
 class AbsencesList(ListResult):
     """A list of absences."""

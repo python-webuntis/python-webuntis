@@ -515,6 +515,10 @@ class AbsenceObject(Result):
         ...
 
     @property
+    def status(self) -> str:
+        ...
+
+    @property
     def time(self) -> int:
         ...
 
