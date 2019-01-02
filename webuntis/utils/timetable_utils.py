@@ -73,7 +73,7 @@ def combine(periods, fields, combine_breaks, sort_before=None):
 
         try:
             same = (all(current[field] == last[field] for field in fields) and
-                    (combine_breaks or (last[u'endTime'] in [current[u'startTime', current[u'endTime']]])))
+                    (combine_breaks or (last[u'endTime'] in [current[u'startTime'], current[u'endTime']])))
         except KeyError:
             same = False
         if same:
