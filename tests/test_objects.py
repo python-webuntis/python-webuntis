@@ -443,11 +443,128 @@ class PeriodTestsData(WebUntisTestCase):
             ],
             session=object())
 
+        pl2 = webuntis.objects.PeriodList(
+            data=[
+                {'id': 1216514, 'date': 20181210, 'startTime': 1135, 'endTime': 1225, 'kl': [{'id': 504}],
+                 'te': [{'id': 129}], 'su': [{'id': 12}], 'ro': [{'id': 10}],
+                 'activityType': 'Unterricht'},
+                {'id': 1225275, 'date': 20181210, 'startTime': 800, 'endTime': 850, 'kl': [{'id': 504}],
+                 'te': [{'id': 181}], 'su': [{'id': 37}], 'ro': [{'id': 10}],
+                 'activityType': 'Unterricht'},
+                {'id': 1225276, 'date': 20181210, 'startTime': 850, 'endTime': 940, 'kl': [{'id': 504}],
+                 'te': [{'id': 181}], 'su': [{'id': 37}], 'ro': [{'id': 10}],
+                 'activityType': 'Unterricht'},
+                {'id': 1249890, 'date': 20181210, 'startTime': 955, 'endTime': 1045, 'kl': [{'id': 504}],
+                 'te': [{'id': 165}], 'su': [{'id': 167}], 'ro': [{'id': 10}],
+                 'activityType': 'Unterricht'},
+                {'id': 1251794, 'date': 20181210, 'startTime': 1045, 'endTime': 1135, 'kl': [{'id': 504}],
+                 'te': [{'id': 182}], 'su': [{'id': 185}], 'ro': [{'id': 10}],
+                 'activityType': 'Unterricht'},
+                {'id': 1323913, 'date': 20181210, 'startTime': 1415, 'endTime': 1505, 'kl': [{'id': 504}],
+                 'te': [{'id': 55}, {'id': 86}, {'id': 157}, {'id': 206}], 'su': [{'id': 195}],
+                 'ro': [{'id': 10}, {'id': 23}, {'id': 159}, {'id': 177}], 'activityType': 'Unterricht'},
+                {'id': 1323914, 'date': 20181210, 'startTime': 1515, 'endTime': 1605, 'kl': [{'id': 504}],
+                 'te': [{'id': 55}, {'id': 86}, {'id': 157}, {'id': 206}], 'su': [{'id': 195}],
+                 'ro': [{'id': 10}, {'id': 23}, {'id': 159}, {'id': 177}], 'activityType': 'Unterricht'},
+                {'id': 1323915, 'date': 20181210, 'startTime': 1605, 'endTime': 1655, 'kl': [{'id': 504}],
+                 'te': [{'id': 55}, {'id': 86}, {'id': 157}, {'id': 206}], 'su': [{'id': 195}],
+                 'ro': [{'id': 10}, {'id': 23}, {'id': 159}, {'id': 177}], 'activityType': 'Unterricht'},
+                {'id': 1323916, 'date': 20181210, 'startTime': 1655, 'endTime': 1745, 'kl': [{'id': 504}],
+                 'te': [{'id': 55}, {'id': 86}, {'id': 157}, {'id': 206}], 'su': [{'id': 195}],
+                 'ro': [{'id': 10}, {'id': 23}, {'id': 159}, {'id': 177}], 'activityType': 'Unterricht'}
+
+            ],
+            session=object())
+
+        pl3 = webuntis.objects.PeriodList(
+            data=[
+                {'id': 1284516, 'date': 20181219, 'startTime': 800, 'endTime': 850, 'kl': [{'id': 472}],
+                 'te': [{'id': 30, 'orgid': 221}], 'su': [{'id': 210}], 'ro': [{'id': 69}],
+                 'activityType': 'Unterricht'},
+                {'id': 1284517, 'date': 20181219, 'startTime': 850, 'endTime': 940, 'kl': [{'id': 472}],
+                 'te': [{'id': 30, 'orgid': 221}], 'su': [{'id': 210}], 'ro': [{'id': 69}],
+                 'activityType': 'Unterricht'},
+                {'id': 1284518, 'date': 20181219, 'startTime': 955, 'endTime': 1045, 'kl': [{'id': 472}],
+                 'te': [{'id': 30, 'orgid': 221}], 'su': [{'id': 210}], 'ro': [{'id': 69}],
+                 'activityType': 'Unterricht'},
+                {'id': 1284519, 'date': 20181219, 'startTime': 1045, 'endTime': 1135, 'kl': [{'id': 472}],
+                 'te': [{'id': 30, 'orgid': 221}], 'su': [{'id': 210}], 'ro': [{'id': 69}],
+                 'activityType': 'Unterricht'},
+                {'id': 1284520, 'date': 20181219, 'startTime': 1135, 'endTime': 1225, 'kl': [{'id': 472}],
+                 'te': [{'id': 30, 'orgid': 221}], 'su': [{'id': 210}], 'ro': [{'id': 69}],
+                 'activityType': 'Unterricht'},
+                {'id': 1284521, 'date': 20181219, 'startTime': 1325, 'endTime': 1415, 'kl': [{'id': 472}],
+                 'te': [{'id': 30, 'orgid': 221}], 'su': [{'id': 210}], 'ro': [{'id': 69}],
+                 'activityType': 'Unterricht'},
+                {'id': 1284522, 'date': 20181219, 'startTime': 1415, 'endTime': 1505, 'kl': [{'id': 472}],
+                 'te': [{'id': 30, 'orgid': 221}], 'su': [{'id': 210}], 'ro': [{'id': 69}],
+                 'activityType': 'Unterricht'},
+                {'id': 1284523, 'date': 20181219, 'startTime': 1515, 'endTime': 1605, 'kl': [{'id': 472}],
+                 'te': [{'id': 30, 'orgid': 221}], 'su': [{'id': 210}], 'ro': [{'id': 69}],
+                 'activityType': 'Unterricht'},
+                {'id': 1284812, 'date': 20181219, 'startTime': 800, 'endTime': 850, 'kl': [{'id': 472}],
+                 'te': [{'id': 161}], 'su': [{'id': 210}], 'ro': [{'id': 63}],
+                 'activityType': 'Unterricht'},
+                {'id': 1284813, 'date': 20181219, 'startTime': 850, 'endTime': 940, 'kl': [{'id': 472}],
+                 'te': [{'id': 161}], 'su': [{'id': 210}], 'ro': [{'id': 63}],
+                 'activityType': 'Unterricht'},
+                {'id': 1284814, 'date': 20181219, 'startTime': 955, 'endTime': 1045, 'kl': [{'id': 472}],
+                 'te': [{'id': 161}], 'su': [{'id': 210}], 'ro': [{'id': 63}],
+                 'activityType': 'Unterricht'},
+                {'id': 1284815, 'date': 20181219, 'startTime': 1045, 'endTime': 1135, 'kl': [{'id': 472}],
+                 'te': [{'id': 161}], 'su': [{'id': 210}], 'ro': [{'id': 63}],
+                 'activityType': 'Unterricht'},
+                {'id': 1284816, 'date': 20181219, 'startTime': 1135, 'endTime': 1225, 'kl': [{'id': 472}],
+                 'te': [{'id': 161}], 'su': [{'id': 210}], 'ro': [{'id': 63}],
+                 'activityType': 'Unterricht'},
+                {'id': 1284817, 'date': 20181219, 'startTime': 1325, 'endTime': 1415, 'kl': [{'id': 472}],
+                 'te': [{'id': 161}], 'su': [{'id': 210}], 'ro': [{'id': 63}],
+                 'activityType': 'Unterricht'},
+                {'id': 1284818, 'date': 20181219, 'startTime': 1415, 'endTime': 1505, 'kl': [{'id': 472}],
+                 'te': [{'id': 161}], 'su': [{'id': 210}], 'ro': [{'id': 63}],
+                 'activityType': 'Unterricht'},
+                {'id': 1284819, 'date': 20181219, 'startTime': 1515, 'endTime': 1605, 'kl': [{'id': 472}],
+                 'te': [{'id': 161}], 'su': [{'id': 210}], 'ro': [{'id': 63}],
+                 'activityType': 'Unterricht'},
+                {'id': 1285108, 'date': 20181219, 'startTime': 800, 'endTime': 850, 'kl': [{'id': 472}],
+                 'te': [{'id': 100}], 'su': [{'id': 210}], 'ro': [{'id': 65}],
+                 'activityType': 'Unterricht'},
+                {'id': 1285109, 'date': 20181219, 'startTime': 850, 'endTime': 940, 'kl': [{'id': 472}],
+                 'te': [{'id': 100}], 'su': [{'id': 210}], 'ro': [{'id': 65}],
+                 'activityType': 'Unterricht'},
+                {'id': 1285110, 'date': 20181219, 'startTime': 955, 'endTime': 1045, 'kl': [{'id': 472}],
+                 'te': [{'id': 100}], 'su': [{'id': 210}], 'ro': [{'id': 65}],
+                 'activityType': 'Unterricht'},
+                {'id': 1285111, 'date': 20181219, 'startTime': 1045, 'endTime': 1135, 'kl': [{'id': 472}],
+                 'te': [{'id': 100}], 'su': [{'id': 210}], 'ro': [{'id': 65}],
+                 'activityType': 'Unterricht'}
+
+            ],
+            session=object())
+
         assert len(pl) == 3
         combined = pl.combine()
         assert len(combined) == 2
         c0 = combined._data[0]
         assert c0[u'startTime'] == 800
+
+        assert len(pl2) == 9
+        combined = pl2.combine(combine_breaks=False)
+        assert len(combined) == 6
+        combined = pl2.combine()  # combine_breaks=True
+        assert len(combined) == 5
+
+        assert len(pl3) == 20
+        combined = pl3.combine(combine_breaks=False)
+        assert len(combined) == 4
+        c0 = combined._data[0]
+        assert c0[u'startTime'] == 800
+        assert c0[u'endTime'] == 940
+        combined = pl3.combine()  # combine_breaks=True)
+        assert len(combined) == 1
+        c0 = combined._data[0]
+        assert c0[u'startTime'] == 800
+        assert c0[u'endTime'] == 1605
 
 
 class StudentTests(WebUntisTestCase):
@@ -662,7 +779,7 @@ class AbsencesTests(WebUntisTestCase):
 class ClassRegEventsTests(WebUntisTestCase):
     def testClassRegEvent(self):
         cre = webuntis.objects.ClassRegEvent(
-            data={'studentid': '42', # <- key!
+            data={'studentid': '42',  # <- key!
                   'surname': 'Potter',
                   'forname': 'Harry',
                   'date': 20180417,
@@ -672,7 +789,7 @@ class ClassRegEventsTests(WebUntisTestCase):
                   },
             session=StubSession()
         )
-        assert  type(cre) == webuntis.objects.ClassRegEvent
+        assert type(cre) == webuntis.objects.ClassRegEvent
         assert cre.student.name == u'Potter'
         assert cre.sur_name == u'Potter'
         assert cre.fore_name == u'Harry'
