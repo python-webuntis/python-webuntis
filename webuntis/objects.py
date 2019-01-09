@@ -117,6 +117,12 @@ class ListResult(Result):
             bar = [kl for kl in s.klassen()
                    if kl.id in {'1A', '2A', '3A', '4A'}]
 
+            # Or you can use a list: this keeps the order: the first element
+            # of the result corresponds to the first element in the filter
+            # Important after using combine()
+            bar = s.klassen().filter(name=['1A', '2A', '3A', '4A'])
+            # --> bar[0].name == '1A'
+
             # Since ``filter`` returns a ListResult itself too, we can chain
             # multiple calls together:
             bar = s.klassen().filter(id=4, name='7A')  # is the same as
@@ -150,6 +156,14 @@ class ListResult(Result):
                     return False
 
             return True
+
+        if isinstance(criterions[0][1], list):
+            return type(self)(
+                parent=self,
+                data=[self.filter(**{key: v})[0]
+                          for key, values in criterions
+                          for v in values
+                      ])
 
         return type(self)(
             parent=self,
@@ -306,7 +320,7 @@ class PeriodObject(ListItem):
         this period."""
 
         return self._session.klassen(from_cache=True).filter(
-            id=set([kl[u'id'] for kl in self._data[u'kl']])
+            id=list([kl[u'id'] for kl in self._data[u'kl']])
         )
 
     @lazyproperty
@@ -315,7 +329,7 @@ class PeriodObject(ListItem):
         which are attending this period."""
 
         return self._session.teachers(from_cache=True).filter(
-            id=set([te[u'id'] for te in self._data[u'te']])
+            id=list([te[u'id'] for te in self._data[u'te']])
         )
 
     @lazyproperty
@@ -326,7 +340,7 @@ class PeriodObject(ListItem):
         their own period."""
 
         return self._session.subjects(from_cache=True).filter(
-            id=set([su[u'id'] for su in self._data[u'su']])
+            id=list([su[u'id'] for su in self._data[u'su']])
         )
 
     @lazyproperty
@@ -336,7 +350,7 @@ class PeriodObject(ListItem):
         lesson that is actually occuring at multiple locations (?)."""
 
         return self._session.rooms(from_cache=True).filter(
-            id=set([ro[u'id'] for ro in self._data[u'ro']])
+            id=list([ro[u'id'] for ro in self._data[u'ro']])
         )
 
     @lazyproperty
@@ -356,7 +370,7 @@ class PeriodObject(ListItem):
     def original_teachers(self):
         """ Support for original teachers """
         try:
-            return self._session.teachers(from_cache=True).filter(id=set([te[u'orgid'] for te in self._data[u'te']]))
+            return self._session.teachers(from_cache=True).filter(id=list([te[u'orgid'] for te in self._data[u'te']]))
         except KeyError:
             pass
         return []
@@ -365,7 +379,7 @@ class PeriodObject(ListItem):
     def original_rooms(self):
         """ Support for original rooms """
         try:
-            return self._session.rooms(from_cache=True).filter(id=set([ro[u'orgid'] for ro in self._data[u'ro']]))
+            return self._session.rooms(from_cache=True).filter(id=list([ro[u'orgid'] for ro in self._data[u'ro']]))
         except KeyError:
             pass
         return []
@@ -877,7 +891,7 @@ class AbsenceObject(Result):
     def teachers(self):
         """@TODO: untested - always empty"""
         try:
-            tes = set(int(te) for te in self._data[u'teacherIds'] if te)
+            tes = list(int(te) for te in self._data[u'teacherIds'] if te)
         except ValueError:
             return []
 
