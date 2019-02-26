@@ -41,6 +41,8 @@ def combine(periods, fields, combine_breaks, sort_before=None):
     """
     shorten a list of periods (or substitutions) by combining consecutive Elements
 
+    :param sort_before: sort date before combining
+    :param fields: which fields to use for compare
     :type combine_breaks: bool
     :param combine_breaks: combine breaks
     :type periods: webuntis.objects.PeriodList or webuntis.objects.SubstitionList

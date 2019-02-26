@@ -161,8 +161,8 @@ class ListResult(Result):
             return type(self)(
                 parent=self,
                 data=[self.filter(**{key: v})[0]
-                          for key, values in criterions
-                          for v in values
+                      for key, values in criterions
+                      for v in values
                       ])
 
         return type(self)(
