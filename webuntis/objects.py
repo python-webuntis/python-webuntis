@@ -320,7 +320,7 @@ class PeriodObject(ListItem):
         this period."""
 
         return self._session.klassen(from_cache=True).filter(
-            id=list([kl[u'id'] for kl in self._data[u'kl']])
+            id=[kl[u'id'] for kl in self._data[u'kl']]
         )
 
     @lazyproperty
@@ -329,7 +329,7 @@ class PeriodObject(ListItem):
         which are attending this period."""
 
         return self._session.teachers(from_cache=True).filter(
-            id=list([te[u'id'] for te in self._data[u'te']])
+            id=[te[u'id'] for te in self._data[u'te']]
         )
 
     @lazyproperty
@@ -340,7 +340,7 @@ class PeriodObject(ListItem):
         their own period."""
 
         return self._session.subjects(from_cache=True).filter(
-            id=list([su[u'id'] for su in self._data[u'su']])
+            id=[su[u'id'] for su in self._data[u'su']]
         )
 
     @lazyproperty
@@ -350,7 +350,7 @@ class PeriodObject(ListItem):
         lesson that is actually occuring at multiple locations (?)."""
 
         return self._session.rooms(from_cache=True).filter(
-            id=list([ro[u'id'] for ro in self._data[u'ro']])
+            id=[ro[u'id'] for ro in self._data[u'ro']]
         )
 
     @lazyproperty
@@ -370,7 +370,7 @@ class PeriodObject(ListItem):
     def original_teachers(self):
         """ Support for original teachers """
         try:
-            return self._session.teachers(from_cache=True).filter(id=list([te[u'orgid'] for te in self._data[u'te']]))
+            return self._session.teachers(from_cache=True).filter(id=[te[u'orgid'] for te in self._data[u'te']])
         except KeyError:
             pass
         return []
@@ -379,7 +379,7 @@ class PeriodObject(ListItem):
     def original_rooms(self):
         """ Support for original rooms """
         try:
-            return self._session.rooms(from_cache=True).filter(id=list([ro[u'orgid'] for ro in self._data[u'ro']]))
+            return self._session.rooms(from_cache=True).filter(id=[ro[u'orgid'] for ro in self._data[u'ro']])
         except KeyError:
             pass
         return []

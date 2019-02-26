@@ -123,6 +123,12 @@ class ListResultTests(WebUntisTestCase):
         self.assert_strict_equal(x, [results[2]])
 
 
+        x = list(r.filter(id=[1, 2]))
+        self.assert_strict_equal(x, [results[1], results[2]])
+        x = list(r.filter(id=[2, 1]))
+        self.assert_strict_equal(x, [results[2], results[1]])
+
+
 class DepartmentTests(WebUntisTestCase):
     def test_basics(self):
         x = webuntis.objects.DepartmentObject(
