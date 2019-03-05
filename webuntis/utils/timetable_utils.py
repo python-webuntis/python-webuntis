@@ -37,10 +37,12 @@ def table(periods, dates=None, times=None):
     return sorted((time, sorted(row.items())) for time, row in ttable.items())
 
 
-def combine(periods, fields, combine_breaks, sort_before = None ):
+def combine(periods, fields, combine_breaks, sort_before=None):
     """
     shorten a list of periods (or substitutions) by combining consecutive Elements
 
+    :param sort_before: sort date before combining
+    :param fields: which fields to use for compare
     :type combine_breaks: bool
     :param combine_breaks: combine breaks
     :type periods: webuntis.objects.PeriodList or webuntis.objects.SubstitionList
@@ -56,7 +58,6 @@ def combine(periods, fields, combine_breaks, sort_before = None ):
 
     olddata = [deepcopy(p._data) for p in periods]
 
-
     # lambda p: (p[u'te'][0][u'name'], p[u'date'], p[u'startTime'])
 
     if sort_before:
@@ -71,11 +72,19 @@ def combine(periods, fields, combine_breaks, sort_before = None ):
     fields_list = [f for f in ['ro', 'te', 'su', 'kl'] if f in last.keys()]
 
     for current in olddata[1:]:
+
         try:
             same = (all(current[field] == last[field] for field in fields) and
-                    (combine_breaks or (last[u'endTime'] in [current[u'startTime', current[u'endTime']]])))
+                    (combine_breaks or (last[u'endTime'] in [current[u'startTime'], current[u'endTime']])))
         except KeyError:
             same = False
+        if same:
+            # don't combine stuff at different times if entry in fields_list is different
+            if current[u'startTime'] != last[u'startTime']:
+                same = not any([c not in last[f]
+                                for f in fields_list
+                                for c in current[f]
+                                ])
         if same:
             last[u'endTime'] = current[u'endTime']
             for f in fields_list:

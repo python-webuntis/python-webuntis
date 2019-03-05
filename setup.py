@@ -13,7 +13,7 @@ dependencies = ['requests']
 
 setup(
     name='webuntis',
-    version='0.1.10',
+    version='0.1.11',
     author='Markus Unterwaditzer',
     author_email='markus@unterwaditzer.net',
     packages=find_packages(),
