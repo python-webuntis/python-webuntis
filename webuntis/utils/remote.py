@@ -40,6 +40,7 @@ def rpc_request(config, method, params):
     server = config['server']
     school = config['school']
     useragent = config['useragent']
+    verify = True if "verify" in config and config['verify'] else False
 
     assert isinstance(method, unicode_string)
     assert isinstance(server, unicode_string)
@@ -85,7 +86,8 @@ def rpc_request(config, method, params):
         url,
         request_body,
         headers,
-        http_session
+        http_session,
+        verify
     )
     return _parse_result(request_body, result_body)
 
@@ -142,7 +144,7 @@ def _parse_error_code(request_body, result_body):
     raise exc
 
 
-def _send_request(url, data, headers, http_session=None):
+def _send_request(url, data, headers, http_session=None, verify):
     """Sends a POST request given the endpoint URL, JSON-encodable data,
     a dictionary with headers and, optionally, a session object for requests.
     """
@@ -150,7 +152,7 @@ def _send_request(url, data, headers, http_session=None):
     if http_session is None:
         http_session = requests.session()
 
-    r = http_session.post(url, data=json.dumps(data), headers=headers)
+    r = http_session.post(url, data=json.dumps(data), headers=headers, verify=verify)
     result = r.text
     # this will eventually raise errors, e.g. on timeout
 
