@@ -12,7 +12,7 @@ from sys import version_info
 dependencies = ['requests']
 
 setup(
-    name='webuntisverify',
+    name='webuntis',
     version='0.1.11',
     author='Markus Unterwaditzer',
     author_email='markus@unterwaditzer.net',
