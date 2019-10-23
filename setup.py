@@ -12,14 +12,14 @@ from sys import version_info
 dependencies = ['requests']
 
 setup(
-    name='webuntis',
+    name='webuntisverify',
     version='0.1.11',
     author='Markus Unterwaditzer',
     author_email='markus@unterwaditzer.net',
     packages=find_packages(),
     include_package_data=True,
-    url='https://github.com/python-webuntis/python-webuntis',
-    license='new-style BSD',
+    url='https://github.com/kurrycat2004/python-webuntis',
+    license='unlicense',
     description='Bindings for WebUntis API',
     long_description=open('README.rst').read(),
     install_requires=dependencies,
