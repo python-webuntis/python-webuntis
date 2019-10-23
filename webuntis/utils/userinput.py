@@ -54,7 +54,8 @@ config_keys = {
     'server': server,
     'useragent': string,
     'login_repeat': int,
-    '_http_session': None
+    '_http_session': None,
+    'verify': boolean
 }
 
 try:
