@@ -1010,7 +1010,8 @@ class ClassRegEvent(Result):
         """the subject of the classregevent."""
         return self._data[u'subject']
 
-    #@TODO: "categoryId" #20 Seite 13
+    # @TODO: "categoryId" #20 Seite 13
+
 
 class ClassRegEventList(ListResult):
     """A list of ClassRegEvents."""
@@ -1035,9 +1036,11 @@ class ClassRegCategory(Result):
         """group"""
         return self._session.class_reg_category_groups().filter(id=self._data[u'groupId'])[0]
 
+
 class ClassRegCategoryList(ListResult):
     """A list of ClassRegCategories."""
     _itemclass = ClassRegCategory
+
 
 class ClassRegCategoryGroup(Result):
     """Represents an ClassRegCategoryGroup."""
@@ -1047,9 +1050,7 @@ class ClassRegCategoryGroup(Result):
         """name of group"""
         return self._data[u'name']
 
-#@TODO für 25
+
 class ClassRegCategoryGroupList(ListResult):
-    """A list of ClassRegCategories."""
+    """A list of ClassRegCategoriesGroups."""
     _itemclass = ClassRegCategoryGroup
-
-

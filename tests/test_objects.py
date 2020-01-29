@@ -122,7 +122,6 @@ class ListResultTests(WebUntisTestCase):
         x = list(r.filter(two='zwoa'))
         self.assert_strict_equal(x, [results[2]])
 
-
         x = list(r.filter(id=[1, 2]))
         self.assert_strict_equal(x, [results[1], results[2]])
         x = list(r.filter(id=[2, 1]))
@@ -361,6 +360,11 @@ class StubSession(object):
         session=sess
     )
 
+    cat1 = webuntis.objects.ClassRegCategoryGroup(
+        data={u'id': 2, u"name": u"group2"},
+        session=sess
+    )
+
     def klassen(self, *args, **kw):
         return webuntis.objects.KlassenList(
             [self.klasse1], session=self.sess)
@@ -380,6 +384,9 @@ class StubSession(object):
     def students(self, *args, **kw):
         return webuntis.objects.StudentsList(
             [self.student1], session=self.sess)
+
+    def class_reg_category_groups(self, *args, **kw):
+        return webuntis.objects.ClassRegCategoryGroupList([self.cat1], session=self.sess)
 
 
 class PeriodTestsData(WebUntisTestCase):
@@ -813,3 +820,62 @@ class ClassRegEventsTests(WebUntisTestCase):
         assert type(crel) == webuntis.objects.ClassRegEventList
         assert len(crel) == 2
         assert type(crel[0]) is webuntis.objects.ClassRegEvent
+
+
+class ClassRegCategoryGroupTests(WebUntisTestCase):
+
+    def testClassRegCategoryGroupList(self):
+        crcg = webuntis.objects.ClassRegCategoryGroupList(
+            data=[
+                {
+                    "id": 1,
+                    "name": "group1"
+                },
+                {
+                    "id": 2,
+                    "name": "group2"
+                }
+            ],
+            session=object()
+        )
+        assert type(crcg) == webuntis.objects.ClassRegCategoryGroupList
+        assert len(crcg) == 2
+        first = crcg[0]
+        assert type(first) == webuntis.objects.ClassRegCategoryGroup
+        assert first.name == "group1"
+
+
+class ClassRegCategoryTests(WebUntisTestCase):
+
+    def testClassRegCategoryList(self):
+        crc = webuntis.objects.ClassRegCategoryList(
+            data=[
+                {
+                    u"id": 1,
+                    u"name": "disturbs",
+                    u"longName": "disturbs a lot"
+                },
+                {
+                    u"id": 6,
+                    u"name": "late",
+                    u"longName": "often late",
+                    u"groupId": 2
+                }
+            ],
+            session=StubSession()
+        )
+        assert type(crc) == webuntis.objects.ClassRegCategoryList
+        assert len(crc) == 2
+
+        first = crc[0]
+        assert type(first) == webuntis.objects.ClassRegCategory
+        assert first.name == "disturbs"
+        assert first.longname == "disturbs a lot"
+
+        second = crc[1]
+        print("second = ", second)
+        assert type(second) == webuntis.objects.ClassRegCategory
+        assert second.name == "late"
+        assert second.longname == "often late"
+
+        assert type(second.group) == webuntis.objects.ClassRegCategoryGroup
