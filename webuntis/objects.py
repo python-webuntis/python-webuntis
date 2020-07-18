@@ -1011,7 +1011,12 @@ class ClassRegEvent(Result):
         """the subject of the classregevent."""
         return self._data[u'subject']
 
-    # @TODO: "categoryId" #20 Seite 13
+    @lazyproperty
+    def category(self):
+        """which category"""
+        return self._session.class_reg_categories(from_cache=True).filter(
+            id=set(self._data[u'categoryId'])
+        )[0]
 
 
 class ClassRegEventList(ListResult):

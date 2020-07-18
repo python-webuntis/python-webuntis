@@ -303,7 +303,7 @@ class WrapperMethodTests(WebUntisTestCase):
 
     def test_timetableWithAbsences(self):
         s = webuntis.Session(**stub_session_parameters)
-        with self.absences_result_mock('getTimetableWithAbsences'):
+        with self.absences_result_mock(u'getTimetableWithAbsences'):
             ex = s.timetable_with_absences(start=1, end=2)
             assert type(ex) is webuntis.objects.AbsencesList
 
@@ -316,6 +316,20 @@ class WrapperMethodTests(WebUntisTestCase):
 
     def test_class_reg_events(self):
         s = webuntis.Session(**stub_session_parameters)
-        with self.noop_result_mock('getClassregEvents'):
+        with self.noop_result_mock(u'getClassregEvents'):
             ex = s.class_reg_events(start=1, end=2)
             assert type(ex) is webuntis.objects.ClassRegEventList
+
+    def test_class_reg_categories(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.noop_result_mock(u'getClassregCategories'):
+            crc = s.class_reg_categories()
+            assert type(crc) is webuntis.objects.ClassRegCategoryList
+            assert len(crc) == 0
+
+    def test_class_reg_category_groups(self):
+        s = webuntis.Session(**stub_session_parameters)
+        with self.noop_result_mock(u'getClassregCategoryGroups'):
+            crcg = s.class_reg_category_groups()
+            assert type(crcg) is webuntis.objects.ClassRegCategoryGroupList
+            assert len(crcg) == 0

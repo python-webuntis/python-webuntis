@@ -429,6 +429,15 @@ class ResultWrapperMixin(object):
         """
         return objects.ClassRegCategoryGroupList, 'getClassregCategoryGroups', {}
 
+    @result_wrapper
+    def class_reg_categories(self):
+        return objects.ClassRegCategoryList, 'getClassregCategories', {}
+
+    @result_wrapper
+    def class_reg_category_groups(self):
+        return objects.ClassRegCategoryGroupList, 'getClassregCategoryGroups', {}
+
+
     @staticmethod
     def _create_date_param(end, start, **kwargs):
         json_start = utils.datetime_utils.format_date(start)
