@@ -58,6 +58,7 @@ config_keys = {
 }
 
 try:
+    # noinspection PyUnresolvedReferences
     unicode_string = unicode
     bytestring = str
 except NameError:

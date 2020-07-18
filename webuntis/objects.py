@@ -748,7 +748,8 @@ class TimegridDayObject(Result):
 
 
 class TimegridObject(ListResult):
-    """A list of TimegridDayObjects"""
+    """A list of TimegridDayObjects
+    """
     _itemclass = TimegridDayObject
 
 

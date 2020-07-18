@@ -364,7 +364,7 @@ class ResultWrapperMixin(object):
         parameters = self._create_date_param(end, start)
         return objects.ClassRegEventList, 'getClassregEvents', parameters
 
-    # @TODO copy of timetable()
+    # @TODO this is a copy of timetable()
 
     @result_wrapper
     def class_reg_event_for_id(self, start, end, **type_and_id):
@@ -419,7 +419,7 @@ class ResultWrapperMixin(object):
 
         :rtype: :py:class:`webuntis.objects.ClassRegClassRegCategoryList`
         """
-        return objects.ClassRegClassRegCategoryList, 'getClassregCategories', {}
+        return objects.ClassRegCategoryList, 'getClassregCategories', {}
 
     @result_wrapper
     def class_reg_category_groups(self):
@@ -427,7 +427,7 @@ class ResultWrapperMixin(object):
 
         :rtype: :py:class:`webuntis.objects.ClassRegClassRegCategoryGroupList`
         """
-        return objects.ClassRegClassRegCategoryGroupList, 'getClassregCategoryGroups', {}
+        return objects.ClassRegCategoryGroupList, 'getClassregCategoryGroups', {}
 
     @staticmethod
     def _create_date_param(end, start, **kwargs):
