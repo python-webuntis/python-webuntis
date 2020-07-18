@@ -575,3 +575,43 @@ class ClassRegEventList(ListResult):
 
     def __getitem__(self, i: int) -> ClassRegEvent:
         ...
+
+
+class ClassRegCategoryGroup(Result):
+    @property
+    def name(self):
+        ...
+
+
+class ClassRegCategory(Result):
+    @property
+    def name(self) -> str:
+        ...
+
+    @property
+    def longname(self) -> str:
+        ...
+
+    @property
+    def group(self) -> ClassRegCategoryGroup:
+        ...
+
+
+class ClassRegCategoryList(ListResult):
+    _itemclass = ClassRegCategory
+
+    def filter(self, **criterions) -> ClassRegCategoryList:
+        ...
+
+    def __getitem__(self, i: int) -> ClassRegCategory:
+        ...
+
+
+class ClassRegCategoryGroupList(ListResult):
+    _itemclass = ClassRegCategoryGroup
+
+    def filter(self, **criterions) -> ClassRegCategoryGroupList:
+        ...
+
+    def __getitem__(self, i: int) -> ClassRegCategoryGroup:
+        ...

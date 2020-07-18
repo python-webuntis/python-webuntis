@@ -325,7 +325,7 @@ class ResultWrapperMixin(object):
         :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
         :param end: The end of the time period.
 
-        :param exam_type_id:  int, ??
+        :param exam_type_id:  int - id of Exam, @TODO: allow examtype id/name
 
         :rtype: :py:class:`webuntis.objects.ExamsList`
         """
@@ -363,6 +363,80 @@ class ResultWrapperMixin(object):
         """
         parameters = self._create_date_param(end, start)
         return objects.ClassRegEventList, 'getClassregEvents', parameters
+
+    # @TODO this is a copy of timetable()
+
+    @result_wrapper
+    def class_reg_event_for_id(self, start, end, **type_and_id):
+        """Get the Information about the ClassRegEvents for a specific school class and time period.
+
+        :type start: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
+        :param start: The beginning of the time period.
+
+        :type end: :py:class:`datetime.datetime` or  :py:class:`datetime.date` or int
+        :param end: The end of the time period.
+
+        :rtype: :py:class:`webuntis.objects.ClassRegEventList`
+
+        see timetable for the type_and_id parameter
+
+        :raises: :exc:`ValueError`, :exc:`TypeError`
+        """
+        element_type_table = {
+            'klasse': 1,
+            'teacher': 2,
+            'subject': 3,
+            'room': 4,
+            'student': 5
+        }
+
+        invalid_type_error = TypeError(
+            'You have to specify exactly one of the following parameters by '
+            'keyword: ' +
+            (', '.join(element_type_table.keys()))
+        )
+
+        if len(type_and_id) != 1:
+            raise invalid_type_error
+
+        element_type, element_id = list(type_and_id.items())[0]
+
+        element_type = utils.userinput.string(element_type)
+
+        if element_type not in element_type_table:
+            raise invalid_type_error
+
+        # if we have to deal with an object in element_id,
+        # its id gets placed here anyway
+
+        parameters = self._create_date_param(end, start,
+                                             id=int(element_id), type=element_type_table[element_type])
+        return objects.ClassRegEventList, 'getClassregEvents', parameters
+
+    @result_wrapper
+    def class_reg_categories(self):
+        """Information about the Request remark categories
+
+        :rtype: :py:class:`webuntis.objects.ClassRegClassRegCategoryList`
+        """
+        return objects.ClassRegCategoryList, 'getClassregCategories', {}
+
+    @result_wrapper
+    def class_reg_category_groups(self):
+        """Information about the Request remark categories groups
+
+        :rtype: :py:class:`webuntis.objects.ClassRegClassRegCategoryGroupList`
+        """
+        return objects.ClassRegCategoryGroupList, 'getClassregCategoryGroups', {}
+
+    @result_wrapper
+    def class_reg_categories(self):
+        return objects.ClassRegCategoryList, 'getClassregCategories', {}
+
+    @result_wrapper
+    def class_reg_category_groups(self):
+        return objects.ClassRegCategoryGroupList, 'getClassregCategoryGroups', {}
+
 
     @staticmethod
     def _create_date_param(end, start, **kwargs):

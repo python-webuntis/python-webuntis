@@ -748,7 +748,8 @@ class TimegridDayObject(Result):
 
 
 class TimegridObject(ListResult):
-    """A list of TimegridDayObjects"""
+    """A list of TimegridDayObjects
+    """
     _itemclass = TimegridDayObject
 
 
@@ -1010,7 +1011,52 @@ class ClassRegEvent(Result):
         """the subject of the classregevent."""
         return self._data[u'subject']
 
+    @lazyproperty
+    def category(self):
+        """which category"""
+        return self._session.class_reg_categories(from_cache=True).filter(
+            id=set(self._data[u'categoryId'])
+        )[0]
+
 
 class ClassRegEventList(ListResult):
     """A list of ClassRegEvents."""
     _itemclass = ClassRegEvent
+
+
+class ClassRegCategory(Result):
+    """Represents an ClassRegCategory."""
+
+    @lazyproperty
+    def name(self):
+        """name of category"""
+        return self._data[u'name']
+
+    @lazyproperty
+    def longname(self):
+        """longname of category"""
+        return self._data[u'longName']
+
+    @lazyproperty
+    def group(self):
+        """group"""
+        return self._session.class_reg_category_groups().filter(id=self._data[u'groupId'])[0]
+
+
+class ClassRegCategoryList(ListResult):
+    """A list of ClassRegCategories."""
+    _itemclass = ClassRegCategory
+
+
+class ClassRegCategoryGroup(Result):
+    """Represents an ClassRegCategoryGroup."""
+
+    @lazyproperty
+    def name(self):
+        """name of group"""
+        return self._data[u'name']
+
+
+class ClassRegCategoryGroupList(ListResult):
+    """A list of ClassRegCategoriesGroups."""
+    _itemclass = ClassRegCategoryGroup
