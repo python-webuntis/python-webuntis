@@ -204,7 +204,7 @@ class PeriodObject(ListItem):
         ...
 
     @property
-    def sg(self) -> str:
+    def studentGroup(self) -> str:
         ...
 
     @property

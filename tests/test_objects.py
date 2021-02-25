@@ -232,6 +232,46 @@ class PeriodTests(WebUntisTestCase):
         x = self.Obj(data={u'type': u'hoompaloompa'}, session=object())
         self.assert_strict_equal(x.type, u'ls')
 
+    def test_full(self):
+        x = self.Obj(
+            data={
+                'id': 1234,
+                'date': 20230605,
+                'startTime': 800,
+                'endTime': 850,
+                'code': 'cancelled',
+                'kl': [{'id': 1}],
+                'te': [{'id': 2}],
+                'su': [{'id': 3}],
+                'ro': [{'id': 4}],
+                'lsnumber': 12345,
+                'sg': 'group_1',
+                'activityType': 'Unterricht',
+
+                'lstext': 'lsext',
+                'statflags': 'flags',
+                'info': 'info',
+                'bkText': 'bkText',
+                'bkRemark': 'bkRemark',
+                'substText': 'substText',
+            },
+            session=object())
+
+        # cc = x.code_color
+        # self.assert_strict_equal(cc.name, 'cancelled')
+        # self.assert_strict_equal(cc.backcolor, 'ededed')
+        # self.assert_strict_equal(cc.forcolor, '000001')
+
+        self.assert_strict_equal(x.lstext, "lsext")
+        self.assert_strict_equal(x.flags, "flags")
+        self.assert_strict_equal(x.info, "info")
+        self.assert_strict_equal(x.studentGroup, 'group_1')
+        self.assert_strict_equal(x.lsnumber, 12345)
+        self.assert_strict_equal(x.bkText, 'bkText')
+        self.assert_strict_equal(x.bkRemark, 'bkRemark')
+        self.assert_strict_equal(x.substText, 'substText')
+        self.assert_strict_equal(x.activityType, 'Unterricht')
+
 
 class RoomTests(WebUntisTestCase):
     def test_basics(self):
@@ -349,7 +389,9 @@ class TimegridTests(WebUntisTestCase):
 
 
 class StubSession(object):
-    """used for multiple tests"""
+    """
+used
+for multiple tests"""
     sess = object()
     klasse1 = webuntis.objects.KlassenObject(
         data={u'id': 2, u'name': u'1A'},
@@ -684,6 +726,17 @@ class SubstitutionTests(WebUntisTestCase):
         assert combined[0].start == datetime.datetime(2018, 3, 19, 8, 0)
 
 
+"""
+
+
+@TODO
+
+:
+reschedule_start
+reschedule_end
+"""
+
+
 class StatusDateTests(WebUntisTestCase):
 
     def test_status(self):
@@ -806,6 +859,16 @@ class AbsencesTests(WebUntisTestCase):
         assert type(al[0]) is webuntis.objects.AbsenceObject
 
 
+"""
+
+
+@TODO
+
+:
+status
+"""
+
+
 class ClassRegEventsTests(WebUntisTestCase):
     def testClassRegEvent(self):
         cre = webuntis.objects.ClassRegEvent(
@@ -837,6 +900,16 @@ class ClassRegEventsTests(WebUntisTestCase):
         assert type(crel) == webuntis.objects.ClassRegEventList
         assert len(crel) == 2
         assert type(crel[0]) is webuntis.objects.ClassRegEvent
+
+
+"""
+
+
+@TODO
+
+:
+category
+"""
 
 
 class ClassRegCategoryGroupTests(WebUntisTestCase):

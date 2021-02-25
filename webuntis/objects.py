@@ -393,7 +393,6 @@ class PeriodObject(ListItem):
         return None
 
 
-
     @lazyproperty
     def original_teachers(self):
         """ Support for original teachers """
@@ -440,11 +439,20 @@ class PeriodObject(ListItem):
         """
         statistical flags
 
-
         only available when timetable_extended() is used
         :return: str
         """
         return self._data.get(u'statflags', u'')
+
+    @lazyproperty
+    def info(self):
+        """
+        activity type of the lesson
+
+        only available when timetable_extended() is used
+        :return: str
+        """
+        return self._data.get(u'info', u'')
 
     @lazyproperty
     def activityType(self):
@@ -466,15 +474,6 @@ class PeriodObject(ListItem):
         """
         return self._data.get(u'sg', u'')
 
-    @lazyproperty
-    def info(self):
-        """
-        period information
-
-        only available when timetable_extended() is used
-        :return: str
-        """
-        return self._data.get(u'info', u'')
 
     @lazyproperty
     def lsnumber(self):
@@ -482,7 +481,7 @@ class PeriodObject(ListItem):
         number of the period's lesson
 
         only available when timetable_extended() is used
-        :return: str
+        :return: int
         """
         return self._data.get(u'lsnumber', -1)
 

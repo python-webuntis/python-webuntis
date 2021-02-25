@@ -217,6 +217,7 @@ class WrapperMethodTests(WebUntisTestCase):
         self.assertRaisesRegex(TypeError, 'by keyword', s.timetable,
                                start=start, end=end, foobar=128)
 
+
     def test_rooms(self):
         s = webuntis.Session(**stub_session_parameters)
         with self.noop_result_mock(u'getRooms'):
