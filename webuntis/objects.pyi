@@ -179,7 +179,25 @@ class PeriodObject(ListItem):
     @property
     def type(self) -> str:
         ...
+    @property
+    def lstext(self) -> str:
+        ...
 
+    @property
+    def flags(self) -> str:
+        ...
+
+    @property
+    def activityType(self) -> str:
+        ...
+
+    @property
+    def sg(self) -> str:
+        ...
+
+    @property
+    def lsnumber(self) -> int:
+        ...
 
 class PeriodList(ListResult):
     _itemclass = PeriodObject

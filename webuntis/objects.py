@@ -397,6 +397,30 @@ class PeriodObject(ListItem):
 
         return self._data.get(u'lstype', u'ls')
 
+    @lazyproperty
+    def lstext(self):
+        return self._data.get(u'lstext', u'')
+
+    @lazyproperty
+    def flags(self):
+        return self._data.get(u'statflags', u'')
+
+    @lazyproperty
+    def activityType(self):
+        return self._data.get(u'activityType', u'')
+
+    @lazyproperty
+    def sg(self):
+        return self._data.get(u'sg', u'')
+
+    @lazyproperty
+    def info(self):
+        return self._data.get(u'info', u'')
+
+    @lazyproperty
+    def lsnumber(self):
+        return self._data.get(u'lsnumber', -1)
+
 
 class PeriodList(ListResult):
     """Aka timetable, a list of periods, in form of :py:class:`PeriodObject`
@@ -1040,8 +1064,10 @@ class ClassRegCategory(Result):
     @lazyproperty
     def group(self):
         """group"""
-        return self._session.class_reg_category_groups().filter(id=self._data[u'groupId'])[0]
-
+        try:
+            return self._session.class_reg_category_groups().filter(id=self._data[u'groupId'])[0]
+        except KeyError:
+            return ""
 
 class ClassRegCategoryList(ListResult):
     """A list of ClassRegCategories."""
