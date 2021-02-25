@@ -198,6 +198,18 @@ class PeriodObject(ListItem):
     @property
     def lsnumber(self) -> int:
         ...
+    @property
+    def bkRemark(self) -> str:
+        ...
+
+    @property
+    def bkText(self) -> str:
+        ...
+
+    @property
+    def substText(self) -> str:
+        ...
+
 
 class PeriodList(ListResult):
     _itemclass = PeriodObject

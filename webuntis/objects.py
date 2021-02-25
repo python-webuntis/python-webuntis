@@ -421,6 +421,18 @@ class PeriodObject(ListItem):
     def lsnumber(self):
         return self._data.get(u'lsnumber', -1)
 
+    @lazyproperty
+    def bkRemark(self):
+        return self._data.get(u'bkRemark', u'')
+
+    @lazyproperty
+    def bkText(self):
+        return self._data.get(u'bkText', u'')
+
+    @lazyproperty
+    def substText(self):
+        return self._data.get(u'substText', u'')
+
 
 class PeriodList(ListResult):
     """Aka timetable, a list of periods, in form of :py:class:`PeriodObject`
