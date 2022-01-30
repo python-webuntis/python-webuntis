@@ -286,6 +286,16 @@ class KlassenObject(ListItem, ColorMixin):
         """Long name of class"""
         return self._data[u'longName']
 
+    @lazyproperty
+    def teacher1(self):
+        """First teacher of class"""
+        return self._session.teachers(from_cache=True).filter(id=self._data[u'teacher1'])
+
+    @lazyproperty
+    def teacher2(self):
+        """Second teacher of class"""
+        return self._session.teachers(from_cache=True).filter(id=self._data[u'teacher2'])
+
 
 class KlassenList(ListResult):
     """A list of school classes, in form of :py:class:`KlassenObject`
@@ -399,38 +409,93 @@ class PeriodObject(ListItem):
 
     @lazyproperty
     def lstext(self):
+        """
+        text of the period's lesson
+
+        only available when timetable_extended() is used
+        :return: str
+        """
         return self._data.get(u'lstext', u'')
 
     @lazyproperty
     def flags(self):
+        """
+        statistical flags
+
+
+        only available when timetable_extended() is used
+        :return: str
+        """
         return self._data.get(u'statflags', u'')
 
     @lazyproperty
     def activityType(self):
+        """
+        activity type of the lesson
+
+        only available when timetable_extended() is used
+        :return: str
+        """
         return self._data.get(u'activityType', u'')
 
     @lazyproperty
-    def sg(self):
+    def studentGroup(self):
+        """
+        name of the period's student group
+
+        only available when timetable_extended() is used
+        :return: str
+        """
         return self._data.get(u'sg', u'')
 
     @lazyproperty
     def info(self):
+        """
+        period information
+
+        only available when timetable_extended() is used
+        :return: str
+        """
         return self._data.get(u'info', u'')
 
     @lazyproperty
     def lsnumber(self):
+        """
+        number of the period's lesson
+
+        only available when timetable_extended() is used
+        :return: str
+        """
         return self._data.get(u'lsnumber', -1)
 
     @lazyproperty
     def bkRemark(self):
+        """
+         remark of the period's booking (optional)
+
+        only available when timetable_extended() is used
+        :return: str
+        """
         return self._data.get(u'bkRemark', u'')
 
     @lazyproperty
     def bkText(self):
+        """
+        text of the period's booking (optional)
+
+        only available when timetable_extended() is used
+        :return: str
+        """
         return self._data.get(u'bkText', u'')
 
     @lazyproperty
     def substText(self):
+        """
+        Untis substitution text
+
+        only available when timetable_extended() is used
+        :return: str
+        """
         return self._data.get(u'substText', u'')
 
 

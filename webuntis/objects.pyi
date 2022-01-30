@@ -127,6 +127,13 @@ class KlassenObject(ListItem, ColorMixin):
     def name(self) -> str:
         ...
 
+    @property
+    def teacher1(selfself) -> TeacherObject:
+        ...
+
+    @property
+    def teacher2(selfself) -> TeacherObject:
+        ...
 
 class KlassenList(ListResult):
     _itemclass = KlassenObject
@@ -179,6 +186,7 @@ class PeriodObject(ListItem):
     @property
     def type(self) -> str:
         ...
+
     @property
     def lstext(self) -> str:
         ...
@@ -198,6 +206,7 @@ class PeriodObject(ListItem):
     @property
     def lsnumber(self) -> int:
         ...
+
     @property
     def bkRemark(self) -> str:
         ...
