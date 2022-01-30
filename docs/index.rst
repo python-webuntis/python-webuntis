@@ -49,5 +49,4 @@ Index
   session
   objects
   exceptions
-  changelog
   license

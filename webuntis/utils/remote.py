@@ -16,7 +16,8 @@ _errorcodes = {
     -32601: errors.MethodNotFoundError,
     -8504: errors.BadCredentialsError,
     -8520: errors.NotLoggedInError,
-    -7004: errors.DateNotAllowed
+    -7004: errors.DateNotAllowed,
+    -8507: errors.DateNotAllowed,
 }
 '''The API-errorcodes python-webuntis is able to interpret, together with the
 exception that will be thrown.'''
@@ -155,8 +156,9 @@ def _send_request(url, data, headers, http_session=None):
     # this will eventually raise errors, e.g. on timeout
 
     try:
-        result_data = json.loads(result)
+        result_data = json.loads(result, )
         log('debug', 'Valid JSON found')
+        log('debug', '  Got data' + str(result)[:100])
     except ValueError:
         raise errors.RemoteError('Invalid JSON', result)
     else:

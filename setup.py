@@ -14,8 +14,8 @@ dependencies = ['requests']
 setup(
     name='webuntis',
     version='0.1.12',
-    author='Markus Unterwaditzer',
-    author_email='markus@unterwaditzer.net',
+    author=u'Markus Unterwaditzer, August Hörandl',
+    author_email='markus@unterwaditzer.net, august.hoerandl@gmx.at',
     packages=find_packages(),
     include_package_data=True,
     url='https://github.com/python-webuntis/python-webuntis',
