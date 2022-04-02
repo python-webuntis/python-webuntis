@@ -311,7 +311,7 @@ class TimeStampTests(WebUntisTestCase):
         exp = datetime.date(2015, 1, 2)
 
         self.assertEqual(x.date.date(), exp)
-        self.assert_(x.date.time().hour in [12, 13])  # travis says: 12, local test says: 13
+        self.assertTrue(x.date.time().hour in [12, 13])  # travis says: 12, local test says: 13
         self.assertEqual(x.date.time().minute, 33)
         self.assertEqual(x.date.time().second, 40)
 
