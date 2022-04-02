@@ -53,15 +53,15 @@ class ListResult(Result):
 
 class ColorMixin:
     @property
-    def backcolor(self) -> str:
+    def backcolor(self) -> Union[ColorInfo, None]:
         ...
 
     @property
-    def forecolor(self) -> str:
+    def forecolor(self) -> Union[ColorInfo, None]:
         ...
 
 
-class ColorInfo(Result):
+class ColorInfo(Result, ColorMixin):
 
     @property
     def name(self) -> str:
@@ -149,6 +149,10 @@ class PeriodObject(ListItem):
 
     @property
     def code(self) -> Union[str, None]:
+        ...
+
+    @property
+    def code_color(self) -> Union[ColorInfo, None]:
         ...
 
     @property

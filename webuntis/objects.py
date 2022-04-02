@@ -265,12 +265,12 @@ class ColorMixin:
     @lazyproperty
     def forecolor(self):
         """The foreground color used in the web interface and elsewhere"""
-        return self._data[self.name][u'foreColor']
+        return self._data[self.name].get('foreColor', None)
 
     @lazyproperty
     def backcolor(self):
         """The background color used in the web interface and elsewhere"""
-        return self._data[self.name][u'backColor']
+        return self._data[self.name].get('backColor', None)
 
 
 class KlassenObject(ListItem, ColorMixin):
@@ -375,6 +375,23 @@ class PeriodObject(ListItem):
         if code in (None, u'cancelled', u'irregular'):
             return code
         return None
+
+    @lazyproperty
+    def code_color(self):
+        """
+        The ColorInfo for the code of the current period
+
+        :return:
+        """
+        code = self.code
+        if code is None:
+            return None
+        for c in self._session.statusdata(from_cache=True).period_codes:
+            if c.name == code:
+                return c
+        return None
+
+
 
     @lazyproperty
     def original_teachers(self):
