@@ -13,3 +13,8 @@ env*
 fabfile*
 htmlcov
 
+*.pyc
+.cache
+.mypy_cache
+.pytest_cache
+.idea
