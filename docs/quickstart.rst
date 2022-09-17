@@ -31,6 +31,23 @@ and its API:
       the timezone provided as part of the API. So this library can't make real
       efforts to handle date and time in a more professional manner.
 
+    - There are **permissions** for the different calls. If you get `no right for ...`
+      you will have to ask your admin.
+
+      Rights to ask for/needed for specific calls (call: needed right):
+
+      * getTimetable: timetable view for the requested element
+      * getTeachers: masterdata teachers read for all
+      * getStudents: masterdata students read for all
+      * getKlassen: masterdata Klassen read for all
+      * getClassregEvents: classregevents read for all
+      * getExams: examinations read for all
+      * getExamTypes: examtypes read for all
+      * getTimetableWithAbsences: Student absences
+      * getClassregCategories: classregister
+      * getClassregCategoryGroups: classregister
+      * getClassregEvents: classevent
+
     - The official untis app is **NOT** using this api. So the app can
       do a lot of additional things.
 
