@@ -289,12 +289,12 @@ class KlassenObject(ListItem, ColorMixin):
     @lazyproperty
     def teacher1(self):
         """First teacher of class"""
-        return self._session.teachers(from_cache=True).filter(id=self._data[u'teacher1'])
+        return self._session.teachers(from_cache=True).filter(id=self._data[u'teacher1'])[0]
 
     @lazyproperty
     def teacher2(self):
         """Second teacher of class"""
-        return self._session.teachers(from_cache=True).filter(id=self._data[u'teacher2'])
+        return self._session.teachers(from_cache=True).filter(id=self._data[u'teacher2'])[0]
 
 
 class KlassenList(ListResult):
@@ -380,8 +380,6 @@ class PeriodObject(ListItem):
     def code_color(self):
         """
         The ColorInfo for the code of the current period
-
-        :return:
         """
         code = self.code
         if code is None:
