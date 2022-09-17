@@ -170,6 +170,23 @@ class KlassenTests(WebUntisTestCase):
         self.assert_strict_equal(x.name, u'1A')
         self.assert_strict_equal(x.long_name, u'Erste A')
 
+    def test_teacher(self):
+        x = webuntis.objects.KlassenObject(
+            data={
+                u'id': 1,
+                u'name': u'1A',
+                u'longName': u'Erste A',
+                'teacher1': 3,
+                'teacher2': 7
+            },
+            session=StubSession())
+
+        self.assert_strict_equal(x.name, u'1A')
+        self.assert_strict_equal(x.long_name, u'Erste A')
+
+        self.assert_strict_equal(x.teacher1.name, u'Hans Gans')
+        self.assert_strict_equal(x.teacher2.name, u'Daniel Duesentrieb')
+
 
 class PeriodTests(WebUntisTestCase):
     Obj = webuntis.objects.PeriodObject
