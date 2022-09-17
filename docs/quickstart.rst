@@ -16,9 +16,10 @@ and its API:
     - **The API is read-only.** And there's nothing you can do about it.
 
     - **The API documentation does not explain the purpose of some methods.**
-      So i can't do a much better job at it.
+      So i can't do a much better job at it. If you want to read the
+      official documentation: please ask the untis support.
 
-    - **Different schools, different rules.** It is not neccessary that schools
+    - **Different schools, different rules.** It is not necessary that schools
       enter information about, for example, a teacher, in the correct format.
       It might happen that a school abuses the name field of a teacher to just
       write the teacher's initials in it. Testing is the only sane way out of
@@ -29,6 +30,26 @@ and its API:
       school. As if that wasn't ridiculous enough, there is no information on
       the timezone provided as part of the API. So this library can't make real
       efforts to handle date and time in a more professional manner.
+
+    - There are **permissions** for the different calls. If you get `no right for ...`
+      you will have to ask your admin.
+
+      Rights to ask for/needed for specific calls (call: needed right):
+
+      * getTimetable: timetable view for the requested element
+      * getTeachers: masterdata teachers read for all
+      * getStudents: masterdata students read for all
+      * getKlassen: masterdata Klassen read for all
+      * getClassregEvents: classregevents read for all
+      * getExams: examinations read for all
+      * getExamTypes: examtypes read for all
+      * getTimetableWithAbsences: Student absences
+      * getClassregCategories: classregister
+      * getClassregCategoryGroups: classregister
+      * getClassregEvents: classevent
+
+    - The official untis app is **NOT** using this api. So the app can
+      do a lot of additional things.
 
 Initially i started writing this library with the goal to abstract away all the
 pain that otherwise would result in direct interaction with the API. This is

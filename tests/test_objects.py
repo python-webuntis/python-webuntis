@@ -170,6 +170,23 @@ class KlassenTests(WebUntisTestCase):
         self.assert_strict_equal(x.name, u'1A')
         self.assert_strict_equal(x.long_name, u'Erste A')
 
+    def test_teacher(self):
+        x = webuntis.objects.KlassenObject(
+            data={
+                u'id': 1,
+                u'name': u'1A',
+                u'longName': u'Erste A',
+                'teacher1': 3,
+                'teacher2': 7
+            },
+            session=StubSession())
+
+        self.assert_strict_equal(x.name, u'1A')
+        self.assert_strict_equal(x.long_name, u'Erste A')
+
+        self.assert_strict_equal(x.teacher1.name, u'Hans Gans')
+        self.assert_strict_equal(x.teacher2.name, u'Daniel Duesentrieb')
+
 
 class PeriodTests(WebUntisTestCase):
     Obj = webuntis.objects.PeriodObject
@@ -311,7 +328,7 @@ class TimeStampTests(WebUntisTestCase):
         exp = datetime.date(2015, 1, 2)
 
         self.assertEqual(x.date.date(), exp)
-        self.assert_(x.date.time().hour in [12, 13])  # travis says: 12, local test says: 13
+        self.assertTrue(x.date.time().hour in [12, 13])  # travis says: 12, local test says: 13
         self.assertEqual(x.date.time().minute, 33)
         self.assertEqual(x.date.time().second, 40)
 

@@ -28,7 +28,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 project = 'python-webuntis'
-copyright = '2013, Markus Unterwaditzer'
+copyright = u'2013, Markus Unterwaditzer; 2018, August Hörandl'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -74,7 +74,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'python-webuntis.tex', 'python-webuntis Documentation',
-   'Markus Unterwaditzer', 'manual'),
+   u'Markus Unterwaditzer, August Hörandl', 'manual'),
 ]
 
 
@@ -84,7 +84,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'python-webuntis', 'python-webuntis Documentation',
-     ['Markus Unterwaditzer'], 1)
+     ['Markus Unterwaditzer', u'August Hörandl'], 1)
 ]
 
 
@@ -95,7 +95,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'python-webuntis', 'python-webuntis Documentation',
-   'Markus Unterwaditzer', 'python-webuntis', 'Bindings for WebUntis.',
+   u'Markus Unterwaditzer, August Hörandl', 'python-webuntis', 'Bindings for WebUntis.',
    'Miscellaneous'),
 ]
 

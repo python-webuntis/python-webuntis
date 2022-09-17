@@ -265,12 +265,12 @@ class ColorMixin:
     @lazyproperty
     def forecolor(self):
         """The foreground color used in the web interface and elsewhere"""
-        return self._data[self.name][u'foreColor']
+        return self._data[self.name].get('foreColor', None)
 
     @lazyproperty
     def backcolor(self):
         """The background color used in the web interface and elsewhere"""
-        return self._data[self.name][u'backColor']
+        return self._data[self.name].get('backColor', None)
 
 
 class KlassenObject(ListItem, ColorMixin):
@@ -285,6 +285,16 @@ class KlassenObject(ListItem, ColorMixin):
     def long_name(self):
         """Long name of class"""
         return self._data[u'longName']
+
+    @lazyproperty
+    def teacher1(self):
+        """First teacher of class"""
+        return self._session.teachers(from_cache=True).filter(id=self._data[u'teacher1'])[0]
+
+    @lazyproperty
+    def teacher2(self):
+        """Second teacher of class"""
+        return self._session.teachers(from_cache=True).filter(id=self._data[u'teacher2'])[0]
 
 
 class KlassenList(ListResult):
@@ -367,6 +377,21 @@ class PeriodObject(ListItem):
         return None
 
     @lazyproperty
+    def code_color(self):
+        """
+        The ColorInfo for the code of the current period
+        """
+        code = self.code
+        if code is None:
+            return None
+        for c in self._session.statusdata(from_cache=True).period_codes:
+            if c.name == code:
+                return c
+        return None
+
+
+
+    @lazyproperty
     def original_teachers(self):
         """ Support for original teachers """
         try:
@@ -396,6 +421,97 @@ class PeriodObject(ListItem):
         """
 
         return self._data.get(u'lstype', u'ls')
+
+    @lazyproperty
+    def lstext(self):
+        """
+        text of the period's lesson
+
+        only available when timetable_extended() is used
+        :return: str
+        """
+        return self._data.get(u'lstext', u'')
+
+    @lazyproperty
+    def flags(self):
+        """
+        statistical flags
+
+
+        only available when timetable_extended() is used
+        :return: str
+        """
+        return self._data.get(u'statflags', u'')
+
+    @lazyproperty
+    def activityType(self):
+        """
+        activity type of the lesson
+
+        only available when timetable_extended() is used
+        :return: str
+        """
+        return self._data.get(u'activityType', u'')
+
+    @lazyproperty
+    def studentGroup(self):
+        """
+        name of the period's student group
+
+        only available when timetable_extended() is used
+        :return: str
+        """
+        return self._data.get(u'sg', u'')
+
+    @lazyproperty
+    def info(self):
+        """
+        period information
+
+        only available when timetable_extended() is used
+        :return: str
+        """
+        return self._data.get(u'info', u'')
+
+    @lazyproperty
+    def lsnumber(self):
+        """
+        number of the period's lesson
+
+        only available when timetable_extended() is used
+        :return: str
+        """
+        return self._data.get(u'lsnumber', -1)
+
+    @lazyproperty
+    def bkRemark(self):
+        """
+         remark of the period's booking (optional)
+
+        only available when timetable_extended() is used
+        :return: str
+        """
+        return self._data.get(u'bkRemark', u'')
+
+    @lazyproperty
+    def bkText(self):
+        """
+        text of the period's booking (optional)
+
+        only available when timetable_extended() is used
+        :return: str
+        """
+        return self._data.get(u'bkText', u'')
+
+    @lazyproperty
+    def substText(self):
+        """
+        Untis substitution text
+
+        only available when timetable_extended() is used
+        :return: str
+        """
+        return self._data.get(u'substText', u'')
 
 
 class PeriodList(ListResult):
@@ -1040,8 +1156,10 @@ class ClassRegCategory(Result):
     @lazyproperty
     def group(self):
         """group"""
-        return self._session.class_reg_category_groups().filter(id=self._data[u'groupId'])[0]
-
+        try:
+            return self._session.class_reg_category_groups().filter(id=self._data[u'groupId'])[0]
+        except KeyError:
+            return ""
 
 class ClassRegCategoryList(ListResult):
     """A list of ClassRegCategories."""

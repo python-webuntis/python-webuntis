@@ -222,6 +222,53 @@ class ResultWrapperMixin(object):
         return objects.PeriodList, 'getTimetable', parameters
 
     @result_wrapper
+    def timetable_extended(self, start, end, **type_and_id):
+        element_type_table = {
+            'klasse': 1,
+            'teacher': 2,
+            'subject': 3,
+            'room': 4,
+            'student': 5
+        }
+
+        invalid_type_error = TypeError(
+            'You have to specify exactly one of the following parameters by '
+            'keyword: ' +
+            (', '.join(element_type_table.keys()))
+        )
+
+        if len(type_and_id) != 1:
+            raise invalid_type_error
+
+        element_type, element_id = list(type_and_id.items())[0]
+
+        element_type = utils.userinput.string(element_type)
+
+        if element_type not in element_type_table:
+            raise invalid_type_error
+
+        options = self._create_date_param(end,
+                                          start,
+                                          element={
+                                              "id": int(element_id),
+                                              "type": element_type_table[element_type],
+                                          },
+                                          onlyBaseTimetable=False,
+                                          showBooking=True,
+                                          showInfo=True,
+                                          showSubstText=True,
+                                          showLsText=True,
+                                          showLsNumber=True,
+                                          showStudentgroup=True,
+                                          )
+
+        parameters = {
+            "options": options,
+        }
+        return objects.PeriodList, 'getTimetable', parameters
+
+
+    @result_wrapper
     def rooms(self):
         """Get all rooms of a school.
 
@@ -428,15 +475,6 @@ class ResultWrapperMixin(object):
         :rtype: :py:class:`webuntis.objects.ClassRegClassRegCategoryGroupList`
         """
         return objects.ClassRegCategoryGroupList, 'getClassregCategoryGroups', {}
-
-    @result_wrapper
-    def class_reg_categories(self):
-        return objects.ClassRegCategoryList, 'getClassregCategories', {}
-
-    @result_wrapper
-    def class_reg_category_groups(self):
-        return objects.ClassRegCategoryGroupList, 'getClassregCategoryGroups', {}
-
 
     @staticmethod
     def _create_date_param(end, start, **kwargs):

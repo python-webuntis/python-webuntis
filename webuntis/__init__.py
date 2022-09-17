@@ -4,7 +4,7 @@
     :copyright: (c) 2012 by Markus Unterwaditzer.
     :license: BSD, see LICENSE for more details.
 """
-__version__ = '0.1.12'
+__version__ = '0.1.20'
 from webuntis.session import Session
 
 from webuntis import errors
