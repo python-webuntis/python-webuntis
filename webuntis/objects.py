@@ -338,6 +338,9 @@ class PeriodObject(ListItem):
         """A list of :py:class:`TeacherObject` instances,
         which are attending this period."""
 
+        if u'te' not in self._data:
+            return []
+
         return self._session.teachers(from_cache=True).filter(
             id=[te[u'id'] for te in self._data[u'te']]
         )
