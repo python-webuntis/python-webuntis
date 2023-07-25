@@ -51,6 +51,9 @@ and its API:
     - The official untis app is **NOT** using this api. So the app can
       do a lot of additional things.
 
+    - You have to ask the Untis-hotline for the manual for the JSON-API. But there seems to be
+      a download at <https://untis-sr.ch/telechargements/> `documentation de l’API JSON REST` (last checked 2023/3).
+
 Initially i started writing this library with the goal to abstract away all the
 pain that otherwise would result in direct interaction with the API. This is
 still an unreached goal. Some things like the problem with time and date is
