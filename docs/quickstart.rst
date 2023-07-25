@@ -51,6 +51,9 @@ and its API:
     - The official untis app is **NOT** using this api. So the app can
       do a lot of additional things.
 
+      But at least the *login* seem to be compatible: see issue 47
+      <https://github.com/python-webuntis/python-webuntis/issues/47>
+
     - You have to ask the Untis-hotline for the manual for the JSON-API. But there seems to be
       a download at <https://untis-sr.ch/telechargements/> `documentation de l’API JSON REST` (last checked 2023/3).
 
