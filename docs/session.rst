@@ -19,6 +19,7 @@ Things you can do with the API
 ==============================
 
 .. class:: Session
+    :noindex:
 
     .. automethod:: departments
     .. automethod:: holidays
@@ -26,7 +27,6 @@ Things you can do with the API
     .. automethod:: timetable
     .. automethod:: rooms
     .. automethod:: schoolyears
-    .. automethod:: statusdata
     .. automethod:: subjects
     .. automethod:: teachers
     .. automethod:: statusdata

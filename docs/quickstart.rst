@@ -82,12 +82,13 @@ Here's the example from the :doc:`Intro <index>` again::
         useragent='WebUntis Test'
     )
 
-    s.login()
+    s.login() # see remark below:
+    # prefered: with webuntis.Session(...).login() as s:
 
     for klasse in s.klassen():
         print(klasse.name)
 
-    s.logout()
+    s.logout() # see remark below
 
 
 So what does this do?

@@ -53,7 +53,7 @@ pygments_style = 'sphinx'
 # -- Options for HTML output ---------------------------------------------------
 
 html_theme = 'default'
-html_static_path = ['_static']
+#html_static_path = ['_static']
 htmlhelp_basename = 'python-webuntisdoc'
 
 
@@ -111,4 +111,4 @@ def setup(app):
     app.connect('autodoc-process-docstring', skip_modules_docstring)
 
 # intersphinx
-intersphinx_mapping = {"http://docs.python.org/2/": None}
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
