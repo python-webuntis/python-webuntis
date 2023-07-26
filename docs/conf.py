@@ -18,6 +18,7 @@ import sys, os
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('.'))
 
 
 # -- General configuration -----------------------------------------------------
@@ -38,10 +39,7 @@ import pkg_resources
 try:
     release = pkg_resources.require('webuntis')[0].version  # The full version, including alpha/beta/rc tags.
 except pkg_resources.DistributionNotFound:
-    print('To build the documentation, the distribution information of'
-          'python-webuntis has to be available. Run "setup.py develop" to do'
-          'this.')
-    sys.exit(1)
+    release = "latest.0.0"
 
 del pkg_resources
 
