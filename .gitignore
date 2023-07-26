@@ -3,6 +3,7 @@
 *.pyc
 .coverage
 .tox
+*~
 __pycache__
 build
 dist
@@ -18,3 +19,5 @@ htmlcov
 .mypy_cache
 .pytest_cache
 .idea
+.pyre_configuration
+.pytype
