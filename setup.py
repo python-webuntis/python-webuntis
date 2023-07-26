@@ -14,7 +14,7 @@ dependencies = ['requests']
 
 setup(
     name='webuntis',
-    version='0.1.20',
+    version='0.1.22',
     author=u'Markus Unterwaditzer, August Hörandl',
     author_email='markus@unterwaditzer.net, august.hoerandl@gmx.at',
     packages=find_packages(),
@@ -37,6 +37,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: Implementation :: PyPy'
     ]
 )
