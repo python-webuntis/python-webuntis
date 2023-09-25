@@ -11,7 +11,7 @@ and its API:
       anonymously. It's designated that schools give each student a user
       account for the WebUntis server they're using. Many schools just make the
       timetable world-accessible though, preventing any use of the API. If you
-      happen to be at such a school, you're a pitiful bastard.
+      happen to be at such a school, my condolences.
 
     - **The API is read-only.** And there's nothing you can do about it.
 
