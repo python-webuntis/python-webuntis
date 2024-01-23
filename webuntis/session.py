@@ -25,7 +25,10 @@ class JSONRPCSession(object):
             'password': None,
             'jsessionid': None,
             'login_repeat': 0,
-            '_http_session': None
+            '_http_session': None,
+            'personType': None,
+            'personId': None,
+            'klasseId': None,
         }
         config.update(kwargs)
         self.config.update(config)
@@ -100,6 +103,12 @@ class JSONRPCSession(object):
         else:
             raise errors.AuthError('Something went wrong while authenticating',
                                    res)
+            
+        if 'personType' in res and 'personType' in res:
+            self.config['personType'] = res['personType']
+            self.config['personId'] = res['personId']
+        if "klasseId" in res:
+            self.config['klasseId'] = res['klasseId']
 
         return self
 
