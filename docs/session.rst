@@ -25,6 +25,8 @@ Things you can do with the API
     .. automethod:: holidays
     .. automethod:: klassen
     .. automethod:: timetable
+    .. automethod:: timetable_extended
+    .. automethod:: my_timetable
     .. automethod:: rooms
     .. automethod:: schoolyears
     .. automethod:: subjects

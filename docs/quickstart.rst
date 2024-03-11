@@ -91,9 +91,7 @@ Here's the example from the :doc:`Intro <index>` again::
     s.logout() # see remark below
 
 
-So what does this do?
-
-::
+So what does this do?::
 
     # a minimal example, these parameters are absolutely neccessary
     s = webuntis.Session(
@@ -147,6 +145,33 @@ which you also can use to log yourself out automatically::
         # work goes here
 
     # now you're logged out, even if your code halted with exceptions before.
+
+
+Get a timetable
+===============
+
+Use one of the following::
+
+    monday = ...
+    friday = ...
+
+    # klasse or teacher
+    klasse = s.klassen().filter(name='KlassenName')[0]
+    teacher = s.teachers().filter(name='ABC')[0]
+
+    # get info
+    table = s.timetable(klasse=klasse, start=monday, end=friday).to_table()
+    table = s.timetable(teacher=teacher, start=monday, end=friday).to_table()
+
+
+    # get more info
+    table = s.timetable_extended(klasse=klasse, start=monday, end=friday).to_table()
+
+Use the logged-in user::
+
+    # same as timetable_extended using data from s.login_result
+    table = s.my_timetable(start=monday, end=friday).to_table()
+
 
 Where to go from here?
 ======================

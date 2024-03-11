@@ -100,6 +100,12 @@ class JSONRPCSession(object):
         else:
             raise errors.AuthError('Something went wrong while authenticating',
                                    res)
+        self.login_result = dict()
+        if 'personType' in res:
+            self.login_result['personType'] = res['personType']
+            self.login_result['personId'] = res['personId']
+        if "klasseId" in res:
+            self.login_result['klasseId'] = res['klasseId']
 
         return self
 
@@ -223,6 +229,10 @@ class ResultWrapperMixin(object):
 
     @result_wrapper
     def timetable_extended(self, start, end, **type_and_id):
+        """Get the timetable for a specific school class and time period.
+
+        Like timetable, but includes more info.
+        """
         element_type_table = {
             'klasse': 1,
             'teacher': 2,
@@ -247,11 +257,25 @@ class ResultWrapperMixin(object):
         if element_type not in element_type_table:
             raise invalid_type_error
 
+        return self._timetable_extended_raw(end, start, element_id, element_type_table[element_type])
+
+    @result_wrapper
+    def my_timetable(self, end, start):
+        """Get the timetable for the logged-in user.
+
+        see timetable_extended.
+        """
+        return self._timetable_extended_raw(end, start,
+                                            self.login_result['personId'], self.login_result['personType'])
+
+
+    def _timetable_extended_raw(self, end, start, element_id, element_type_num):
+
         options = self._create_date_param(end,
                                           start,
                                           element={
                                               "id": int(element_id),
-                                              "type": element_type_table[element_type],
+                                              "type": element_type_num,
                                           },
                                           onlyBaseTimetable=False,
                                           showBooking=True,
@@ -261,12 +285,10 @@ class ResultWrapperMixin(object):
                                           showLsNumber=True,
                                           showStudentgroup=True,
                                           )
-
         parameters = {
             "options": options,
         }
         return objects.PeriodList, 'getTimetable', parameters
-
 
     @result_wrapper
     def rooms(self):
