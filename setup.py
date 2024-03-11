@@ -14,7 +14,7 @@ dependencies = ['requests']
 
 setup(
     name='webuntis',
-    version='0.1.22',
+    version='0.1.23',
     author=u'Markus Unterwaditzer, August Hörandl',
     author_email='markus@unterwaditzer.net, august.hoerandl@gmx.at',
     packages=find_packages(),
@@ -23,6 +23,7 @@ setup(
     license='new-style BSD',
     description='Bindings for WebUntis API',
     long_description=open('README.rst').read(),
+    long_description_content_type = 'text/x-rst',
     install_requires=dependencies,
     classifiers=[
         'Intended Audience :: Developers',
@@ -38,6 +39,7 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Programming Language :: Python :: Implementation :: PyPy'
     ]
 )
