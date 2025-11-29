@@ -228,7 +228,7 @@ class ResultWrapperMixin(object):
         return objects.PeriodList, 'getTimetable', parameters
 
     @result_wrapper
-    def timetable_extended(self, start, end, **type_and_id):
+    def timetable_extended(self, start, end, key_type="id", teacher_fields=["id"], **type_and_id):
         """Get the timetable for a specific school class and time period.
 
         Like timetable, but includes more info.
@@ -257,7 +257,7 @@ class ResultWrapperMixin(object):
         if element_type not in element_type_table:
             raise invalid_type_error
 
-        return self._timetable_extended_raw(end, start, element_id, element_type_table[element_type])
+        return self._timetable_extended_raw(end, start, element_id, element_type_table[element_type], key_type, teacher_fields)
 
     @result_wrapper
     def my_timetable(self, end, start):
@@ -269,14 +269,16 @@ class ResultWrapperMixin(object):
                                             self.login_result['personId'], self.login_result['personType'])
 
 
-    def _timetable_extended_raw(self, end, start, element_id, element_type_num):
-
+    def _timetable_extended_raw(self, end, start, element_id, element_type_num, key_type="id", teacher_fields=["id"]):
+        element = {
+            "id" : int(element_id) if key_type == "id" else element_id,
+            "type": element_type_num,
+            "keyType": key_type
+        }
         options = self._create_date_param(end,
                                           start,
-                                          element={
-                                              "id": int(element_id),
-                                              "type": element_type_num,
-                                          },
+                                          element=element,
+                                          teacherFields=teacher_fields,
                                           onlyBaseTimetable=False,
                                           showBooking=True,
                                           showInfo=True,
