@@ -12,7 +12,7 @@ authors = [
 description = "Bindings for WebUntis API"
 readme = { file = "README.rst", content-type = "text/x-rst" }
 license = { file = "LICENSE" }
-requires-python = ">=3.4"
+requires-python = ">=3.8"
 dependencies = ["requests"]
 urls = { Homepage = "https://github.com/python-webuntis/python-webuntis" }
 
@@ -37,51 +37,10 @@ classifiers = [
 [tool.setuptools]
 include-package-data = true
 
-[tool.setuptools.bdist_wheel]
-universal = true
-
-[tool.setuptools.packages]
-find = {}
+[tool.setuptools.packages.find]
+# Explicitly exclude tests and docs here
+exclude = ["tests*", "docs*", "examples*"]
+namespaces = false
 
 [tool.setuptools.package-data]
 webuntis = ["py.typed", "*.pyi"]
-
-docs = ["*.rst", "*.py", "Makefile"]
-examples = ["*.py"]
-
-tests = ["*.json"]
-
-[tool.setuptools.exclude-package-data]
-docs = ["_build/*"]
-examples = ["mytests/*"]
-[tool.setuptools.manifest]
-
-include = [
-    "README.rst",
-    "LICENSE",
-    ".coveragerc",
-    "webuntis/py.typed",
-]
-recursive-include = [
-    "docs *.rst",
-    "docs Makefile",
-    "examples *.py",
-    "webuntis *.pyi",
-    "docs *.py",
-    "tests *.json",
-]
-recursive-exclude = [
-    "docs/_build *",
-    "examples/mytests *",
-]
-
-[tool.tox]
-envlist = "py27,py38,py39,py310,py311,py312,pypy3"
-
-
-[tool.tox.testenv]
-deps = ["pytest", "mock", "coverage"]
-commands = [
-"coverage run --source=webuntis/,tests/ --module pytest",
-"coverage report --show-missing"
-]
