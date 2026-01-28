@@ -337,13 +337,13 @@ class PeriodObject(ListItem):
     def teachers(self):
         """A list of :py:class:`TeacherObject` instances,
         which are attending this period."""
+        try:
+            return self._session.teachers(from_cache=True).filter(
+                id=[te['id'] for te in self._data['te'] if te.get('id')]
 
-        if u'te' not in self._data:
+            )
+        except KeyError:
             return []
-
-        return self._session.teachers(from_cache=True).filter(
-            id=[te[u'id'] for te in self._data[u'te']]
-        )
 
     @lazyproperty
     def subjects(self):
@@ -362,9 +362,12 @@ class PeriodObject(ListItem):
         at. This also is not used for multiple lessons, but rather for a single
         lesson that is actually occuring at multiple locations (?)."""
 
-        return self._session.rooms(from_cache=True).filter(
-            id=[ro[u'id'] for ro in self._data[u'ro']]
-        )
+        try:
+            return self._session.teachers(from_cache=True).filter(
+                id=[te['orgid'] for te in self._data['te'] if te.get('orgid')]
+            )
+        except KeyError:
+            return []
 
     @lazyproperty
     def code(self):
@@ -397,19 +400,21 @@ class PeriodObject(ListItem):
     def original_teachers(self):
         """ Support for original teachers """
         try:
-            return self._session.teachers(from_cache=True).filter(id=[te[u'orgid'] for te in self._data[u'te']])
+            return self._session.teachers(from_cache=True).filter(
+                id=[te['orgid'] for te in self._data['te'] if te.get('orgid')]
+            )
         except KeyError:
-            pass
-        return []
+            return []
 
     @lazyproperty
     def original_rooms(self):
         """ Support for original rooms """
         try:
-            return self._session.rooms(from_cache=True).filter(id=[ro[u'orgid'] for ro in self._data[u'ro']])
+            return self._session.rooms(from_cache=True).filter(
+                id=[ro['orgid'] for ro in self._data['ro'] if ro.get('orgid')]
+            )
         except KeyError:
-            pass
-        return []
+            return []
 
     @lazyproperty
     def type(self):
