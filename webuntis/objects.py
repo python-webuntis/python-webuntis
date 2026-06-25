@@ -412,6 +412,15 @@ class PeriodObject(ListItem):
         return []
 
     @lazyproperty
+    def original_subjects(self):
+        """ Support for original subjects """
+        try:
+            return self._session.subjects(from_cache=True).filter(id=[su[u'orgid'] for su in self._data[u'su']])
+        except KeyError:
+            pass
+        return []
+
+    @lazyproperty
     def type(self):
         """May be:
 
