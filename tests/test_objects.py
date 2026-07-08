@@ -406,6 +406,10 @@ for multiple tests"""
         data={u'id': 4, u'name': u'Math'},
         session=sess
     )
+    subject2 = webuntis.objects.SubjectObject(
+        data={u'id': 6, u'name': u'Science'},
+        session=sess
+    )
     room1 = webuntis.objects.RoomObject(
         data={u'id': 5, u'name': u'PHY', u'longName': u'Physics lab'},
         session=object()
@@ -434,7 +438,7 @@ for multiple tests"""
 
     def subjects(self, *args, **kw):
         return webuntis.objects.SubjectList(
-            [self.subject1], session=self.sess)
+            [self.subject1, self.subject2], session=self.sess)
 
     def rooms(self, *args, **kw):
         return webuntis.objects.RoomList(
@@ -455,7 +459,7 @@ class PeriodTestsData(WebUntisTestCase):
                 u'id': 1,
                 u'kl': [{"id": 2}],
                 u'te': [{"id": 3, u'orgid': 7}],
-                u'su': [{"id": 4}],
+                u'su': [{"id": 4, u'orgid': 6}],
                 u'ro': [{"id": 5, u'orgid': 8}],
             },
             session=StubSession()
@@ -467,6 +471,9 @@ class PeriodTestsData(WebUntisTestCase):
 
         self.assertEqual(p.original_teachers[0].name, u'Daniel Duesentrieb')
         self.assertEqual(len(p.original_teachers), 1)
+
+        self.assertEqual(p.original_subjects[0].name, u'Science')
+        self.assertEqual(len(p.original_subjects), 1)
 
         # without orgid
         p = webuntis.objects.PeriodObject(
@@ -481,6 +488,7 @@ class PeriodTestsData(WebUntisTestCase):
         )
         self.assertEqual(len(p.original_teachers), 0)
         self.assertEqual(len(p.original_rooms), 0)
+        self.assertEqual(len(p.original_subjects), 0)
 
     def test_combine(self):
         pl = webuntis.objects.PeriodList(
