@@ -172,6 +172,10 @@ class PeriodObject(ListItem):
         ...
 
     @property
+    def original_subjects(self) -> SubjectList:
+        ...
+
+    @property
     def rooms(self) -> RoomList:
         ...
 
